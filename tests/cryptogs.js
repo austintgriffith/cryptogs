@@ -80,12 +80,16 @@ module.exports = {
         this.timeout(120000)
         const accounts = await clevis("accounts")
         const tokensOfOwner = await clevis("contract","tokensOfOwner","Cryptogs",accounts[accountindex])
-        const lastToken = tokensOfOwner[tokensOfOwner.length-1]
+        const token5 = tokensOfOwner[tokensOfOwner.length-1]
+        const token4 = tokensOfOwner[tokensOfOwner.length-2]
+        const token3 = tokensOfOwner[tokensOfOwner.length-3]
+        const token2 = tokensOfOwner[tokensOfOwner.length-4]
+        const token1 = tokensOfOwner[tokensOfOwner.length-5]
         const SlammerTimeAddress = localContractAddress("SlammerTime")
-        const result = await clevis("contract","submitStack","Cryptogs",accountindex,SlammerTimeAddress,lastToken)
+        const result = await clevis("contract","submitStack","Cryptogs",accountindex,SlammerTimeAddress,token1,token2,token3,token4,token5)
         printTxResult(result)
-        const approveContract = await clevis("contract","tokenIndexToApproved","Cryptogs",lastToken)
-        assert(approveContract == SlammerTimeAddress,"SlammerTime is NOT approved to move the token "+lastToken)
+        const approveContract = await clevis("contract","tokenIndexToApproved","Cryptogs",token5)
+        assert(approveContract == SlammerTimeAddress,"SlammerTime is NOT approved to move the token "+token5)
       });
     });
   },
@@ -95,7 +99,11 @@ module.exports = {
         this.timeout(120000)
         const accounts = await clevis("accounts")
         const tokensOfOwner = await clevis("contract","tokensOfOwner","Cryptogs",accounts[accountindex])
-        const lastToken = tokensOfOwner[tokensOfOwner.length-1]
+        const token5 = tokensOfOwner[tokensOfOwner.length-1]
+        const token4 = tokensOfOwner[tokensOfOwner.length-2]
+        const token3 = tokensOfOwner[tokensOfOwner.length-3]
+        const token2 = tokensOfOwner[tokensOfOwner.length-4]
+        const token1 = tokensOfOwner[tokensOfOwner.length-5]
         const SlammerTimeAddress = localContractAddress("SlammerTime")
 
         //we need to get the stack id for the last submit event
@@ -107,10 +115,10 @@ module.exports = {
         const lastStackId = lastSubmitStackEvent.returnValues._stackid
         console.log(tab,"Last stack id:",lastStackId.cyan)
 
-        const result = await clevis("contract","submitCounterStack","Cryptogs",accountindex,SlammerTimeAddress,lastStackId,lastToken)
+        const result = await clevis("contract","submitCounterStack","Cryptogs",accountindex,SlammerTimeAddress,lastStackId,token1,token2,token3,token4,token5)
         printTxResult(result)
-        const approveContract = await clevis("contract","tokenIndexToApproved","Cryptogs",lastToken)
-        assert(approveContract == SlammerTimeAddress,"SlammerTime is NOT approved to move the token "+lastToken)
+        const approveContract = await clevis("contract","tokenIndexToApproved","Cryptogs",token5)
+        assert(approveContract == SlammerTimeAddress,"SlammerTime is NOT approved to move the token "+token5)
       });
     });
   },
@@ -302,15 +310,13 @@ module.exports = {
         const FlipEvents  = await clevis("contract","eventFlip","Cryptogs")
         for(let e in FlipEvents){
           if(FlipEvents[e].returnValues.stack==lastStackId){
-            console.log(tab,"Cryptog ",(""+FlipEvents[e].returnValues.id).blue," was flipped by ",FlipEvents[e].returnValues.toWhom.cyan)
+            console.log(tab,"Cryptog ",(""+FlipEvents[e].returnValues.id).blue," was flipped by ",FlipEvents[e].returnValues.toWhom.cyan," at block ",(""+FlipEvents[e].returnValues.blockNumber).grey)
           }
         }
 
       });
     });
   },
-
-
 
 
 
