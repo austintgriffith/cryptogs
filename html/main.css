@@ -1,11 +1,72 @@
 
- .dot {
-        height: 225px;
-        width: 225px;
-        background-color: #bbb;
-        border-radius: 50%;
-        display: inline-block;
+	nav{
+	box-shadow: 0px 3px 10px #ccc;
+	background-color: #fff;
+	}
+	
+	.container{
+	padding-top: 80px;
+	padding-bottom: 300px;
+
+	}
+	
+
+    
+    p{
+	    font-size: 16px;
     }
+    
+    .navbar-nav{
+	    margin:0px;
+	    padding:5px 0px;
+	    
+    }
+     nav li a{
+	        width: 80px;
+    }
+    
+        
+    .btn.btn-pog{
+		color: #7B005E; font-weight: bold; border: 5px solid #7B005E; font-style: italic;
+    }
+    
+    .logo{
+	    position: absolute;
+    background-image: url(logo.png);
+    height: 45px;
+    background-size: 50%;
+    /* background-position: 0px -10px; */
+    background-repeat: no-repeat;
+    width: 100%;
+    display: block;
+    text-align: center;
+    width: 380px;
+    top: 10px;
+    left: 50%;
+    margin-left: -105px;
+    }
+
+    #mainaction{
+   left: 50%;
+    width: 200px;
+    box-shadow: 0px 7px 16px #00000047;
+    font-size: 24px;
+    margin: 0px 0px 15px 0px;
+    background: #fff;
+    }
+    
+   
+    
+    .menu-icon{
+	    background-image: url("menu.png");
+	        height: 25px;
+	    background-size: 50%;
+	    background-position: 0px -10px;
+	    background-repeat: no-repeat;
+	    width: 90px;
+	    display: block;
+    }
+  
 
     .circle-text {
 		position: relative;
@@ -26,6 +87,7 @@
 	    background: #00F7E4;
 	    border-radius: 50%;
 	    height:50px;
+	    z-index: 2;
 	    width: 50px;
 	    position: absolute;
 	    left:50%;
@@ -41,41 +103,26 @@
 	width: 100%;
 	display: block;
 	margin: 0px auto;
+	transform: scale(0.95);
 	}
 
-	nav{
-		box-shadow: 0px 3px 10px #ccc;
-		background-color: #fff;
-	}
-
-	.container{
-		padding-top: 80px;
-		padding-bottom: 300px;
-	}
- 
-    
-    .btn.btn-pog{
-		color: #7B005E; font-weight: bold; border: 5px solid #7B005E; font-style: italic;
-    }
     
     #footernav{
-	    position: fixed;
-    bottom: 5px;
+	     position: fixed;
+    bottom: 0px;
+    right: 0px;
     left: 0px;
-    width: 100%;
+    min-width: 100%;
+    display: block;
     text-align: center;
+    padding: 10px 0px;
     }
     
-    #mainaction{
-	    left: 50%;
-	    width: 200px;
-	    box-shadow: 0px 7px 16px #c1c1c1;
-	    font-size: 24px;
-	    margin:0px 0px 15px 0px;
-    }
-    
-    p{
-	    font-size: 16px;
-    }
-  
-    
+    	.gradient{
+		background-image: -moz-linear-gradient(270deg, rgba(255,255,255,0) 3%, rgba(255,255,255,1) 80%);
+  background-image: -webkit-linear-gradient(270deg, rgba(255, 255, 255, 0) 3%, rgba(255, 255, 255, 1) 80% );
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0) 3%, rgba(255, 255, 255, 1) 80% );
+	}
+	
+
+   
