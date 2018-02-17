@@ -107,13 +107,7 @@ module.exports = {
         const lastStackId = lastSubmitStackEvent.returnValues._stackid
         console.log(tab,"Last stack id:",lastStackId.cyan)
 
-        let web3 = new Web3()
-        COMMIT = web3.utils.sha3(Math.random()+Date.now()+"CRYPTOGS4LIFE");
-        console.log(tab,"Using Commit:",COMMIT.blue)
-        let commitHash = web3.utils.sha3(COMMIT);
-        console.log(tab,"Commit hash:",commitHash.magenta)
-
-        const result = await clevis("contract","submitCounterStack","Cryptogs",accountindex,SlammerTimeAddress,lastStackId,lastToken,commitHash)
+        const result = await clevis("contract","submitCounterStack","Cryptogs",accountindex,SlammerTimeAddress,lastStackId,lastToken)
         printTxResult(result)
         const approveContract = await clevis("contract","tokenIndexToApproved","Cryptogs",lastToken)
         assert(approveContract == SlammerTimeAddress,"SlammerTime is NOT approved to move the token "+lastToken)
@@ -141,6 +135,52 @@ module.exports = {
       });
     });
   },
+  startCoinFlip:(accountindex)=>{
+    describe('#startCoinFlip() ', function() {
+      it('should start coin flip with commit', async function() {
+        this.timeout(120000)
+        const accounts = await clevis("accounts")
+
+        const AcceptCounterStackEvents  = await clevis("contract","eventAcceptCounterStack","Cryptogs")
+        //console.log(CounterStackEvents)
+        const lastAcceptCounterStackEvent = AcceptCounterStackEvents[AcceptCounterStackEvents.length-1]
+        //console.log(lastCounterStackEvent)
+        const lastStackId = lastAcceptCounterStackEvent.returnValues._stack
+        const lastCounterStackId = lastAcceptCounterStackEvent.returnValues._counterStack
+        console.log(tab,"Last stack id:",lastStackId.cyan)
+
+        let web3 = new Web3()
+        COMMIT = web3.utils.sha3(Math.random()+Date.now()+"CRYPTOGS4LIFE");
+        console.log(tab,"Using Commit:",COMMIT.blue)
+        let commitHash = web3.utils.sha3(COMMIT);
+        console.log(tab,"Commit hash:",commitHash.magenta)
+
+        const result = await clevis("contract","startCoinFlip","Cryptogs",accountindex,lastStackId,lastCounterStackId,commitHash)
+        printTxResult(result)
+      });
+    });
+  },
+  endCoinFlip:(accountindex)=>{
+    describe('#endCoinFlip() ', function() {
+      it('should end coin flip with commit', async function() {
+        this.timeout(120000)
+        const accounts = await clevis("accounts")
+
+        const AcceptCounterStackEvents  = await clevis("contract","eventAcceptCounterStack","Cryptogs")
+        //console.log(CounterStackEvents)
+        const lastAcceptCounterStackEvent = AcceptCounterStackEvents[AcceptCounterStackEvents.length-1]
+        //console.log(lastCounterStackEvent)
+        const lastStackId = lastAcceptCounterStackEvent.returnValues._stack
+        const lastCounterStackId = lastAcceptCounterStackEvent.returnValues._counterStack
+        console.log(tab,"Last stack id:",lastStackId.cyan)
+
+
+        const result = await clevis("contract","endCoinFlip","Cryptogs",accountindex,lastStackId,lastCounterStackId,COMMIT)
+        printTxResult(result)
+      });
+    });
+  },
+
 
   redeploy:()=>{
     describe(bigHeader('DEPLOY'), function() {
@@ -162,6 +202,13 @@ module.exports = {
         this.timeout(6000000)
         const result = await clevis("test","submitStacks")
         assert(result==0,"submitStacks ERRORS")
+      });
+    });
+    describe(bigHeader('TEST COIN FLIP'), function() {
+      it('should flip the coin', async function() {
+        this.timeout(6000000)
+        const result = await clevis("test","flipCoin")
+        assert(result==0,"flipCoin ERRORS")
       });
     });
   },
