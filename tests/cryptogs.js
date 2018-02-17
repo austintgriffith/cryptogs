@@ -180,6 +180,50 @@ module.exports = {
       });
     });
   },
+  raiseSlammer:(player1Index,player2Index)=>{
+    describe('#raiseSlammer() ', function() {
+      it('should raise slammer for next player', async function() {
+        this.timeout(120000)
+        const accounts = await clevis("accounts")
+
+        const AcceptCounterStackEvents  = await clevis("contract","eventAcceptCounterStack","Cryptogs")
+        //console.log(CounterStackEvents)
+        const lastAcceptCounterStackEvent = AcceptCounterStackEvents[AcceptCounterStackEvents.length-1]
+        console.log(lastAcceptCounterStackEvent)
+        const lastStackId = lastAcceptCounterStackEvent.returnValues._stack
+        const lastCounterStackId = lastAcceptCounterStackEvent.returnValues._counterStack
+        console.log(tab,"Last stack id:",lastStackId.cyan)
+
+
+        const player1 = await clevis("contract","stackOwner","Cryptogs",lastStackId)
+        console.log("player1",player1)
+        const player2 = await clevis("contract","stackOwner","Cryptogs",lastCounterStackId)
+        console.log("player2",player2)
+        const lastActor = await clevis("contract","lastActor","Cryptogs",lastStackId)
+        console.log("lastActor",lastActor)
+        let web3 = new Web3()
+        COMMIT = web3.utils.sha3(Math.random()+Date.now()+"CRYPTOGS4LIFE");
+        console.log(tab,"Using Commit:",COMMIT.blue)
+        let commitHash = web3.utils.sha3(COMMIT);
+        console.log(tab,"Commit hash:",commitHash.magenta)
+
+
+        let accountindex
+        if(player1==lastActor){
+          console.log(tab,"it's player 2's turn...".white)
+          //it's player 2's turn
+          accountindex = player2Index
+        }else{
+          console.log(tab,"it's player 1's turn...".white)
+          //it's player 1's turn
+          accountindex = player1Index
+        }
+        console.log(tab,accountindex,lastStackId,lastCounterStackId,commitHash)
+        const result = await clevis("contract","raiseSlammer","Cryptogs",accountindex,lastStackId,lastCounterStackId,commitHash)
+        printTxResult(result)
+      });
+    });
+  },
 
 
   redeploy:()=>{
@@ -209,6 +253,13 @@ module.exports = {
         this.timeout(6000000)
         const result = await clevis("test","flipCoin")
         assert(result==0,"flipCoin ERRORS")
+      });
+    });
+    describe(bigHeader('TEST SLAMMER THROW'), function() {
+      it('should flip the coin', async function() {
+        this.timeout(6000000)
+        const result = await clevis("test","throwSlammer")
+        assert(result==0,"throwSlammer ERRORS")
       });
     });
   },

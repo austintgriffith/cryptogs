@@ -186,6 +186,10 @@ contract Cryptogs is NFT, Ownable {
     mapping (bytes32 => Stack) public stacks;
     mapping (bytes32 => bytes32) public stackCounter;
 
+    function stackOwner(bytes32 _stack) public constant returns (address owner) {
+      return stacks[_stack].owner;
+    }
+
     //tx 1: of a game, player one approves the SlammerTime contract to take their tokens
     //this triggers an event to broadcast to other players that there is an open challenge
     function submitStack(address _slammerTime, uint256 _id, bool _public) public returns (bool) {
@@ -284,6 +288,7 @@ contract Cryptogs is NFT, Ownable {
     }
     event StartCoinFlip(bytes32 stack, bytes32 commit);
 
+    //tx5: player one ends coin flip with reveal
     function endCoinFlip(bytes32 _stack, bytes32 _counterStack, bytes32 _reveal) public returns (bool) {
       //make sure it's the owner of the first stack (player one) doing the flip
       require(stacks[_stack].owner==msg.sender);
@@ -322,6 +327,72 @@ contract Cryptogs is NFT, Ownable {
     event CoinFlipSuccess(bytes32 stack,address whosTurn,bool heads);
     event CoinFlipFail(bytes32 stack);
 
+
+    //tx6 next player raises slammer
+    function raiseSlammer(bytes32 _stack, bytes32 _counterStack, bytes32 _commit) public returns (bool) {
+      Debug(bytes32 lastActor[_stack]);
+      if(lastActor[_stack]==stacks[_stack].owner){
+        //it is player2's turn
+        //require(stacks[_counterStack].owner==msg.sender);
+      }else{
+        //it is player1's turn
+        //require(stacks[_stack].owner==msg.sender);
+      }
+      //the counter must be a counter of stack 1
+      //require(stackCounter[_counterStack]==_stack);
+      //make sure that we are in mode 3
+    //  require(mode[_stack]==3);
+      //store the commit for the next tx
+    //  commit[_stack]=_commit;
+      //inc the mode to 2
+      //mode[_stack]=4;
+      //RaiseSlammer(_stack,_commit);
+    }
+    event Debug(bytes32 lastActor);
+    event RaiseSlammer(bytes32 stack, bytes32 commit);
+
+
+    //tx7 player throws slammer
+    function throwSlammer(bytes32 _stack, bytes32 _counterStack, bytes32 _reveal) public returns (bool) {
+      if(lastActor[_stack]==stacks[_stack].owner){
+        //it is player2's turn
+        require(stacks[_counterStack].owner==msg.sender);
+      }else{
+        //it is player1's turn
+        require(stacks[_stack].owner==msg.sender);
+      }
+      //the counter must be a counter of stack 1
+      require(stackCounter[_counterStack]==_stack);
+      //make sure that we are in mode 4
+      require(mode[_stack]==4);
+
+      if(keccak256(_reveal)!=commit[_stack]){
+        //commit/reveal failed.. this can happen if they
+        //reload, so don't punish, just go back to the
+        //start of the slammer raise
+        mode[_stack]==3;
+        ThrowSlammerFail(_stack);
+        return false;
+      }else{
+        //successful slam!!!!!!!!!!!! At this point I have officially been awake for 24 hours !!!!!!!!!!
+        mode[_stack]==3;
+        bytes32 pseudoRandomHash = keccak256(_reveal,block.blockhash(block.number-1));
+        if(lastActor[_stack]==stacks[_stack].owner){
+          //player1 goes next
+          lastBlock[_stack]=uint32(block.number);
+          lastActor[_stack]=stacks[_counterStack].owner;
+          ThrowSlammerSuccess(_stack,stacks[_stack].owner,pseudoRandomHash);
+        }else{
+          //player2 goes next
+          lastBlock[_stack]=uint32(block.number);
+          lastActor[_stack]=stacks[_stack].owner;
+          ThrowSlammerSuccess(_stack,stacks[_counterStack].owner,pseudoRandomHash);
+        }
+        return true;
+      }
+    }
+    event ThrowSlammerFail(bytes32 stack);
+    event ThrowSlammerSuccess(bytes32 stack, address whosTurn,bytes32 randDebug);
 
 
 
