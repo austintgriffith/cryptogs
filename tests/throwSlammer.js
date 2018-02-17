@@ -1,3 +1,3 @@
 const cryptogs = require("./cryptogs.js")
-cryptogs.raiseSlammer(0,1)
-//cryptogs.throwSlammer(0,1)
+cryptogs.raiseSlammer(1,2)
+cryptogs.throwSlammer(1,2)

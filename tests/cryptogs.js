@@ -177,6 +177,15 @@ module.exports = {
 
         const result = await clevis("contract","endCoinFlip","Cryptogs",accountindex,lastStackId,lastCounterStackId,COMMIT)
         printTxResult(result)
+
+        const player1 = await clevis("contract","stackOwner","Cryptogs",lastStackId)
+        console.log("player1",player1)
+        const player2 = await clevis("contract","stackOwner","Cryptogs",lastCounterStackId)
+        console.log("player2",player2)
+        const lastActor = await clevis("contract","lastActor","Cryptogs",lastStackId)
+        console.log("lastActor",lastActor)
+
+
       });
     });
   },
@@ -224,6 +233,45 @@ module.exports = {
       });
     });
   },
+  throwSlammer:(player1Index,player2Index)=>{
+    describe('#raiseSlammer() ', function() {
+      it('should throw slammer for current player', async function() {
+        this.timeout(120000)
+        const accounts = await clevis("accounts")
+
+        const AcceptCounterStackEvents  = await clevis("contract","eventAcceptCounterStack","Cryptogs")
+        //console.log(CounterStackEvents)
+        const lastAcceptCounterStackEvent = AcceptCounterStackEvents[AcceptCounterStackEvents.length-1]
+        console.log(lastAcceptCounterStackEvent)
+        const lastStackId = lastAcceptCounterStackEvent.returnValues._stack
+        const lastCounterStackId = lastAcceptCounterStackEvent.returnValues._counterStack
+        console.log(tab,"Last stack id:",lastStackId.cyan)
+
+        const player1 = await clevis("contract","stackOwner","Cryptogs",lastStackId)
+        console.log("player1",player1)
+        const player2 = await clevis("contract","stackOwner","Cryptogs",lastCounterStackId)
+        console.log("player2",player2)
+        const lastActor = await clevis("contract","lastActor","Cryptogs",lastStackId)
+        console.log("lastActor",lastActor)
+
+        let accountindex
+        if(player1==lastActor){
+          console.log(tab,"it's player 2's turn...".white)
+          //it's player 2's turn
+          accountindex = player2Index
+        }else{
+          console.log(tab,"it's player 1's turn...".white)
+          //it's player 1's turn
+          accountindex = player1Index
+        }
+        console.log(tab,"THROW SLAMMER",accountindex,lastStackId,lastCounterStackId,COMMIT)
+
+        //throwSlammer(bytes32 _stack, bytes32 _counterStack, bytes32 _reveal)
+        const result = await clevis("contract","throwSlammer","Cryptogs",accountindex,lastStackId,lastCounterStackId,COMMIT)
+        printTxResult(result)
+      });
+    });
+  },
 
 
   redeploy:()=>{
@@ -256,7 +304,7 @@ module.exports = {
       });
     });
     describe(bigHeader('TEST SLAMMER THROW'), function() {
-      it('should flip the coin', async function() {
+      it('should SLAMMA JIM JAM', async function() {
         this.timeout(6000000)
         const result = await clevis("test","throwSlammer")
         assert(result==0,"throwSlammer ERRORS")

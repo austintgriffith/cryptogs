@@ -128,6 +128,8 @@ contract Cryptogs is NFT, Ownable {
 
     uint256 public constant RARITYMULTIPLIER = 1000000000000000;
 
+    uint8 public constant FLIPPINESS = 128;
+
     function Cryptogs() public {
       //0 index should be a blank item owned by no one
       Item memory _item = Item({
@@ -234,6 +236,7 @@ contract Cryptogs is NFT, Ownable {
     mapping (bytes32 => uint8) public mode;
     mapping (bytes32 => uint32) public lastBlock;
     mapping (bytes32 => address) public lastActor;
+    uint256[10] public mixedStack;
 
     //tx 3: of a game, player one approves counter stack and transfers everything in
     function acceptCounterStack(address _slammerTime, bytes32 _stack, bytes32 _counterStack) public returns (bool) {
@@ -257,12 +260,16 @@ contract Cryptogs is NFT, Ownable {
       lastActor[_stack]=stacks[_counterStack].owner;
       mode[_stack]=1;
 
+      mixedStack[0] = stacks[_stack].id;
+      mixedStack[1] = stacks[_counterStack].id;
+
       //let the front end know that the transfer is good and we are ready for the coin flip
       AcceptCounterStack(msg.sender,_stack,_counterStack);
     }
     event AcceptCounterStack(address _sender,bytes32 _stack, bytes32 _counterStack);
 
     mapping (bytes32 => bytes32) public commit;
+
 
     //tx 4: player one commits and flips coin up
     //at this point, the timeout goes into effect and if any transaction including
@@ -307,7 +314,7 @@ contract Cryptogs is NFT, Ownable {
         return false;
       }else{
         //successful coin flip, ready to get random
-        mode[_stack]==3;
+        mode[_stack]=3;
         bytes32 pseudoRandomHash = keccak256(_reveal,block.blockhash(block.number-1));
         if(uint256(pseudoRandomHash)%2==0){
           //player1 goes first
@@ -330,25 +337,23 @@ contract Cryptogs is NFT, Ownable {
 
     //tx6 next player raises slammer
     function raiseSlammer(bytes32 _stack, bytes32 _counterStack, bytes32 _commit) public returns (bool) {
-      Debug(bytes32 lastActor[_stack]);
       if(lastActor[_stack]==stacks[_stack].owner){
         //it is player2's turn
-        //require(stacks[_counterStack].owner==msg.sender);
+        require(stacks[_counterStack].owner==msg.sender);
       }else{
         //it is player1's turn
-        //require(stacks[_stack].owner==msg.sender);
+        require(stacks[_stack].owner==msg.sender);
       }
       //the counter must be a counter of stack 1
-      //require(stackCounter[_counterStack]==_stack);
+      require(stackCounter[_counterStack]==_stack);
       //make sure that we are in mode 3
-    //  require(mode[_stack]==3);
+      require(mode[_stack]==3);
       //store the commit for the next tx
-    //  commit[_stack]=_commit;
+      commit[_stack]=_commit;
       //inc the mode to 2
-      //mode[_stack]=4;
-      //RaiseSlammer(_stack,_commit);
+      mode[_stack]=4;
+      RaiseSlammer(_stack,_commit);
     }
-    event Debug(bytes32 lastActor);
     event RaiseSlammer(bytes32 stack, bytes32 commit);
 
 
@@ -370,12 +375,12 @@ contract Cryptogs is NFT, Ownable {
         //commit/reveal failed.. this can happen if they
         //reload, so don't punish, just go back to the
         //start of the slammer raise
-        mode[_stack]==3;
+        mode[_stack]=3;
         ThrowSlammerFail(_stack);
         return false;
       }else{
         //successful slam!!!!!!!!!!!! At this point I have officially been awake for 24 hours !!!!!!!!!!
-        mode[_stack]==3;
+        mode[_stack]=3;
         bytes32 pseudoRandomHash = keccak256(_reveal,block.blockhash(block.number-1));
         if(lastActor[_stack]==stacks[_stack].owner){
           //player1 goes next
@@ -388,13 +393,31 @@ contract Cryptogs is NFT, Ownable {
           lastActor[_stack]=stacks[_stack].owner;
           ThrowSlammerSuccess(_stack,stacks[_counterStack].owner,pseudoRandomHash);
         }
+
+        //look through the stack of remaining pogs and compare to byte to see if less than FLIPPINESS and transfer back to correct owner
+        // oh man, that smells like reentrance --  I think the mode would actually break that right?
+        for(uint8 i=0;i<10;i++){
+          if(mixedStack[i]>0){
+            //there is still a pog here, check for flip
+            if(uint8(pseudoRandomHash[i])<FLIPPINESS){
+              //ITS A FLIP!
+               Flip(_stack,lastActor[_stack],mixedStack[i]);
+               //mixedStack[i]=0;
+               //XFER !!!
+            }
+          }
+        }
+
         return true;
       }
     }
+
+    event Flip(bytes32 stack,address toWhom,uint256 id);
     event ThrowSlammerFail(bytes32 stack);
     event ThrowSlammerSuccess(bytes32 stack, address whosTurn,bytes32 randDebug);
 
-
+    //TODO make flip actually do transfer, but before that let's tear out SLAMMER TIME contract, I don't think we need it
+    // we will just transfer the ownership directly to this contract... so weird.
 
 
     function totalSupply() public view returns (uint) {
