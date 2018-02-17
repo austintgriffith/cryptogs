@@ -179,11 +179,11 @@ module.exports = {
         printTxResult(result)
 
         const player1 = await clevis("contract","stackOwner","Cryptogs",lastStackId)
-        console.log("player1",player1)
+        console.log(tab,"player1",player1)
         const player2 = await clevis("contract","stackOwner","Cryptogs",lastCounterStackId)
-        console.log("player2",player2)
+        console.log(tab,"player2",player2)
         const lastActor = await clevis("contract","lastActor","Cryptogs",lastStackId)
-        console.log("lastActor",lastActor)
+        console.log(tab,"lastActor",lastActor)
 
 
       });
@@ -198,43 +198,50 @@ module.exports = {
         const AcceptCounterStackEvents  = await clevis("contract","eventAcceptCounterStack","Cryptogs")
         //console.log(CounterStackEvents)
         const lastAcceptCounterStackEvent = AcceptCounterStackEvents[AcceptCounterStackEvents.length-1]
-        console.log(lastAcceptCounterStackEvent)
+        //console.log(lastAcceptCounterStackEvent)
         const lastStackId = lastAcceptCounterStackEvent.returnValues._stack
         const lastCounterStackId = lastAcceptCounterStackEvent.returnValues._counterStack
         console.log(tab,"Last stack id:",lastStackId.cyan)
 
-
-        const player1 = await clevis("contract","stackOwner","Cryptogs",lastStackId)
-        console.log("player1",player1)
-        const player2 = await clevis("contract","stackOwner","Cryptogs",lastCounterStackId)
-        console.log("player2",player2)
-        const lastActor = await clevis("contract","lastActor","Cryptogs",lastStackId)
-        console.log("lastActor",lastActor)
-        let web3 = new Web3()
-        COMMIT = web3.utils.sha3(Math.random()+Date.now()+"CRYPTOGS4LIFE");
-        console.log(tab,"Using Commit:",COMMIT.blue)
-        let commitHash = web3.utils.sha3(COMMIT);
-        console.log(tab,"Commit hash:",commitHash.magenta)
-
-
-        let accountindex
-        if(player1==lastActor){
-          console.log(tab,"it's player 2's turn...".white)
-          //it's player 2's turn
-          accountindex = player2Index
+        const mode = await clevis("contract","mode","Cryptogs",lastStackId)
+        console.log(tab,"CURRENT MODE:",mode.green)
+        if(mode==9){
+          console.log("GAME OVER, SKIP")
         }else{
-          console.log(tab,"it's player 1's turn...".white)
-          //it's player 1's turn
-          accountindex = player1Index
+          const player1 = await clevis("contract","stackOwner","Cryptogs",lastStackId)
+          console.log(tab,"player1",player1)
+          const player2 = await clevis("contract","stackOwner","Cryptogs",lastCounterStackId)
+          console.log(tab,"player2",player2)
+          const lastActor = await clevis("contract","lastActor","Cryptogs",lastStackId)
+          console.log(tab,"lastActor",lastActor)
+          let web3 = new Web3()
+          COMMIT = web3.utils.sha3(Math.random()+Date.now()+"CRYPTOGS4LIFE");
+          console.log(tab,"Using Commit:",COMMIT.blue)
+          let commitHash = web3.utils.sha3(COMMIT);
+          console.log(tab,"Commit hash:",commitHash.magenta)
+
+
+          let accountindex
+          if(player1==lastActor){
+            console.log(tab,"it's player 2's turn...".white)
+            //it's player 2's turn
+            accountindex = player2Index
+          }else{
+            console.log(tab,"it's player 1's turn...".white)
+            //it's player 1's turn
+            accountindex = player1Index
+          }
+          console.log(tab,accountindex,lastStackId,lastCounterStackId,commitHash)
+          const result = await clevis("contract","raiseSlammer","Cryptogs",accountindex,lastStackId,lastCounterStackId,commitHash)
+          printTxResult(result)
         }
-        console.log(tab,accountindex,lastStackId,lastCounterStackId,commitHash)
-        const result = await clevis("contract","raiseSlammer","Cryptogs",accountindex,lastStackId,lastCounterStackId,commitHash)
-        printTxResult(result)
+
+
       });
     });
   },
   throwSlammer:(player1Index,player2Index)=>{
-    describe('#raiseSlammer() ', function() {
+    describe('#throwSlammer() ', function() {
       it('should throw slammer for current player', async function() {
         this.timeout(120000)
         const accounts = await clevis("accounts")
@@ -242,36 +249,71 @@ module.exports = {
         const AcceptCounterStackEvents  = await clevis("contract","eventAcceptCounterStack","Cryptogs")
         //console.log(CounterStackEvents)
         const lastAcceptCounterStackEvent = AcceptCounterStackEvents[AcceptCounterStackEvents.length-1]
-        console.log(lastAcceptCounterStackEvent)
+        //console.log(lastAcceptCounterStackEvent)
         const lastStackId = lastAcceptCounterStackEvent.returnValues._stack
         const lastCounterStackId = lastAcceptCounterStackEvent.returnValues._counterStack
         console.log(tab,"Last stack id:",lastStackId.cyan)
 
-        const player1 = await clevis("contract","stackOwner","Cryptogs",lastStackId)
-        console.log("player1",player1)
-        const player2 = await clevis("contract","stackOwner","Cryptogs",lastCounterStackId)
-        console.log("player2",player2)
-        const lastActor = await clevis("contract","lastActor","Cryptogs",lastStackId)
-        console.log("lastActor",lastActor)
-
-        let accountindex
-        if(player1==lastActor){
-          console.log(tab,"it's player 2's turn...".white)
-          //it's player 2's turn
-          accountindex = player2Index
+        const mode = await clevis("contract","mode","Cryptogs",lastStackId)
+        console.log(tab,"CURRENT MODE:",mode.green)
+        if(mode==9){
+          console.log("GAME OVER, SKIP")
         }else{
-          console.log(tab,"it's player 1's turn...".white)
-          //it's player 1's turn
-          accountindex = player1Index
-        }
-        console.log(tab,"THROW SLAMMER",accountindex,lastStackId,lastCounterStackId,COMMIT)
+          const player1 = await clevis("contract","stackOwner","Cryptogs",lastStackId)
+          console.log(tab,"player1",player1)
+          const player2 = await clevis("contract","stackOwner","Cryptogs",lastCounterStackId)
+          console.log(tab,"player2",player2)
+          const lastActor = await clevis("contract","lastActor","Cryptogs",lastStackId)
+          console.log(tab,"lastActor",lastActor)
 
-        //throwSlammer(bytes32 _stack, bytes32 _counterStack, bytes32 _reveal)
-        const result = await clevis("contract","throwSlammer","Cryptogs",accountindex,lastStackId,lastCounterStackId,COMMIT)
-        printTxResult(result)
+          let accountindex
+          if(player1==lastActor){
+            console.log(tab,"it's player 2's turn...".white)
+            //it's player 2's turn
+            accountindex = player2Index
+          }else{
+            console.log(tab,"it's player 1's turn...".white)
+            //it's player 1's turn
+            accountindex = player1Index
+          }
+          console.log(tab,"THROW SLAMMER",accountindex,lastStackId,lastCounterStackId,COMMIT)
+
+          //throwSlammer(bytes32 _stack, bytes32 _counterStack, bytes32 _reveal)
+          const result = await clevis("contract","throwSlammer","Cryptogs",accountindex,lastStackId,lastCounterStackId,COMMIT)
+          printTxResult(result)
+        }
       });
     });
   },
+  report:()=>{
+    describe('#report() ', function() {
+      it('should report the Flips from the last game', async function() {
+        this.timeout(120000)
+        const accounts = await clevis("accounts")
+
+        const AcceptCounterStackEvents  = await clevis("contract","eventAcceptCounterStack","Cryptogs")
+        //console.log(CounterStackEvents)
+        const lastAcceptCounterStackEvent = AcceptCounterStackEvents[AcceptCounterStackEvents.length-1]
+        //console.log(lastAcceptCounterStackEvent)
+        const lastStackId = lastAcceptCounterStackEvent.returnValues._stack
+        const lastCounterStackId = lastAcceptCounterStackEvent.returnValues._counterStack
+        console.log(tab,"Last stack id:",lastStackId.cyan)
+
+        const FlipEvents  = await clevis("contract","eventFlip","Cryptogs")
+        for(let e in FlipEvents){
+          if(FlipEvents[e].returnValues.stack==lastStackId){
+            console.log(tab,"Cryptog ",(""+FlipEvents[e].returnValues.id).blue," was flipped by ",FlipEvents[e].returnValues.toWhom.cyan)
+          }
+        }
+
+      });
+    });
+  },
+
+
+
+
+
 
 
   redeploy:()=>{

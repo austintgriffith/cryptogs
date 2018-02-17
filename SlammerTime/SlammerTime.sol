@@ -34,6 +34,17 @@ contract SlammerTime {
     return true;
   }
 
+  function transferBack(address _toWhom, uint256 _id) public returns (bool) {
+    //only the cryptogs contract should be able to hit it
+    require(msg.sender==cryptogs);
+
+    Cryptogs cryptogsContract = Cryptogs(cryptogs);
+
+    require(cryptogsContract.tokenIndexToOwner(_id)==address(this));
+    cryptogsContract.transfer(_toWhom,_id);
+    require(cryptogsContract.tokenIndexToOwner(_id)==_toWhom);
+    return true;
+  }
 
 
 }
@@ -42,5 +53,6 @@ contract SlammerTime {
 
 contract Cryptogs {
   mapping (uint256 => address) public tokenIndexToOwner;
+  function transfer(address _to,uint256 _tokenId) external { }
   function transferFrom(address _from,address _to,uint256 _tokenId) external { }
 }

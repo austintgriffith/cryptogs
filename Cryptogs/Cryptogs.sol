@@ -287,16 +287,26 @@ contract Cryptogs is NFT, Ownable {
 
         //look through the stack of remaining pogs and compare to byte to see if less than FLIPPINESS and transfer back to correct owner
         // oh man, that smells like reentrance --  I think the mode would actually break that right?
+        bool done=true;
         for(uint8 i=0;i<10;i++){
           if(mixedStack[i]>0){
             //there is still a pog here, check for flip
             if(uint8(pseudoRandomHash[i])<FLIPPINESS){
               //ITS A FLIP!
-               Flip(_stack,lastActor[_stack],mixedStack[i]);
-               //mixedStack[i]=0;
-               //XFER !!!
+               Flip(_stack,msg.sender,mixedStack[i]);
+               uint256 tempId = mixedStack[i];
+               mixedStack[i]=0;
+               SlammerTime slammerTimeContract = SlammerTime(stacks[_stack].slammerTime);
+               require( slammerTimeContract.transferBack(msg.sender,tempId) );
+            }else{
+              done=false;
             }
           }
+        }
+
+        if(done){
+          FinishGame(_stack);
+          mode[_stack]=9;
         }
 
         return true;
@@ -306,6 +316,7 @@ contract Cryptogs is NFT, Ownable {
     event Flip(bytes32 stack,address toWhom,uint256 id);
     event ThrowSlammerFail(bytes32 stack);
     event ThrowSlammerSuccess(bytes32 stack, address whosTurn,bytes32 randDebug);
+    event FinishGame(bytes32 stack);
 
     //TODO make flip actually do transfer, but before that let's tear out SLAMMER TIME contract, I don't think we need it
     // we will just transfer the ownership directly to this contract... so weird.
@@ -338,4 +349,5 @@ contract Cryptogs is NFT, Ownable {
 
 contract SlammerTime {
   function startSlammerTime(address _player1,uint256 _id1,address _player2,uint256 _id2) public returns (bool) { }
+  function transferBack(address _toWhom, uint256 _id) public returns (bool) { }
 }
