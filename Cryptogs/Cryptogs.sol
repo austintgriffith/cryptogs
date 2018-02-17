@@ -130,8 +130,16 @@ contract Cryptogs is NFT, Ownable {
       //the SlammerTimeAddresses need to line up
       require(_slammerTime==stacks[_stack].slammerTime);
 
-      //READY FOR SLAMMERTIME MY DUDES!!!!!!!!!
+      //do the transfer
+      SlammerTime slammerTimeContract = SlammerTime(_slammerTime);
+      require( slammerTimeContract.startSlammerTime(msg.sender,stacks[_stack].id,stacks[_counterStack].owner,stacks[_counterStack].id) );
 
+      //add in a little extra safe stuff just because it's late and my head is fuzzy
+      //require(tokenIndexToOwner[stacks[_stack].id]==_slammerTime);
+      //require(tokenIndexToOwner[stacks[_counterStack].id]==_slammerTime);
+
+      //let the front end know that the transfer is good and we are ready for the coin flip
+      AcceptCounterStack(msg.sender,_stack,_counterStack);
     }
     event AcceptCounterStack(address _sender,bytes32 _stack, bytes32 _counterStack);
 
@@ -157,4 +165,9 @@ contract Cryptogs is NFT, Ownable {
             return result;
         }
     }
+}
+
+
+contract SlammerTime {
+  function startSlammerTime(address _player1,uint256 _id1,address _player2,uint256 _id2) public returns (bool) { }
 }

@@ -2,11 +2,45 @@ pragma solidity ^0.4.15;
 
 contract SlammerTime {
 
-  function SlammerTime() public {
+  address public cryptogs;
 
-    //for now this is just a holder contract to deploy to get the address
-    //but eventually the game mechanics will happen in here
-
+  function SlammerTime(address _cryptogs) public {
+    //deploy slammertime with cryptogs address coded in so
+    // only the cryptogs address can mess with it
+    cryptogs=_cryptogs;
   }
 
+  function startSlammerTime(address _player1,uint256 _id1,address _player2,uint256 _id2) public returns (bool) {
+    //only the cryptogs contract should be able to hit it
+    require(msg.sender==cryptogs);
+
+    Cryptogs cryptogsContract = Cryptogs(cryptogs);
+
+    //make sure player1 owns _id1
+    require(cryptogsContract.tokenIndexToOwner(_id1)==_player1);
+    //transfer id1 in
+    cryptogsContract.transferFrom(_player1,address(this),_id1);
+    //make this contract is the owner
+    require(cryptogsContract.tokenIndexToOwner(_id1)==address(this));
+
+
+    //make sure player1 owns _id1
+    require(cryptogsContract.tokenIndexToOwner(_id2)==_player2);
+    //transfer id1 in
+    cryptogsContract.transferFrom(_player2,address(this),_id2);
+    //make this contract is the owner
+    require(cryptogsContract.tokenIndexToOwner(_id2)==address(this));
+
+    return true;
+  }
+
+
+
+}
+
+
+
+contract Cryptogs {
+  mapping (uint256 => address) public tokenIndexToOwner;
+  function transferFrom(address _from,address _to,uint256 _tokenId) external { }
 }
