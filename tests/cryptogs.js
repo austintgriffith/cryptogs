@@ -68,7 +68,7 @@ module.exports = {
         const lastToken = tokensOfOwner[tokensOfOwner.length-1]
         const token = await clevis("contract","getToken","Cryptogs",lastToken)
         assert(token.owner==accounts[toIndex],"This should never be wrong!?!")
-        const cleanImage = web3.utils.toAscii(token.image).replace(/[\W_]+/g,"")
+        const cleanImage = web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
         assert(cleanImage==image,"Image of minted token doesn't equal image we meant to mint.. hah.")
         console.log(tab,accounts[accountindex].blue+" minted Cryptog "+lastToken.magenta+" to account "+accounts[toIndex].cyan+" with image "+cleanImage.white)
       });
@@ -321,7 +321,33 @@ module.exports = {
 
 
 
+  publish:()=>{
+    describe('#publish() ', function() {
+      it('should inject contract address and abi into web app', async function() {
+        this.timeout(120000)
+        const fs = require("fs")
 
+        let address = fs.readFileSync("Cryptogs/Cryptogs.address").toString().trim()
+        console.log(tab,"ADDRESS:",address.blue)
+        assert(address,"No Address!?")
+        fs.writeFileSync("app/src/cryptogs.address.js","module.exports = \""+address+"\"");
+
+        let slammeraddress = fs.readFileSync("SlammerTime/SlammerTime.address").toString().trim()
+        console.log(tab,"ADDRESS:",address.blue)
+        assert(address,"No Address!?")
+        fs.writeFileSync("app/src/slammertime.address.js","module.exports = \""+slammeraddress+"\"");
+
+        let blockNumber = fs.readFileSync("Cryptogs/Cryptogs.blockNumber").toString().trim()
+        console.log(tab,"blockNumber:",blockNumber.blue)
+        assert(blockNumber,"No blockNumber!?")
+        fs.writeFileSync("app/src/cryptogs.blockNumber.js","module.exports = \""+blockNumber+"\"");
+
+        loadAbi("Cryptogs")
+        loadAbi("SlammerTime")
+
+      });
+    });
+  },
   redeploy:()=>{
     describe(bigHeader('DEPLOY'), function() {
       it('should deploy', async function() {
@@ -356,6 +382,13 @@ module.exports = {
         this.timeout(6000000)
         const result = await clevis("test","throwSlammer")
         assert(result==0,"throwSlammer ERRORS")
+      });
+    });
+    describe(bigHeader('PUBLISH'), function() {
+      it('should publish conract address to app', async function() {
+        this.timeout(6000000)
+        const result = await clevis("test","publish")
+        assert(result==0,"publish ERRORS")
       });
     });
   },
