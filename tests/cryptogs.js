@@ -1,0 +1,105 @@
+const clevis = require("clevis")
+const colors = require('colors')
+const chai = require("chai")
+const assert = chai.assert
+const expect = chai.expect;
+const should = chai.should();
+const fs = require('fs')
+const Web3 = require('web3')
+const clevisConfig = JSON.parse(fs.readFileSync("clevis.json").toString().trim())
+web3 = new Web3(new Web3.providers.HttpProvider(clevisConfig.provider))
+function localContractAddress(contract){
+  return fs.readFileSync(contract+"/"+contract+".address").toString().trim()
+}
+function printTxResult(result){
+  console.log(tab,result.transactionHash.gray,(""+result.gasUsed).yellow)
+}
+function bigHeader(str){
+  return "########### "+str+" "+Array(128-str.length).join("#")
+}
+function rand(min, max) {
+  return Math.floor( Math.random() * (max - min) + min );
+}
+function loadAbi(contract){
+  let abi = fs.readFileSync(contract+"/"+contract+".abi").toString().trim()
+  fs.writeFileSync("app/src/"+contract+".abi.js","module.exports = "+abi);
+}
+const tab = "\t\t";
+
+module.exports = {
+  compile:(contract)=>{
+    describe('#compile() '+contract.magenta, function() {
+      it('should compile '+contract.magenta+' contract to bytecode', async function() {
+        this.timeout(90000)
+        const result = await clevis("compile",contract)
+        assert(Object.keys(result.contracts).length>0, "No compiled contacts found.")
+        let count = 0
+        for(let c in result.contracts){
+          console.log("\t\t"+"contract "+c.blue+": ",result.contracts[c].bytecode.length)
+          if(count++==0){
+              assert(result.contracts[c].bytecode.length > 1, "No bytecode for contract "+c)
+          }
+        }
+      });
+    });
+  },
+  deploy:(contract,accountindex)=>{
+    describe('#deploy() '+contract.magenta, function() {
+      it('should deploy '+contract.magenta+' as account '+accountindex, async function() {
+        this.timeout(360000)
+        const result = await clevis("deploy",contract,accountindex)
+        printTxResult(result)
+        console.log(tab+"Address: "+result.contractAddress.blue)
+        assert(result.contractAddress)
+      });
+    });
+  },
+  mint:(accountindex,image,toIndex)=>{
+    describe('#testMint() ', function() {
+      it('should mint a cryptog', async function() {
+        this.timeout(120000)
+        const accounts = await clevis("accounts")
+        const result = await clevis("contract","mint","Cryptogs",accountindex,web3.utils.fromAscii(image),accounts[toIndex])
+        printTxResult(result)
+        const tokensOfOwner = await clevis("contract","tokensOfOwner","Cryptogs",accounts[toIndex])
+        const lastToken = tokensOfOwner[tokensOfOwner.length-1]
+        const token = await clevis("contract","getToken","Cryptogs",lastToken)
+        assert(token.owner==accounts[toIndex],"This should never be wrong!?!")
+        const cleanImage = web3.utils.toAscii(token.image).replace(/[\W_]+/g,"")
+        assert(cleanImage==image,"Image of minted token doesn't equal image we meant to mint.. hah.")
+        console.log(tab,accounts[accountindex].blue+" minted Cryptog "+lastToken.magenta+" to account "+accounts[toIndex].cyan+" with image "+cleanImage.white)
+      });
+    });
+  },
+  redeploy:()=>{
+    describe(bigHeader('DEPLOY'), function() {
+      it('should deploy', async function() {
+        this.timeout(6000000)
+        const result = await clevis("test","deploy")
+        assert(result==0,"deploy ERRORS")
+      });
+    });
+    describe(bigHeader('TEST MINTING'), function() {
+      it('should mint, please work first try!', async function() {
+        this.timeout(6000000)
+        const result = await clevis("test","mint")
+        assert(result==0,"mint ERRORS")
+      });
+    });
+  },
+  full:()=>{
+    describe(bigHeader('COMPILE'), function() {
+      it('should compile', async function() {
+        this.timeout(6000000)
+        const result = await clevis("test","compile")
+        assert(result==0,"compile ERRORS")
+      });
+    });
+    describe('#redeploy()', function() {
+      it('should redeploy', async function() {
+        this.timeout(240000)
+        module.exports.redeploy()
+      });
+    });
+  },
+}
