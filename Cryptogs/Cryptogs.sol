@@ -17,6 +17,8 @@ contract Cryptogs is NFT, Ownable {
     string public constant purpose = "ETHDenver";
     string public constant contact = "https://cryptogs.io";
 
+    uint256 public constant RARITYMULTIPLIER = 1000000000000000;
+
     function Cryptogs() public {
       //0 index should be a blank item owned by no one
       Item memory _item = Item({
@@ -56,6 +58,82 @@ contract Cryptogs is NFT, Ownable {
         items[_id].image
       );
     }
+
+    //we can get the rarity percentage bar off chain by multiplying the div width by
+    // rarity(<tokenid>) / RARITYMULTIPLIER
+    function rarity(uint256 _id) public constant returns (uint256) {
+      return RARITYMULTIPLIER-(RARITYMULTIPLIER * tokensOfImage[items[_id].image])/(items.length - 1);
+    }
+
+    uint256 nonce = 0;
+
+    struct Stack{
+      address slammerTime;
+      //this will be an array of ids but for now just doing one for simplicity
+      uint256 id;
+      address owner;
+    }
+
+    mapping (bytes32 => Stack) public stacks;
+    mapping (bytes32 => bytes32) public stackCommit;
+    mapping (bytes32 => bytes32) public stackCounter;
+
+    //tx 1 of a game, player one approves the SlammerTime contract to take their tokens
+    //this triggers an event to broadcast to other players that there is an open challenge
+    function submitStack(address _slammerTime, uint256 _id, bool _public) public returns (bool) {
+      //the sender must own the token
+      require(tokenIndexToOwner[_id]==msg.sender);
+      //they approve the slammertime contract to take the token away from them
+      require(approve(_slammerTime,_id));
+
+      bytes32 stackid = keccak256(nonce++,msg.sender,_id);
+      stacks[stackid] = Stack(_slammerTime,_id,msg.sender);
+
+      //the event is triggered to the frontend to display the stack
+      //the frontend will check if they want it public or not
+      SubmitStack(msg.sender,stackid,_id,_public);
+    }
+    event SubmitStack(address _sender,bytes32 _stackid,uint256 _token1,bool _public);
+
+    //TODO: cancel stack (unapprove and send a new event so it is removed from frontend display)
+
+    //tx 2 of a game, player two approves the SlammerTime contract to take their tokens
+    //this triggers an event to broadcast to player one that this player wants to rumble
+    //the commit for the commit/reveal of the coin flip happens here too
+    function submitCounterStack(address _slammerTime, bytes32 _stack, uint256 _id, bytes32 _commit) public returns (bool) {
+      //the sender must own the token
+      require(tokenIndexToOwner[_id]==msg.sender);
+      //they approve the slammertime contract to take the token away from them
+      require(approve(_slammerTime,_id));
+      //the SlammerTimeAddresses need to line up
+      require(_slammerTime==stacks[_stack].slammerTime);
+
+
+      bytes32 stackid = keccak256(nonce++,msg.sender,_id);
+      stacks[stackid] = Stack(_slammerTime,_id,msg.sender);
+      stackCommit[stackid] = _commit;
+      stackCounter[stackid] = _stack;
+
+      //the event is triggered to the frontend to display the stack
+      //the frontend will check if they want it public or not
+      CounterStack(msg.sender,_stack,stackid,_id,_commit);
+    }
+    event CounterStack(address _sender,bytes32 _stack, bytes32 _counterStack, uint256 _token1,bytes32 _commit);
+
+    //tx 3 of a game, player one approves counter stack and transfers everything in
+    //to the slammertime contract and signals to player two to reveal coin flip
+    function acceptCounterStack(address _slammerTime, bytes32 _stack, bytes32 _counterStack) public returns (bool) {
+      //sender must be owner of stack 1
+      require(msg.sender==stacks[_stack].owner);
+      //the counter must be a counter of stack 1
+      require(stackCounter[_counterStack]==_stack);
+      //the SlammerTimeAddresses need to line up
+      require(_slammerTime==stacks[_stack].slammerTime);
+
+      //READY FOR SLAMMERTIME MY DUDES!!!!!!!!!
+
+    }
+    event AcceptCounterStack(address _sender,bytes32 _stack, bytes32 _counterStack);
 
     function totalSupply() public view returns (uint) {
         return items.length - 1;

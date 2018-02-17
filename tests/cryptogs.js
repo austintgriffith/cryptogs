@@ -26,6 +26,9 @@ function loadAbi(contract){
 }
 const tab = "\t\t";
 
+
+let COMMIT
+
 module.exports = {
   compile:(contract)=>{
     describe('#compile() '+contract.magenta, function() {
@@ -71,6 +74,74 @@ module.exports = {
       });
     });
   },
+  submitStack:(accountindex)=>{
+    describe('#submitStack() ', function() {
+      it('should submit stack', async function() {
+        this.timeout(120000)
+        const accounts = await clevis("accounts")
+        const tokensOfOwner = await clevis("contract","tokensOfOwner","Cryptogs",accounts[accountindex])
+        const lastToken = tokensOfOwner[tokensOfOwner.length-1]
+        const SlammerTimeAddress = localContractAddress("SlammerTime")
+        const result = await clevis("contract","submitStack","Cryptogs",accountindex,SlammerTimeAddress,lastToken)
+        printTxResult(result)
+        const approveContract = await clevis("contract","tokenIndexToApproved","Cryptogs",lastToken)
+        assert(approveContract == SlammerTimeAddress,"SlammerTime is NOT approved to move the token "+lastToken)
+      });
+    });
+  },
+  submitCounterStack:(accountindex)=>{
+    describe('#submitCounterStack() ', function() {
+      it('should submit counter stack', async function() {
+        this.timeout(120000)
+        const accounts = await clevis("accounts")
+        const tokensOfOwner = await clevis("contract","tokensOfOwner","Cryptogs",accounts[accountindex])
+        const lastToken = tokensOfOwner[tokensOfOwner.length-1]
+        const SlammerTimeAddress = localContractAddress("SlammerTime")
+
+        //we need to get the stack id for the last submit event
+        ///÷clevis contract eventSubmitStack Cryptogs
+        const SubmitStackEvents  = await clevis("contract","eventSubmitStack","Cryptogs")
+        //console.log("SubmitStackEvents",SubmitStackEvents)
+        const lastSubmitStackEvent = SubmitStackEvents[SubmitStackEvents.length-1]
+        //console.log("lastSubmitStackEvent",lastSubmitStackEvent)
+        const lastStackId = lastSubmitStackEvent.returnValues._stackid
+        console.log(tab,"Last stack id:",lastStackId.cyan)
+
+        let web3 = new Web3()
+        COMMIT = web3.utils.sha3(Math.random()+Date.now()+"CRYPTOGS4LIFE");
+        console.log(tab,"Using Commit:",COMMIT.blue)
+        let commitHash = web3.utils.sha3(COMMIT);
+        console.log(tab,"Commit hash:",commitHash.magenta)
+
+        const result = await clevis("contract","submitCounterStack","Cryptogs",accountindex,SlammerTimeAddress,lastStackId,lastToken,commitHash)
+        printTxResult(result)
+        const approveContract = await clevis("contract","tokenIndexToApproved","Cryptogs",lastToken)
+        assert(approveContract == SlammerTimeAddress,"SlammerTime is NOT approved to move the token "+lastToken)
+      });
+    });
+  },
+  acceptCounterStack:(accountindex)=>{
+    describe('#acceptCounterStack() ', function() {
+      it('should accept counter stack', async function() {
+        this.timeout(120000)
+        const accounts = await clevis("accounts")
+        const SlammerTimeAddress = localContractAddress("SlammerTime")
+
+        const CounterStackEvents  = await clevis("contract","eventCounterStack","Cryptogs")
+        //console.log(CounterStackEvents)
+        const lastCounterStackEvent = CounterStackEvents[CounterStackEvents.length-1]
+        //console.log(lastCounterStackEvent)
+        const lastStackId = lastCounterStackEvent.returnValues._stack
+        console.log(tab,"Last stack id:",lastStackId.cyan)
+        const lastCounterStackId = lastCounterStackEvent.returnValues._counterStack
+        console.log(tab,"Last counter stack id:",lastCounterStackId.cyan)
+
+        const result = await clevis("contract","acceptCounterStack","Cryptogs",accountindex,SlammerTimeAddress,lastStackId,lastCounterStackId)
+        printTxResult(result)
+      });
+    });
+  },
+
   redeploy:()=>{
     describe(bigHeader('DEPLOY'), function() {
       it('should deploy', async function() {
@@ -84,6 +155,13 @@ module.exports = {
         this.timeout(6000000)
         const result = await clevis("test","mint")
         assert(result==0,"mint ERRORS")
+      });
+    });
+    describe(bigHeader('TEST SUBMITTING STACKS'), function() {
+      it('should submit stacks', async function() {
+        this.timeout(6000000)
+        const result = await clevis("test","submitStacks")
+        assert(result==0,"submitStacks ERRORS")
       });
     });
   },
