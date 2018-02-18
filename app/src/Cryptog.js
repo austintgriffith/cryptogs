@@ -6,7 +6,7 @@ class Cryptog extends Component {
       size=this.props.size
     }
     return (
-      <div style={{width:size,height:size}}>
+      <div style={{width:size,height:size,margin:3}}>
         <div className="circle-text">
           <img className="circular-square" src={this.props.image} />
         </div>

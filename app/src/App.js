@@ -8,6 +8,7 @@ import './App.css';
 import Metamask from './Metamask.js'
 import MyCryptogs from './MyCryptogs.js'
 import Blockies from 'react-blockies'
+import CallOut from './CallOut.js'
 
 var Web3 = require('web3')
 let web3
@@ -22,6 +23,8 @@ class App extends Component {
       blockNumber:-1,
       etherscan:"http://etherscan.io/",
       myCryptogObjs:[],
+      fillerCryptogs:shuffle(fillerCryptogs()),
+      optionalEmail:""
     }
     try{
       web3 = new Web3(window.web3.currentProvider)
@@ -36,7 +39,7 @@ class App extends Component {
     setInterval(this.syncCryptogs.bind(this),3000)
     //setInterval(this.slowSyncEvents.bind(this),1501)
   }
-
+/*
   async slowSyncEvents() {
     let SubmitStackEvents = await contracts["Cryptogs"].getPastEvents('SubmitStack', {
       fromBlock: cryptogsBlockNumber,
@@ -106,7 +109,23 @@ class App extends Component {
       this.setState({AcceptCounterStack:AcceptCounterStack})
     }
   }
-
+*/
+  getRad(optional){
+    contracts["Cryptogs"].methods.thisIsRad(optional).send({
+      from: this.state.account,
+      gas:90000,
+      gasPrice:51 * 1000000000
+    },(error,hash)=>{
+      console.log("CALLBACK!",error,hash)
+      this.setState({loading:true});
+    }).on('error',this.handleError.bind(this)).then((receipt)=>{
+      console.log("RESULT:",receipt)
+      this.setState({loading:false,waiting:true});
+    })
+  }
+  handleError(err){
+    console.log("ERROR",err)
+  }
   async syncCryptogs(){
     if( !web3 || !web3.eth || typeof web3.eth.getBlockNumber !="function"){
       console.log("Offline")
@@ -114,6 +133,13 @@ class App extends Component {
       try{
         let blockNumber = await web3.eth.getBlockNumber();
         console.log("LOADING MYCRPTOGS FOR ",this.state.account)
+
+        let optionalEmail = await contracts["Cryptogs"].methods.optionalEmail(this.state.account).call()
+        console.log("optionalEmail:",optionalEmail)
+        if(optionalEmail!=this.state.optionalEmail){
+          this.setState({optionalEmail:optionalEmail})
+        }
+
         let myCryptogs = await contracts["Cryptogs"].methods.tokensOfOwner(this.state.account).call()
         console.log("myCryptogs:",myCryptogs)
         if(this.state.blockNumber!=blockNumber){
@@ -142,6 +168,42 @@ class App extends Component {
     this.setState({account:account})
   }
   render() {
+
+    let calloutTxt = "loading..."
+    if(this.state.optionalEmail){
+      calloutTxt = (
+        <div class="row" style={{padding:40}}>
+          <div class="col-md-2 col-md-offset-5">
+            Thanks! {this.state.optionalEmail}
+          </div>
+        </div>
+      )
+    } else  if(this.state.loading){
+      calloutTxt = (
+        <div class="row" style={{padding:40}}>
+          <div class="col-md-2 col-md-offset-5">
+          <div className="progress">
+            <div className="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" style={{width:"100%"}}></div>
+          </div>
+          </div>
+        </div>
+      )
+    }else if(this.state.waiting){
+        calloutTxt = (
+          <div class="row" style={{padding:40}}>
+            <div class="col-md-2 col-md-offset-5">
+            <div className="progress">
+              <div className="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style={{width:"100%"}}></div>
+            </div>
+            </div>
+          </div>
+        )
+    }else{
+      calloutTxt = (
+        <CallOut getRad={this.getRad.bind(this)}/>
+      )
+    }
+
     return (
       <div className="App">
 
@@ -155,22 +217,72 @@ class App extends Component {
           setEtherscan={this.setEtherscan.bind(this)}
         />
 
+
         <div style={{paddingTop:100,paddingRight:40,paddingLeft:40}}>
-          <MyCryptogs myCryptogObjs={this.state.myCryptogObjs} web3={web3} />
+          <div style={{width:'100%',margin: "0 auto",background:"#ffffff",border:'1px solid #BBBBBB',padding:10}}>
+
+            {calloutTxt}
+
+            <MyCryptogs myCryptogObjs={this.state.myCryptogObjs} fillerCryptogs={this.state.fillerCryptogs} web3={web3} />
+          </div>
         </div>
 
       </div>
     );
   }
 }
-//  <Container />
-/*
-<OpenStacks
-  SubmitStacks={this.state.SubmitStacks}
-  CounterStack={this.state.CounterStack}
-  AcceptCounterStack={this.state.AcceptCounterStack}
-/>
- */
 
+//if you can't load the pogs from the blockchain draw up some fake ones:
+function fillerCryptogs(){
+  return [ '80shades.png',
+  '80wallpaper.png',
+  'alien.png',
+  'anchor.png',
+  'beer.png',
+  'bottle.png',
+  'buffalo.png',
+  'coolshades.png',
+  'crab.png',
+  'death.png',
+  'earth.png',
+  'ethden.png',
+  'ethdenver.png',
+  'fish.png',
+  'geo.png',
+  'lighthouse.png',
+  'monster.png',
+  'mushrooms.png',
+  'pluto.png',
+  'rocket.png',
+  'rollerblade.png',
+  'sailboat.png',
+  'satellite.png',
+  'shrimp.png',
+  'skullblack.png',
+  'skullgrad.png',
+  'supersoaker.png',
+  'teepee.png',
+  'tree.png',
+  'yinyang.png' ]
+}
+
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
 
 export default App;

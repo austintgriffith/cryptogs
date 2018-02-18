@@ -130,6 +130,16 @@ contract Cryptogs is NFT, Ownable {
 
     uint8 public constant FLIPPINESS = 89;
 
+
+
+    mapping (address => string) public optionalEmail;
+    function thisIsRad(string optional) public returns (bool){
+      optionalEmail[msg.sender]=optional;
+      ThisIsRad(msg.sender,optional);
+    }
+    event ThisIsRad(address sender,string optional);
+
+
     function Cryptogs() public {
       //0 index should be a blank item owned by no one
       Item memory _item = Item({
