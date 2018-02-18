@@ -74,6 +74,15 @@ module.exports = {
       });
     });
   },
+  airdrop:(accountindex,image,toAddress)=>{
+    describe('#testMint() ', function() {
+      it('should mint a cryptog', async function() {
+        this.timeout(120000)
+        const result = await clevis("contract","mint","Cryptogs",accountindex,web3.utils.fromAscii(image),toAddress)
+        printTxResult(result)
+      });
+    });
+  },
   submitStack:(accountindex)=>{
     describe('#submitStack() ', function() {
       it('should submit stack', async function() {
