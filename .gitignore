@@ -1,3 +1,4 @@
+app/aws*
 accounts.json
 **.DS_*
 zeppelin-solidity
