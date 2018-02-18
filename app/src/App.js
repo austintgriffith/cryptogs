@@ -207,6 +207,8 @@ class App extends Component {
     return (
       <div className="App">
 
+      <img src="logo.png" style={{maxWidth:300,marginRight:100,float:"right"}} />
+
         <Metamask
           syncBlockNumber={this.syncBlockNumber}
           account={this.state.account}
