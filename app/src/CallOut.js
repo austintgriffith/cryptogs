@@ -29,7 +29,13 @@ class CallOut extends Component {
 Enter your email and <b>get airdropped</b> a pack of Cryptogs (Ropsten).
           </div>
           <div style={{padding:5,opacity:0.8}}>
-          <a href="/prototype/">You can play with our live prototype too! (<a target="_blank" href="https://github.com/austintgriffith/cryptogs">open source</a> <a target="_blank" href="https://ropsten.etherscan.io/address/0xba88b8ee9e8ac7bbe82060f2d13095406d30ac16#code">smart contract</a>)</a><br/><br/>
+          <a href="/prototype/">You can play with our live prototype too!</a><br/><br/>
+          <div>
+          <a target="_blank" href="https://github.com/austintgriffith/cryptogs">github repo</a>
+          </div>
+          <div>
+          <a target="_blank" href="https://ropsten.etherscan.io/address/0xba88b8ee9e8ac7bbe82060f2d13095406d30ac16#code">smart contract</a>
+          </div>
           </div>
       </div>
     )

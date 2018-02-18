@@ -27,12 +27,17 @@
   to { transform: rotate(360deg); }
 }
 
+body{
+    font-family: 'Kanit', sans-serif;
+}
+
 h1{
         font-size: 38px;
         color: #7B005E;
         text-align: center;
         font-style: italic;
         font-weight: bold;
+
     }
 
 a{

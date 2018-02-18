@@ -1,4 +1,6 @@
-
+body{
+    font-family: 'Kanit', sans-serif;
+}
 
 
 	nav{
@@ -6,7 +8,7 @@
 	background-color: #fff;
 
 	}
-	
+
 	.container{
     padding-top: 80px;
     padding-bottom: 300px;
@@ -14,7 +16,7 @@
     background-size: 33%;
 	}
 
-	
+
 	h1{
 		font-size: 46px;
 	    color: #7B005E;
@@ -22,42 +24,42 @@
 	    font-style: italic;
 	    font-weight: bold;
 	}
-	
+
 	h2{
 	    font-size: 38px;
 	    color: #7B005E;
 	    font-weight: 300;
     }
-    
+
     .message{
-	   padding-bottom: 10px; 
+	   padding-bottom: 10px;
 	   }
-	
+
 	.text-center{
 		text-align: center;
 	}
-    
+
     p{
 	    font-size: 16px;
 	    color: #7B005E;
     }
-    
-    
-    
+
+
+
     .navbar-nav{
 	    margin:0px;
 	    padding:5px 0px;
-	    
+
     }
      nav li a{
 	        width: 80px;
     }
-    
-        
+
+
     .btn.btn-pog{
 		color: #7B005E; font-weight: bold; border: 5px solid #7B005E; font-style: italic;
     }
-    
+
     .logo{
 	    position: absolute;
     background-image: url(logo.png);
@@ -84,10 +86,10 @@
     color:#fff;
     border-radius: 50px;
     }
-    
-    
-   
-    
+
+
+
+
     .menu-icon{
 	    background-image: url("menu.png");
 	        height: 25px;
@@ -97,7 +99,7 @@
 	    width: 90px;
 	    display: block;
     }
-  
+
 
     .circle-text {
 		position: relative;
@@ -113,7 +115,7 @@
         border-radius: 50%;
 /*         border:1px solid #CBCBCB; */
     }
-    
+
     .circle-text .selected{
 	    background: #00F7E4;
 	    border-radius: 50%;
@@ -127,8 +129,8 @@
 	    margin-left:-25px;
 	    box-shadow: 0px 3px 10px #000;
     }
-    
-	  
+
+
     .circular-square {
 	border-radius: 50%;
 	width: 100%;
@@ -137,7 +139,7 @@
 	transform: scale(0.95);
 	}
 
-    
+
     #footernav{
 	     position: fixed;
     bottom: 0px;
@@ -148,20 +150,20 @@
     text-align: center;
     padding: 10px 0px;
     }
-    
+
     .gradient{
 		background-image: -moz-linear-gradient(270deg, rgba(255,255,255,0) 3%, rgba(255,255,255,1) 80%);
   background-image: -webkit-linear-gradient(270deg, rgba(255, 255, 255, 0) 3%, rgba(255, 255, 255, 1) 80% );
   background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0) 3%, rgba(255, 255, 255, 1) 80% );
 	}
-	
-	
+
+
 .gameplay{
 	margin-top: 50px;
 	}
 
 .card {
-  box-shadow: 
+  box-shadow:
   	0 0.0625em 0.1875em 0 rgba(0, 0, 0, 0.1),
    -1px 0.9em 0 -0.25em #f2f2f2,
    0 1.3em 0 -0.33em rgba(0, 0, 0, 0.11),
@@ -177,7 +179,7 @@
 .card > :last-child {
   margin-bottom: 0;
 }
-	
+
 
 
 
@@ -223,7 +225,7 @@
 	display: block;
 	margin: 0px auto;
 	transform: scale(0.95);
-	
+
 
 }
 
@@ -242,7 +244,3 @@
   -vendor-animation-delay: 2s;
   -vendor-animation-iteration-count: infinite;
 }
-
-
-
-   
