@@ -23,6 +23,16 @@
 	    font-weight: bold;
 	}
 	
+	h2{
+	    font-size: 38px;
+	    color: #7B005E;
+	    font-weight: 300;
+    }
+    
+    .message{
+	   padding-bottom: 10px; 
+	   }
+	
 	.text-center{
 		text-align: center;
 	}
@@ -31,6 +41,8 @@
 	    font-size: 16px;
 	    color: #7B005E;
     }
+    
+    
     
     .navbar-nav{
 	    margin:0px;
@@ -68,8 +80,11 @@
     box-shadow: 0px 7px 16px #00000047;
     font-size: 24px;
     margin: 0px 0px 15px 0px;
-    background: #fff;
+    background: #7B005E;
+    color:#fff;
+    border-radius: 50px;
     }
+    
     
    
     
@@ -201,7 +216,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  
+  background-image: url("/cryptogs/Pogs-v1-00.png")
 
 	border-radius: 50%;
 	width: 100%;
@@ -212,8 +227,21 @@
 
 }
 
+.heads {
+  z-index: 2;
+}
+
+.tails {
+  z-index: 1;
+}
 
 
+.save {
+
+  -vendor-animation-duration: 3s;
+  -vendor-animation-delay: 2s;
+  -vendor-animation-iteration-count: infinite;
+}
 
 
 
