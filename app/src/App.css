@@ -27,9 +27,20 @@
   to { transform: rotate(360deg); }
 }
 
+h1{
+        font-size: 38px;
+        color: #7B005E;
+        text-align: center;
+        font-style: italic;
+        font-weight: bold;
+    }
+
+a{
+  text-decoration: underline;
+}
+
 
 a:link {
-  text-decoration: none;
   color: #333333;
 }
 
@@ -117,12 +128,16 @@ nav{
 }
 
 #mainaction{
-  left: 50%;
-  width: 200px;
-  box-shadow: 0px 7px 16px #c1c1c1;
-  font-size: 24px;
-  margin:0px 0px 15px 0px;
-}
+   left: 50%;
+    width: 200px;
+    box-shadow: 0px 7px 16px #00000047;
+    font-size: 18px;
+    margin: 10px 0px 15px 0px;
+    background: #7B005E;
+    color:#fff;
+    border-radius: 50px;
+    border:none;
+    }
 
 p{
   font-size: 16px;

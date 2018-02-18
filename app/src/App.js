@@ -221,7 +221,7 @@ class App extends Component {
 
 
         <div style={{paddingTop:100,paddingRight:40,paddingLeft:40}}>
-          <div style={{width:'100%',margin: "0 auto",background:"#ffffff",border:'1px solid #BBBBBB',padding:10}}>
+          <div style={{width:'100%',margin: "0 auto",padding:10}}>
 
             {calloutTxt}
 
