@@ -12,6 +12,8 @@ fs.readdirSync(testFolder).forEach(file => {
 
 })
 
+console.log(possible)
+
 let randomImage = function(){
   return possible[Math.floor(Math.random()*possible.length)];
 }

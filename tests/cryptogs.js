@@ -327,7 +327,16 @@ module.exports = {
     });
   },
 
+  thisIsRad:(accountindex)=>{
+    describe('#thisIsRad() ', function() {
+      it('should call thisIsRad', async function() {
+        this.timeout(120000)
+        const result = await clevis("contract","thisIsRad","Cryptogs",accountindex,"http://cryptogs.io")
+        printTxResult(result)
 
+      });
+    });
+  },
 
 
   publish:()=>{
@@ -363,6 +372,13 @@ module.exports = {
         this.timeout(6000000)
         const result = await clevis("test","deploy")
         assert(result==0,"deploy ERRORS")
+      });
+    });
+    describe(bigHeader('TEST THIS IS RAD'), function() {
+      it('should this is rad!', async function() {
+        this.timeout(6000000)
+        const result = await clevis("test","thisisrad")
+        assert(result==0,"thisisrad ERRORS")
       });
     });
     describe(bigHeader('TEST MINTING'), function() {
