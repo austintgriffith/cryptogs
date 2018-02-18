@@ -127,11 +127,89 @@
     padding: 10px 0px;
     }
     
-    	.gradient{
+    .gradient{
 		background-image: -moz-linear-gradient(270deg, rgba(255,255,255,0) 3%, rgba(255,255,255,1) 80%);
   background-image: -webkit-linear-gradient(270deg, rgba(255, 255, 255, 0) 3%, rgba(255, 255, 255, 1) 80% );
   background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0) 3%, rgba(255, 255, 255, 1) 80% );
 	}
 	
+	
+.gameplay{
+	margin-top: 50px;
+	}
+
+.card {
+  box-shadow: 
+  	0 0.0625em 0.1875em 0 rgba(0, 0, 0, 0.1),
+   -1px 0.9em 0 -0.25em #f2f2f2,
+   0 1.3em 0 -0.33em rgba(0, 0, 0, 0.11),
+   0 2em 0 -0.5em #eeeeee,
+   0 2.3em 0em -0.5em rgba(0, 0, 0, 0.12),
+   0 2.8em 0 -0.5em #eeeeee,
+   0 3.1em 0em -0.5em rgba(0, 0, 0, 0.13),
+   0 3.6em 0 -0.5em #eeeeee,
+   0 4em 0em -0.5em rgba(0, 0, 0, 0.14);
+}
+
+}
+.card > :last-child {
+  margin-bottom: 0;
+}
+	
+
+
+
+
+@keyframes rotation {
+  0% {
+    transform: rotate3d(0, 1, 0, 0deg);
+  }
+  50% {
+    transform: rotate3d(0, 1, 0, 180deg);
+  }
+  100% {
+    transform: rotate3d(0, 1, 0, 360deg);
+  }
+}
+
+.spincontainer {
+  perspective: 1000;
+
+}
+.spin {
+  position: relative;
+  top: 25px;
+  left: 25px;
+  width: 250px;
+  height: 250px;
+  text-align: center;
+  line-height: 50px;
+  animation-name: rotation;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-duration: 0.5s;
+  transform: rotateY(0deg);
+  transform-style: preserve-3d;
+}
+.face {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  
+
+	border-radius: 50%;
+	width: 100%;
+	display: block;
+	margin: 0px auto;
+	transform: scale(0.95);
+	
+
+}
+
+
+
+
+
 
    
