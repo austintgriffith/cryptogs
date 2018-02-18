@@ -175,7 +175,7 @@ class Metamask extends Component {
               <span style={{
                 float:'left',
                 marginTop:3,
-                paddingLeft:50,
+                paddingLeft:60,
                 zIndex:210,
                 fontWeight:'bold',
                 fontSize:18,
@@ -201,7 +201,7 @@ class Metamask extends Component {
               <a target="_Blank" href="https://wallet.ethereum.org/">
               <this.props.Blockies
                 seed={this.state.accounts[0]}
-                scale={5}
+                scale={6}
               />
               </a>
             </div>

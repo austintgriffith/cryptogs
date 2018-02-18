@@ -128,7 +128,7 @@ contract Cryptogs is NFT, Ownable {
 
     uint256 public constant RARITYMULTIPLIER = 1000000000000000;
 
-    uint8 public constant FLIPPINESS = 99;
+    uint8 public constant FLIPPINESS = 89;
 
     function Cryptogs() public {
       //0 index should be a blank item owned by no one
@@ -192,6 +192,10 @@ contract Cryptogs is NFT, Ownable {
       return stacks[_stack].owner;
     }
 
+    function getStack(bytes32 _stack) public constant returns (address owner,uint256 token1,uint256 token2,uint256 token3,uint256 token4,uint256 token5) {
+      return (stacks[_stack].owner,stacks[_stack].ids[0],stacks[_stack].ids[1],stacks[_stack].ids[2],stacks[_stack].ids[3],stacks[_stack].ids[4]);
+    }
+
     //tx 1: of a game, player one approves the SlammerTime contract to take their tokens
     //this triggers an event to broadcast to other players that there is an open challenge
     function submitStack(address _slammerTime, uint256 _id,uint256 _id2,uint256 _id3,uint256 _id4,uint256 _id5, bool _public) public returns (bool) {
@@ -214,9 +218,9 @@ contract Cryptogs is NFT, Ownable {
 
       //the event is triggered to the frontend to display the stack
       //the frontend will check if they want it public or not
-      SubmitStack(msg.sender,stackid,_id,_id2,_id3,_id4,_id5,_public);
+      SubmitStack(msg.sender,now,stackid,_id,_id2,_id3,_id4,_id5,_public);
     }
-    event SubmitStack(address _sender,bytes32 _stackid,uint256 _token1,uint256 _token2,uint256 _token3,uint256 _token4,uint256 _token5,bool _public);
+    event SubmitStack(address _sender,uint256 timestamp,bytes32 _stackid,uint256 _token1,uint256 _token2,uint256 _token3,uint256 _token4,uint256 _token5,bool _public);
 
     //TODO: cancel stack (unapprove and send a new event so it is removed from frontend display)
 
@@ -247,9 +251,9 @@ contract Cryptogs is NFT, Ownable {
 
       //the event is triggered to the frontend to display the stack
       //the frontend will check if they want it public or not
-      CounterStack(msg.sender,_stack,stackid,_id,_id2,_id3,_id4,_id5);
+      CounterStack(msg.sender,now,_stack,stackid,_id,_id2,_id3,_id4,_id5);
     }
-    event CounterStack(address _sender,bytes32 _stack, bytes32 _counterStack, uint256 _token1, uint256 _token2, uint256 _token3, uint256 _token4, uint256 _token5);
+    event CounterStack(address _sender,uint256 timestamp,bytes32 _stack, bytes32 _counterStack, uint256 _token1, uint256 _token2, uint256 _token3, uint256 _token4, uint256 _token5);
 
     mapping (bytes32 => uint8) public mode;
     mapping (bytes32 => uint32) public lastBlock;
@@ -446,7 +450,6 @@ contract Cryptogs is NFT, Ownable {
           }
         }
 
-
         if(done){
           FinishGame(_stack);
           mode[_stack]=9;
@@ -462,8 +465,23 @@ contract Cryptogs is NFT, Ownable {
     event ThrowSlammerSuccess(bytes32 stack, address whosTurn,bytes32 randDebug);
     event FinishGame(bytes32 stack);
 
-    //TODO make flip actually do transfer, but before that let's tear out SLAMMER TIME contract, I don't think we need it
-    // we will just transfer the ownership directly to this contract... so weird.
+
+
+    function drainStack(bytes32 _stack, bytes32 _counterStack) public returns (bool) {
+      //make sure it's the owner of the first stack (player one) doing the flip
+      require( stacks[_stack].owner==msg.sender || stacks[_counterStack].owner==msg.sender );
+      require( lastActor[_stack]!=msg.sender );
+      require( block.number - lastBlock[_stack] > 100);
+
+      for(uint8 i=0;i<10;i++){
+        if(mixedStack[i]>0){
+          uint256 tempId = mixedStack[i];
+          mixedStack[i]=0;
+          SlammerTime slammerTimeContract = SlammerTime(stacks[_stack].slammerTime);
+          slammerTimeContract.transferBack(msg.sender,tempId);
+        }
+      }
+    }
 
 
     function totalSupply() public view returns (uint) {
