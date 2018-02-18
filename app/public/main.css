@@ -1,0 +1,248 @@
+
+
+
+	nav{
+	box-shadow: 0px 3px 10px #ccc;
+	background-color: #fff;
+
+	}
+	
+	.container{
+    padding-top: 80px;
+    padding-bottom: 300px;
+    background-image: url(bg.svg);
+    background-size: 33%;
+	}
+
+	
+	h1{
+		font-size: 46px;
+	    color: #7B005E;
+	    text-align: center;
+	    font-style: italic;
+	    font-weight: bold;
+	}
+	
+	h2{
+	    font-size: 38px;
+	    color: #7B005E;
+	    font-weight: 300;
+    }
+    
+    .message{
+	   padding-bottom: 10px; 
+	   }
+	
+	.text-center{
+		text-align: center;
+	}
+    
+    p{
+	    font-size: 16px;
+	    color: #7B005E;
+    }
+    
+    
+    
+    .navbar-nav{
+	    margin:0px;
+	    padding:5px 0px;
+	    
+    }
+     nav li a{
+	        width: 80px;
+    }
+    
+        
+    .btn.btn-pog{
+		color: #7B005E; font-weight: bold; border: 5px solid #7B005E; font-style: italic;
+    }
+    
+    .logo{
+	    position: absolute;
+    background-image: url(logo.png);
+    height: 45px;
+    background-size: 50%;
+    /* background-position: 0px -10px; */
+    background-repeat: no-repeat;
+    width: 100%;
+    display: block;
+    text-align: center;
+    width: 380px;
+    top: 10px;
+    left: 50%;
+    margin-left: -95px;
+    }
+
+    #mainaction{
+   left: 50%;
+    width: 200px;
+    box-shadow: 0px 7px 16px #00000047;
+    font-size: 24px;
+    margin: 0px 0px 15px 0px;
+    background: #7B005E;
+    color:#fff;
+    border-radius: 50px;
+    }
+    
+    
+   
+    
+    .menu-icon{
+	    background-image: url("menu.png");
+	        height: 25px;
+	    background-size: 50%;
+	    background-position: 0px -10px;
+	    background-repeat: no-repeat;
+	    width: 90px;
+	    display: block;
+    }
+  
+
+    .circle-text {
+		position: relative;
+        box-shadow: 0px 5px 0px #ccc;
+        margin-bottom: 8px;
+        display: block;
+        width: 100%;
+        height:0;
+        padding-bottom: 100%;
+        background: #f5f5f5;
+        -moz-border-radius: 50%;
+        -webkit-border-radius: 50%;
+        border-radius: 50%;
+/*         border:1px solid #CBCBCB; */
+    }
+    
+    .circle-text .selected{
+	    background: #00F7E4;
+	    border-radius: 50%;
+	    height:50px;
+	    z-index: 2;
+	    width: 50px;
+	    position: absolute;
+	    left:50%;
+	    top:50%;
+	    margin-top:-25px;
+	    margin-left:-25px;
+	    box-shadow: 0px 3px 10px #000;
+    }
+    
+	  
+    .circular-square {
+	border-radius: 50%;
+	width: 100%;
+	display: block;
+	margin: 0px auto;
+	transform: scale(0.95);
+	}
+
+    
+    #footernav{
+	     position: fixed;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
+    min-width: 100%;
+    display: block;
+    text-align: center;
+    padding: 10px 0px;
+    }
+    
+    .gradient{
+		background-image: -moz-linear-gradient(270deg, rgba(255,255,255,0) 3%, rgba(255,255,255,1) 80%);
+  background-image: -webkit-linear-gradient(270deg, rgba(255, 255, 255, 0) 3%, rgba(255, 255, 255, 1) 80% );
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0) 3%, rgba(255, 255, 255, 1) 80% );
+	}
+	
+	
+.gameplay{
+	margin-top: 50px;
+	}
+
+.card {
+  box-shadow: 
+  	0 0.0625em 0.1875em 0 rgba(0, 0, 0, 0.1),
+   -1px 0.9em 0 -0.25em #f2f2f2,
+   0 1.3em 0 -0.33em rgba(0, 0, 0, 0.11),
+   0 2em 0 -0.5em #eeeeee,
+   0 2.3em 0em -0.5em rgba(0, 0, 0, 0.12),
+   0 2.8em 0 -0.5em #eeeeee,
+   0 3.1em 0em -0.5em rgba(0, 0, 0, 0.13),
+   0 3.6em 0 -0.5em #eeeeee,
+   0 4em 0em -0.5em rgba(0, 0, 0, 0.14);
+}
+
+}
+.card > :last-child {
+  margin-bottom: 0;
+}
+	
+
+
+
+
+@keyframes rotation {
+  0% {
+    transform: rotate3d(0, 1, 0, 0deg);
+  }
+  50% {
+    transform: rotate3d(0, 1, 0, 180deg);
+  }
+  100% {
+    transform: rotate3d(0, 1, 0, 360deg);
+  }
+}
+
+.spincontainer {
+  perspective: 1000;
+
+}
+.spin {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  line-height: 50px;
+  animation-name: rotation;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-duration: 0.5s;
+  transform: rotateY(0deg);
+  transform-style: preserve-3d;
+}
+.face {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-image: url("/cryptogs/Pogs-v1-00.png")
+
+	border-radius: 50%;
+	width: 100%;
+	display: block;
+	margin: 0px auto;
+	transform: scale(0.95);
+	
+
+}
+
+.heads {
+  z-index: 2;
+}
+
+.tails {
+  z-index: 1;
+}
+
+
+.save {
+
+  -vendor-animation-duration: 3s;
+  -vendor-animation-delay: 2s;
+  -vendor-animation-iteration-count: infinite;
+}
+
+
+
+   
