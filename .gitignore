@@ -1,3 +1,4 @@
+*/*.compiled
 app/aws*
 accounts.json
 **.DS_*
@@ -7,6 +8,7 @@ package-lock.json
 *.ens
 */*/*.abi
 */*/*.bytecode
+.compiled*/*/*
 */*/*.address
 */*/*.run.xml
 */*/*.log.*

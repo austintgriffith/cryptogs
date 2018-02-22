@@ -8,6 +8,7 @@ const fs = require('fs')
 const Web3 = require('web3')
 const clevisConfig = JSON.parse(fs.readFileSync("clevis.json").toString().trim())
 web3 = new Web3(new Web3.providers.HttpProvider(clevisConfig.provider))
+const tab = "\t\t";
 function localContractAddress(contract){
   return fs.readFileSync(contract+"/"+contract+".address").toString().trim()
 }
@@ -20,12 +21,25 @@ function bigHeader(str){
 function rand(min, max) {
   return Math.floor( Math.random() * (max - min) + min );
 }
+const contractsDir = "gatsby-site/src/contracts/"
 function loadAbi(contract){
   let abi = fs.readFileSync(contract+"/"+contract+".abi").toString().trim()
-  fs.writeFileSync("app/src/"+contract+".abi.js","module.exports = "+abi);
+  console.log(tab,contract.cyan,"ABI:",(""+abi.length).yellow)
+  assert(abi,"No ABI for "+contract+"!?")
+  fs.writeFileSync(contractsDir+contract+".abi.js","module.exports = "+abi);
 }
-const tab = "\t\t";
-
+function loadAddress(contract){
+  let addr = fs.readFileSync(contract+"/"+contract+".address").toString().trim()
+  console.log(tab,contract.cyan,"ADDRESS:",addr.blue)
+  assert(addr,"No Address for "+contract+"!?")
+  fs.writeFileSync(contractsDir+contract+".address.js","module.exports = \""+addr+"\"");
+}
+function loadBlockNumber(contract){
+  let blockNumber = fs.readFileSync(contract+"/"+contract+".blockNumber").toString().trim()
+  console.log(tab,contract.cyan,"blockNumber:",blockNumber.blue)
+  assert(blockNumber,"No blockNumber for "+contract+"!?")
+  fs.writeFileSync(contractsDir+contract+".blockNumber.js","module.exports = \""+blockNumber+"\"");
+}
 
 let COMMIT
 
@@ -121,7 +135,7 @@ module.exports = {
         //console.log("SubmitStackEvents",SubmitStackEvents)
         const lastSubmitStackEvent = SubmitStackEvents[SubmitStackEvents.length-1]
         //console.log("lastSubmitStackEvent",lastSubmitStackEvent)
-        const lastStackId = lastSubmitStackEvent.returnValues._stackid
+        const lastStackId = lastSubmitStackEvent.returnValues._stack
         console.log(tab,"Last stack id:",lastStackId.cyan)
 
         const result = await clevis("contract","submitCounterStack","Cryptogs",accountindex,SlammerTimeAddress,lastStackId,token1,token2,token3,token4,token5)
@@ -326,6 +340,17 @@ module.exports = {
       });
     });
   },
+  metamask:()=>{
+    describe('#transfer() ', function() {
+      it('should give metamask account some ether', async function() {
+        this.timeout(600000)
+        //firefox
+        await clevis("sendTo","0.1","0","0x5f19cEfc9C9D1BC63f9e4d4780493ff5577D238B")
+        await clevis("sendTo","0.1","0","0xF11b9dCa0972e95b292891b027F5d8102e2cB8a5")
+
+      });
+    });
+  },
 
   thisIsRad:(accountindex)=>{
     describe('#thisIsRad() ', function() {
@@ -345,23 +370,13 @@ module.exports = {
         this.timeout(120000)
         const fs = require("fs")
 
-        let address = fs.readFileSync("Cryptogs/Cryptogs.address").toString().trim()
-        console.log(tab,"ADDRESS:",address.blue)
-        assert(address,"No Address!?")
-        fs.writeFileSync("app/src/cryptogs.address.js","module.exports = \""+address+"\"");
-
-        let slammeraddress = fs.readFileSync("SlammerTime/SlammerTime.address").toString().trim()
-        console.log(tab,"ADDRESS:",address.blue)
-        assert(address,"No Address!?")
-        fs.writeFileSync("app/src/slammertime.address.js","module.exports = \""+slammeraddress+"\"");
-
-        let blockNumber = fs.readFileSync("Cryptogs/Cryptogs.blockNumber").toString().trim()
-        console.log(tab,"blockNumber:",blockNumber.blue)
-        assert(blockNumber,"No blockNumber!?")
-        fs.writeFileSync("app/src/cryptogs.blockNumber.js","module.exports = \""+blockNumber+"\"");
+        loadAddress("Cryptogs")
+        loadAddress("SlammerTime")
 
         loadAbi("Cryptogs")
         loadAbi("SlammerTime")
+
+        loadBlockNumber("Cryptogs")
 
       });
     });
@@ -388,6 +403,20 @@ module.exports = {
         assert(result==0,"mint ERRORS")
       });
     });
+    describe(bigHeader('METAMASK'), function() {
+      it('should metamask', async function() {
+        this.timeout(6000000)
+        const result = await clevis("test","metamask")
+        assert(result==0,"metamask ERRORS")
+      });
+    });
+    describe(bigHeader('PUBLISH'), function() {
+      it('should publish conract address to app', async function() {
+        this.timeout(6000000)
+        const result = await clevis("test","publish")
+        assert(result==0,"publish ERRORS")
+      });
+    });
     describe(bigHeader('TEST SUBMITTING STACKS'), function() {
       it('should submit stacks', async function() {
         this.timeout(6000000)
@@ -409,13 +438,7 @@ module.exports = {
         assert(result==0,"throwSlammer ERRORS")
       });
     });
-    describe(bigHeader('PUBLISH'), function() {
-      it('should publish conract address to app', async function() {
-        this.timeout(6000000)
-        const result = await clevis("test","publish")
-        assert(result==0,"publish ERRORS")
-      });
-    });
+
   },
   full:()=>{
     describe(bigHeader('COMPILE'), function() {

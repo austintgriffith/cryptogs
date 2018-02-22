@@ -113,15 +113,15 @@ contract Cryptogs is NFT, Ownable {
       require(approve(_slammerTime,_id4));
       require(approve(_slammerTime,_id5));
 
-      bytes32 stackid = keccak256(nonce++,msg.sender);
+      bytes32 stack = keccak256(nonce++,msg.sender);
       uint256[5] memory ids = [_id,_id2,_id3,_id4,_id5];
-      stacks[stackid] = Stack(_slammerTime,ids,msg.sender);
+      stacks[stack] = Stack(_slammerTime,ids,msg.sender);
 
       //the event is triggered to the frontend to display the stack
       //the frontend will check if they want it public or not
-      SubmitStack(msg.sender,now,stackid,_id,_id2,_id3,_id4,_id5,_public);
+      SubmitStack(msg.sender,now,stack,_id,_id2,_id3,_id4,_id5,_public);
     }
-    event SubmitStack(address _sender,uint256 timestamp,bytes32 _stackid,uint256 _token1,uint256 _token2,uint256 _token3,uint256 _token4,uint256 _token5,bool _public);
+    event SubmitStack(address indexed _sender,uint256 indexed timestamp,bytes32 indexed _stack,uint256 _token1,uint256 _token2,uint256 _token3,uint256 _token4,uint256 _token5,bool _public);
 
     //TODO: cancel stack (unapprove and send a new event so it is removed from frontend display)
 
@@ -145,19 +145,20 @@ contract Cryptogs is NFT, Ownable {
       //stop playing with yourself
       require(msg.sender!=stacks[_stack].owner);
 
-      bytes32 stackid = keccak256(nonce++,msg.sender,_id);
+      bytes32 counterstack = keccak256(nonce++,msg.sender,_id);
       uint256[5] memory ids = [_id,_id2,_id3,_id4,_id5];
-      stacks[stackid] = Stack(_slammerTime,ids,msg.sender);
-      stackCounter[stackid] = _stack;
+      stacks[counterstack] = Stack(_slammerTime,ids,msg.sender);
+      stackCounter[counterstack] = _stack;
 
       //the event is triggered to the frontend to display the stack
       //the frontend will check if they want it public or not
-      CounterStack(msg.sender,now,_stack,stackid,_id,_id2,_id3,_id4,_id5);
+      CounterStack(msg.sender,now,_stack,counterstack,_id,_id2,_id3,_id4,_id5);
     }
-    event CounterStack(address _sender,uint256 timestamp,bytes32 _stack, bytes32 _counterStack, uint256 _token1, uint256 _token2, uint256 _token3, uint256 _token4, uint256 _token5);
+    event CounterStack(address indexed _sender,uint256 indexed timestamp,bytes32 indexed _stack, bytes32 _counterStack, uint256 _token1, uint256 _token2, uint256 _token3, uint256 _token4, uint256 _token5);
 
     mapping (bytes32 => uint8) public mode;
     mapping (bytes32 => uint32) public lastBlock;
+    mapping (bytes32 => uint32) public commitBlock;
     mapping (bytes32 => address) public lastActor;
     uint256[10] public mixedStack;
 
@@ -169,6 +170,8 @@ contract Cryptogs is NFT, Ownable {
       require(stackCounter[_counterStack]==_stack);
       //the SlammerTimeAddresses need to line up
       require(_slammerTime==stacks[_stack].slammerTime);
+      //make sure there is no mode set yet
+      require(mode[_stack]==0);
 
       //do the transfer
       SlammerTime slammerTimeContract = SlammerTime(_slammerTime);
@@ -198,7 +201,7 @@ contract Cryptogs is NFT, Ownable {
       //let the front end know that the transfer is good and we are ready for the coin flip
       AcceptCounterStack(msg.sender,_stack,_counterStack);
     }
-    event AcceptCounterStack(address _sender,bytes32 _stack, bytes32 _counterStack);
+    event AcceptCounterStack(address indexed _sender,bytes32 indexed _stack, bytes32 indexed _counterStack);
 
     mapping (bytes32 => bytes32) public commit;
 
@@ -221,6 +224,7 @@ contract Cryptogs is NFT, Ownable {
       require(mode[_stack]==1);
       //store the commit for the next tx
       commit[_stack]=_commit;
+      commitBlock[_stack]=uint32(block.number);
       //inc the mode to 2
       mode[_stack]=2;
       StartCoinFlip(_stack,_commit);
@@ -247,7 +251,7 @@ contract Cryptogs is NFT, Ownable {
       }else{
         //successful coin flip, ready to get random
         mode[_stack]=3;
-        bytes32 pseudoRandomHash = keccak256(_reveal,block.blockhash(block.number-1));
+        bytes32 pseudoRandomHash = keccak256(_reveal,block.blockhash(commitBlock[_stack]));
         if(uint256(pseudoRandomHash)%2==0){
           //player1 goes first
           lastBlock[_stack]=uint32(block.number);
@@ -282,6 +286,7 @@ contract Cryptogs is NFT, Ownable {
       require(mode[_stack]==3);
       //store the commit for the next tx
       commit[_stack]=_commit;
+      commitBlock[_stack]=uint32(block.number);
       //inc the mode to 2
       mode[_stack]=4;
       RaiseSlammer(_stack,_commit);
@@ -314,7 +319,7 @@ contract Cryptogs is NFT, Ownable {
         //successful slam!!!!!!!!!!!! At this point I have officially been awake for 24 hours !!!!!!!!!!
         mode[_stack]=3;
 
-        bytes32 pseudoRandomHash = keccak256(_reveal,block.blockhash(block.number-1));
+        bytes32 pseudoRandomHash = keccak256(_reveal,block.blockhash(commitBlock[_stack]));
         //Debug(_reveal,block.blockhash(block.number-1),pseudoRandomHash);
         if(lastActor[_stack]==stacks[_stack].owner){
           //player1 goes next
