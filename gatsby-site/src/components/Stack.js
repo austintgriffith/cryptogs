@@ -6,22 +6,41 @@ import Cryptog from '../components/Cryptog.js'
 
 export default createClass({
   render(){
-
+    let {callToAction} = this.props
     let cryptogs = []
-    for(let t=1;t<=5;t++){
-      cryptogs.push(<Cryptog id={this.props["_token"+t]} image={this.props["_token"+t+"Image"]}/>)
+    let account
+    if(this.props._sender){
+      account = this.props._sender.toLowerCase()
+      for(let t=1;t<=5;t++){
+        cryptogs.push(<Cryptog key={"tos"+this.props["_token"+t]} id={this.props["_token"+t]} image={this.props["_token"+t+"Image"]}/>)
+      }
+    }else{
+       account = this.props.owner.toLowerCase()
+       for(let t=1;t<=5;t++){
+         cryptogs.push(<Cryptog key={"tos"+this.props["token"+t]} id={this.props["token"+t]} image={this.props["token"+t+"Image"]}/>)
+       }
     }
-    
+    let button = ""
+
+    if(callToAction){
+      button = (
+        <div>
+          {callToAction}
+        </div>
+      )
+    }
+
     return (
       <StackGrid
         style={{marginTop:50}}
         columnWidth={110}
       >
       <Blockies
-        seed={this.props._sender.toLowerCase()}
+        seed={account}
         scale={6}
       />
       {cryptogs}
+      {button}
       </StackGrid>
     )
   }

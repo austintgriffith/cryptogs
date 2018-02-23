@@ -1,0 +1,66 @@
+import React, { Component } from 'react';
+import Stack from '../components/Stack.js'
+import StackSelect from '../components/StackSelect.js'
+
+let waitInterval
+const GWEI = 1
+
+class JoinStack extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      stack:this.props.match.params.stack
+    }
+    this.loadStackData()
+  }
+  async loadStackData(){
+    let stack
+    let stackData = await this.props.context.contracts['Cryptogs'].methods.getStack(this.state.stack).call()
+    this.setState({stackData:stackData})
+  }
+  joinStack(tokens){
+		const { account,contracts } = this.props.context
+    const { stack } = this.state
+
+		let finalArray = []
+		for(let id in tokens){
+			if(tokens[id]){
+				finalArray.push(id)
+			}
+		}
+
+		console.log("submitCounterStack as "+account,finalArray)
+		//submitCounterStack(address _slammerTime, bytes32 _stack, uint256 _id, uint256 _id2, uint256 _id3, uint256 _id4, uint256 _id5)
+		contracts["Cryptogs"].methods.submitCounterStack(contracts["SlammerTime"]._address,stack,finalArray[0],finalArray[1],finalArray[2],finalArray[3],finalArray[4]).send({
+        from: account,
+        gas:350000,
+        gasPrice:GWEI * 1000000000
+      },(error,hash)=>{
+        console.log("CALLBACK!",error,hash)
+      }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
+        console.log("RESULT:",receipt)
+      })
+	}
+  render(){
+    if(!this.state.stackData){
+      return (
+        <div style={{opacity:0.3}}>Loading...</div>
+      )
+    }
+    return (
+      <div>
+        <Stack {...this.state.stackData}/>
+        <StackSelect message={"Select 5 tokens to join existing game."} myTokens={this.props.context.myTokens} goFn={this.joinStack.bind(this)} />
+      </div>
+    )
+  }
+}
+export default JoinStack;
+
+/*
+
+const JoinStack = ({ match: { params } }) => (
+  <div>
+    {params.stack}
+  </div>
+)*/

@@ -18,7 +18,7 @@ export default createClass({
             <Link to="/mine" style={{color: '#666666',textDecoration: 'none',padding:5}}>
               mine
             </Link>
-						<Link to="/play" style={{color: '#666666',textDecoration: 'none',padding:5}}>
+						<Link to="/stacks" style={{color: '#666666',textDecoration: 'none',padding:5}}>
               play
             </Link>
           </h1>

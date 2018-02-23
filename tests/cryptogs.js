@@ -330,10 +330,10 @@ module.exports = {
         const lastCounterStackId = lastAcceptCounterStackEvent.returnValues._counterStack
         console.log(tab,"Last stack id:",lastStackId.cyan)
 
-        const FlipEvents  = await clevis("contract","eventFlip","Cryptogs")
-        for(let e in FlipEvents){
-          if(FlipEvents[e].returnValues.stack==lastStackId){
-            console.log(tab,"Cryptog ",(""+FlipEvents[e].returnValues.id).blue," was flipped by ",FlipEvents[e].returnValues.toWhom.cyan," at block ",(""+FlipEvents[e].returnValues.blockNumber).grey)
+        const throwSlammerEvents  = await clevis("contract","eventThrowSlammer","Cryptogs")
+        for(let e in throwSlammerEvents){
+          if(throwSlammerEvents[e].returnValues.stack==lastStackId){
+            console.log(tab,"Cryptog ",JSON.stringify(throwSlammerEvents));
           }
         }
 
@@ -347,6 +347,8 @@ module.exports = {
         //firefox
         await clevis("sendTo","0.1","0","0x5f19cEfc9C9D1BC63f9e4d4780493ff5577D238B")
         await clevis("sendTo","0.1","0","0xF11b9dCa0972e95b292891b027F5d8102e2cB8a5")
+        await clevis("sendTo","0.1","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb")
+
 
       });
     });

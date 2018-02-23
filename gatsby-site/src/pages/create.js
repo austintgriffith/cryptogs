@@ -3,10 +3,9 @@ import createClass from 'create-react-class'
 import Link from 'gatsby-link'
 import { withPrefix} from 'gatsby-link'
 import PropTypes from 'prop-types'
-import Cryptog from '../components/Cryptog.js'
-import StackGrid from 'react-stack-grid'
+import StackSelect from '../components/StackSelect.js'
 
-const GWEI = 50
+const GWEI = 1
 
 let syncInterval
 export default createClass({
@@ -19,32 +18,22 @@ export default createClass({
 	},
 	getInitialState(){
 		return {
-			selectedTokens:[]
+			selectedTokens:[],
+			loading:false
 		}
 	},
-	tokenClick(id){
-		console.log("CLICK",id)
-		if(this.state.selectedTokens[id]){
-			this.state.selectedTokens[id]=false;
-		}else{
-			let count = 0;
-			for(let id in this.state.selectedTokens){
-				if(this.state.selectedTokens[id]){count++}
-			}
-			if(count<5) this.state.selectedTokens[id]=true;
-		}
-		this.setState({selectedTokens:this.state.selectedTokens})
-	},
-	go(){
+	submitStack(tokens){
+		console.log("GO tokens",tokens)
+
 		const { account,contracts } = this.context
 		let finalArray = []
-		for(let id in this.state.selectedTokens){
-			if(this.state.selectedTokens[id]){
+		for(let id in tokens){
+			if(tokens[id]){
 				finalArray.push(id)
 			}
 		}
 
-		console.log("GO",this.state.selectedTokens)
+		console.log("GO",finalArray)
 		//submitStack(address _slammerTime, uint256 _id,uint256 _id2,uint256 _id3,uint256 _id4,uint256 _id5, bool _public)
 		contracts["Cryptogs"].methods.submitStack(contracts["SlammerTime"]._address,finalArray[0],finalArray[1],finalArray[2],finalArray[3],finalArray[4],true).send({
         from: account,
@@ -54,58 +43,37 @@ export default createClass({
         console.log("CALLBACK!",error,hash)
       }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
         console.log("RESULT:",receipt)
+				this.findSubmitStackAndGo()
       })
 	},
+	async findSubmitStackAndGo(){
+		const { account,contracts } = this.context
+		let submitStackEvents = await contracts['Cryptogs'].getPastEvents("SubmitStack", {
+			filter: {_sender: account},
+			fromBlock: contracts['Cryptogs'].blockNumber,
+			toBlock: 'latest'
+		});
+		let mostRecentStack = ""
+		let mostRecentStackTimestamp = 0
+		for(let e in submitStackEvents){
+			if(submitStackEvents[e].returnValues.timestamp > mostRecentStackTimestamp){
+				mostRecentStackTimestamp = submitStackEvents[e].returnValues.timestamp
+				mostRecentStack = submitStackEvents[e].returnValues._stack
+			}
+		}
+		window.location = "/play/"+mostRecentStack
+	},
 	render(){
-		const { myTokens } = this.context
-		if(!myTokens) return (<div style={{opacity:0.3}}>loading...</div>)
-		let images = []
-		let tokenDisplay = myTokens.map((token)=>{
-			let style={}
-			if(this.state.selectedTokens[token.id]){
-				style.opacity=0.3
-			}
-			images[token.id]=token.image
-			return <div style={style} onClick={this.tokenClick.bind(this,token.id)} key={"cryptog"+token.id} id={token.id} ><Cryptog image={token.image}/></div>
-		})
-		let selectedTokens = []
-		for(let id in this.state.selectedTokens){
-			if(this.state.selectedTokens[id]){
-				selectedTokens.push( <div onClick={this.tokenClick.bind(this,id,true)} key={"selectedcryptog"+id} id={"selected"+id} ><Cryptog image={images[id]}/></div> )
-			}
+		if(this.state.loading){
+			return (
+	      <div style={{opacity:0.3}}>
+					Waiting for trasaction to go through.........
+	      </div>
+	    )
 		}
-		let gobutton = ""
-		if(selectedTokens.length<=0){
-			selectedTokens.push(<div key={"holder"} style={{height:113}}></div>)
-		}else if(selectedTokens.length==5){
-			//take out the margin right but figure out how to get zinex right
-			//normally I'm unable to click it!!! POS
-			gobutton = (
-				<button style={{cursor:'pointer',marginRight:-50}} onClick={this.go}>GO</button>
-			)
-		}
-
 		return (
       <div>
-				<div style={{float:'right'}}>
-					{gobutton}
-				</div>
-				<StackGrid
-					style={{marginTop:50}}
-					columnWidth={110}
-				>
-					{selectedTokens}
-				</StackGrid>
-				Select 5 tokens to create a challenge:
-				<div style={{float:'right'}}>count ({tokenDisplay.length})</div>
-				this needs to be in grid format:
-				<StackGrid
-					style={{marginTop:50}}
-	        columnWidth={110}
-	      >
-	        {tokenDisplay}
-	      </StackGrid>
-
+				<StackSelect message={"Select 5 tokens to open a new game."} myTokens={this.context.myTokens} goFn={this.submitStack} />
       </div>
     )
 	}

@@ -21,6 +21,7 @@ export default createClass({
 		account: PropTypes.string,
 		myTokens: PropTypes.array,
 		allStacks: PropTypes.array,
+		blockNumber: PropTypes.number
 	},
 	getChildContext(){
 		return {
@@ -28,7 +29,8 @@ export default createClass({
 			contracts: this.state.contracts,
 			account: this.state.account,
 			myTokens: this.state.myTokens,
-			allStacks: this.state.allStacks
+			allStacks: this.state.allStacks,
+			blockNumber: this.state.blockNumber
 		};
 	},
 	getInitialState(){
@@ -107,6 +109,7 @@ export default createClass({
 	},
 	loadBlockNumber(cb){
 		this.state.web3.eth.getBlockNumber().then((number)=>{
+			number=parseInt(number)
 			//console.log("GOT BLOCK",number)
 			if(number && !this.state.blockNumber || this.state.blockNumber!=number){
 				//console.log("BLOCK MINED",number)

@@ -2,8 +2,8 @@ pragma solidity ^0.4.15;
 
 /*
   https://cryptogs.io
-  --Austin Thomas Griffith
-  --ETHDenver
+  --Austin Thomas Griffith for ETHDenver
+  ( PS this gas guzzling beast is totally unaudited )
 */
 
 import 'NFT.sol';
@@ -20,6 +20,8 @@ contract Cryptogs is NFT, Ownable {
     uint256 public constant RARITYMULTIPLIER = 1000000000000000;
 
     uint8 public constant FLIPPINESS = 89;
+    uint8 public constant FLIPPINESSROUNDBONUS = 10;
+    uint8 public constant TIMEOUTBLOCKS = 40;
 
 
 
@@ -157,10 +159,11 @@ contract Cryptogs is NFT, Ownable {
     event CounterStack(address indexed _sender,uint256 indexed timestamp,bytes32 indexed _stack, bytes32 _counterStack, uint256 _token1, uint256 _token2, uint256 _token3, uint256 _token4, uint256 _token5);
 
     mapping (bytes32 => uint8) public mode;
+    mapping (bytes32 => uint8) public round;
     mapping (bytes32 => uint32) public lastBlock;
     mapping (bytes32 => uint32) public commitBlock;
     mapping (bytes32 => address) public lastActor;
-    uint256[10] public mixedStack;
+    mapping (bytes32 => uint256[10]) public mixedStack;
 
     //tx 3: of a game, player one approves counter stack and transfers everything in
     function acceptCounterStack(address _slammerTime, bytes32 _stack, bytes32 _counterStack) public returns (bool) {
@@ -187,16 +190,16 @@ contract Cryptogs is NFT, Ownable {
       mode[_stack]=1;
 
       //// LOL @
-      mixedStack[0] = stacks[_stack].ids[0];
-      mixedStack[1] = stacks[_counterStack].ids[0];
-      mixedStack[2] = stacks[_stack].ids[1];
-      mixedStack[3] = stacks[_counterStack].ids[1];
-      mixedStack[4] = stacks[_stack].ids[2];
-      mixedStack[5] = stacks[_counterStack].ids[2];
-      mixedStack[6] = stacks[_stack].ids[3];
-      mixedStack[7] = stacks[_counterStack].ids[3];
-      mixedStack[8] = stacks[_stack].ids[4];
-      mixedStack[9] = stacks[_counterStack].ids[4];
+      mixedStack[_stack][0] = stacks[_stack].ids[0];
+      mixedStack[_stack][1] = stacks[_counterStack].ids[0];
+      mixedStack[_stack][2] = stacks[_stack].ids[1];
+      mixedStack[_stack][3] = stacks[_counterStack].ids[1];
+      mixedStack[_stack][4] = stacks[_stack].ids[2];
+      mixedStack[_stack][5] = stacks[_counterStack].ids[2];
+      mixedStack[_stack][6] = stacks[_stack].ids[3];
+      mixedStack[_stack][7] = stacks[_counterStack].ids[3];
+      mixedStack[_stack][8] = stacks[_stack].ids[4];
+      mixedStack[_stack][9] = stacks[_counterStack].ids[4];
 
       //let the front end know that the transfer is good and we are ready for the coin flip
       AcceptCounterStack(msg.sender,_stack,_counterStack);
@@ -245,12 +248,13 @@ contract Cryptogs is NFT, Ownable {
         //commit/reveal failed.. this can happen if they
         //reload, so don't punish, just go back to the
         //start of the coin flip stage
-        mode[_stack]==1;
+        mode[_stack]=1;
         CoinFlipFail(_stack);
         return false;
       }else{
         //successful coin flip, ready to get random
         mode[_stack]=3;
+        round[_stack]=1;
         bytes32 pseudoRandomHash = keccak256(_reveal,block.blockhash(commitBlock[_stack]));
         if(uint256(pseudoRandomHash)%2==0){
           //player1 goes first
@@ -308,12 +312,14 @@ contract Cryptogs is NFT, Ownable {
       //make sure that we are in mode 4
       require(mode[_stack]==4);
 
+      bool[10] memory flipped;
       if(keccak256(_reveal)!=commit[_stack]){
         //commit/reveal failed.. this can happen if they
         //reload, so don't punish, just go back to the
         //start of the slammer raise
         mode[_stack]=3;
-        ThrowSlammerFail(_stack);
+
+        throwSlammerEvent(_stack,false,msg.sender,uint32(block.number),flipped);
         return false;
       }else{
         //successful slam!!!!!!!!!!!! At this point I have officially been awake for 24 hours !!!!!!!!!!
@@ -325,12 +331,10 @@ contract Cryptogs is NFT, Ownable {
           //player1 goes next
           lastBlock[_stack]=uint32(block.number);
           lastActor[_stack]=stacks[_counterStack].owner;
-          ThrowSlammerSuccess(_stack,stacks[_stack].owner,pseudoRandomHash);
         }else{
           //player2 goes next
           lastBlock[_stack]=uint32(block.number);
           lastActor[_stack]=stacks[_stack].owner;
-          ThrowSlammerSuccess(_stack,stacks[_counterStack].owner,pseudoRandomHash);
         }
 
         //look through the stack of remaining pogs and compare to byte to see if less than FLIPPINESS and transfer back to correct owner
@@ -338,15 +342,15 @@ contract Cryptogs is NFT, Ownable {
         bool done=true;
         uint8 randIndex = 0;
         for(uint8 i=0;i<10;i++){
-          if(mixedStack[i]>0){
+          if(mixedStack[_stack][i]>0){
             //there is still a pog here, check for flip
             uint8 thisFlipper = uint8(pseudoRandomHash[randIndex++]);
             //DebugFlip(pseudoRandomHash,i,randIndex,thisFlipper,FLIPPINESS);
-            if(thisFlipper<FLIPPINESS){
+            if(thisFlipper<(FLIPPINESS+round[_stack]*FLIPPINESSROUNDBONUS)){
               //ITS A FLIP!
-               Flip(_stack,msg.sender,mixedStack[i],uint32(block.number));
-               uint256 tempId = mixedStack[i];
-               mixedStack[i]=0;
+               flipped[i]=true;
+               uint256 tempId = mixedStack[_stack][i];
+               mixedStack[_stack][i]=0;
                SlammerTime slammerTimeContract = SlammerTime(stacks[_stack].slammerTime);
                //require( slammerTimeContract.transferBack(msg.sender,tempId) );
                slammerTimeContract.transferBack(msg.sender,tempId);
@@ -356,33 +360,37 @@ contract Cryptogs is NFT, Ownable {
           }
         }
 
+        throwSlammerEvent(_stack,true,msg.sender,uint32(block.number),flipped);
+
         if(done){
           FinishGame(_stack);
           mode[_stack]=9;
+        }else{
+          round[_stack]++;
         }
 
         return true;
       }
     }
-    //event Debug(bytes32 reveal,bytes32 blockhash,bytes32 pseudoRandomHash);
-  //  event DebugFlip(bytes32 pseudoRandomHash,uint8 i,uint8 randIndex,uint8 val,uint8 flippiness);
-    event Flip(bytes32 stack,address toWhom,uint256 id,uint32 blockNumber);
-    event ThrowSlammerFail(bytes32 stack);
-    event ThrowSlammerSuccess(bytes32 stack, address whosTurn,bytes32 randDebug);
+    event ThrowSlammer(bytes32 indexed stack, bool success, address whoDoneIt, uint32 blockNumber, bool token1Flipped, bool token2Flipped, bool token3Flipped, bool token4Flipped, bool token5Flipped, bool token6Flipped, bool token7Flipped, bool token8Flipped, bool token9Flipped, bool token10Flipped);
     event FinishGame(bytes32 stack);
 
+    function throwSlammerEvent(bytes32 stack,bool success,address whoDoneIt,uint32 blockNumber,bool[10] flipArray) internal {
+      ThrowSlammer(stack,success,whoDoneIt,blockNumber,flipArray[0],flipArray[1],flipArray[2],flipArray[3],flipArray[4],flipArray[5],flipArray[6],flipArray[7],flipArray[8],flipArray[9]);
+    }
 
 
     function drainStack(bytes32 _stack, bytes32 _counterStack) public returns (bool) {
       //make sure it's the owner of the first stack (player one) doing the flip
       require( stacks[_stack].owner==msg.sender || stacks[_counterStack].owner==msg.sender );
       require( lastActor[_stack]!=msg.sender );
-      require( block.number - lastBlock[_stack] > 100);
+      require( block.number - lastBlock[_stack] > TIMEOUTBLOCKS);
+      require( mode[_stack]<9 );//make sure game is still going
 
       for(uint8 i=0;i<10;i++){
-        if(mixedStack[i]>0){
-          uint256 tempId = mixedStack[i];
-          mixedStack[i]=0;
+        if(mixedStack[_stack][i]>0){
+          uint256 tempId = mixedStack[_stack][i];
+          mixedStack[_stack][i]=0;
           SlammerTime slammerTimeContract = SlammerTime(stacks[_stack].slammerTime);
           slammerTimeContract.transferBack(msg.sender,tempId);
         }
