@@ -1,0 +1,186 @@
+$color_coin_coin__front: #999999;
+$color_coin_back: #666666;
+$color_coin_sides: #cccccc;
+$time: 1s;
+
+.field {
+  position: relative;
+  height: 800px;
+}
+
+.coin__container {
+  height: 160px;
+  width: 160px;
+  transition: all 1s ease;
+}
+.is-stacked .coin__container {
+  height: 10px;
+}
+
+.coin {
+  height: 160px;
+  width: 160px;
+  position: absolute;
+  transform-style: preserve-3d;
+  transform-origin: 50%;
+  // animation: spin $time infinite;
+  // animation-timing-function: linear;
+}
+
+.is-slam .coin__container {
+  height: 160px;
+  position: absolute;
+  transition: all 1s ease;
+}
+
+.is-slam .coin {
+  animation: spin $time infinite;
+  animation-timing-function: linear;
+  transform: rotateX(75deg);
+  // transform: rotateX(-720deg);
+  // transition-duration: 3s;
+}
+
+.is-stopped .coin {
+  animation: none;
+  transform: rotateX(75deg);
+}
+
+// .spinning .coin {
+//   animation: spinTwo $time infinite;
+//   transform: rotateX(0deg);
+// }
+
+.coin .coin__front,
+.coin .coin__back {
+  position: absolute;
+  height: 160px;
+  width: 160px;
+  border-radius: 50%;
+  background-size: cover;
+}
+
+.coin .coin__front {
+  transform: translateZ(5px);
+}
+
+.coin .coin__back {
+  transform: translateZ(-5px) rotateY(180deg);
+}
+
+.coin .coin__side {
+  transform: translateX(75px);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.coin .coin__side .coin__c {
+  height: 160px;
+  width: 10px;
+  position: absolute;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.coin .coin__side .coin__c:before,
+.coin .coin__side .coin__c:after {
+  content: '';
+  display: block;
+  height: 15.682742452729697px;
+  width: 10px;
+  position: absolute;
+  transform: rotateX(84.375deg);
+  background: $color_coin_sides;
+}
+
+.coin .coin__side .coin__c:before {
+  transform-origin: top center;
+}
+.coin .coin__side .coin__c:after {
+  bottom: 0;
+  transform-origin: center bottom;
+}
+.coin .coin__side .coin__c:nth-child(16) {
+  transform: rotateY(90deg) rotateX(180deg);
+}
+.coin .coin__side .coin__c:nth-child(15) {
+  transform: rotateY(90deg) rotateX(168.75deg);
+}
+.coin .coin__side .coin__c:nth-child(14) {
+  transform: rotateY(90deg) rotateX(157.5deg);
+}
+.coin .coin__side .coin__c:nth-child(13) {
+  transform: rotateY(90deg) rotateX(146.25deg);
+}
+.coin .coin__side .coin__c:nth-child(12) {
+  transform: rotateY(90deg) rotateX(135deg);
+}
+.coin .coin__side .coin__c:nth-child(11) {
+  transform: rotateY(90deg) rotateX(123.75deg);
+}
+.coin .coin__side .coin__c:nth-child(10) {
+  transform: rotateY(90deg) rotateX(112.5deg);
+}
+.coin .coin__side .coin__c:nth-child(9) {
+  transform: rotateY(90deg) rotateX(101.25deg);
+}
+.coin .coin__side .coin__c:nth-child(8) {
+  transform: rotateY(90deg) rotateX(90deg);
+}
+.coin .coin__side .coin__c:nth-child(7) {
+  transform: rotateY(90deg) rotateX(78.75deg);
+}
+.coin .coin__side .coin__c:nth-child(6) {
+  transform: rotateY(90deg) rotateX(67.5deg);
+}
+.coin .coin__side .coin__c:nth-child(5) {
+  transform: rotateY(90deg) rotateX(56.25deg);
+}
+.coin .coin__side .coin__c:nth-child(4) {
+  transform: rotateY(90deg) rotateX(45deg);
+}
+.coin .coin__side .coin__c:nth-child(3) {
+  transform: rotateY(90deg) rotateX(33.75deg);
+}
+.coin .coin__side .coin__c:nth-child(2) {
+  transform: rotateY(90deg) rotateX(22.5deg);
+}
+.coin .coin__side .coin__c:nth-child(1) {
+  transform: rotateY(90deg) rotateX(11.25deg);
+}
+
+.coin .coin__front {
+  background-color: $color_coin_coin__front;
+  background-position: center center;
+}
+
+.coin .coin__back {
+  background-color: $color_coin_back;
+}
+
+@keyframes spin {
+  // 0% { transform: rotateX(75deg) }
+  // 50% { transform: rotateX(360deg) }
+  // 75% { transform: rotateX(360deg) }
+  // 25% { transform: rotateX(0deg) }
+  // 50% { transform: rotateX(-180deg) }
+  // 100% { transform: rotateX(-720deg) }
+
+  from {
+    transform: rotateX(75deg);
+  }
+  to {
+    transform: rotateX(435deg);
+  }
+}
+
+// @keyframes spinTwo {
+//   // 0% { transform: rotateX(0deg) }
+//   // 100% { transform: rotateX(-720deg) }
+//   from {
+//     transform: rotateX(0deg);
+//   }
+//   to {
+//     transform: rotateX(-360deg);
+//   }
+// }

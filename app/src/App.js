@@ -134,10 +134,14 @@ class App extends Component {
         let blockNumber = await web3.eth.getBlockNumber();
         console.log("LOADING MYCRPTOGS FOR ",this.state.account)
 
+        try{
         let optionalEmail = await contracts["Cryptogs"].methods.optionalEmail(this.state.account).call()
-        console.log("optionalEmail:",optionalEmail)
-        if(optionalEmail!=this.state.optionalEmail){
-          this.setState({optionalEmail:optionalEmail})
+          console.log("optionalEmail:",optionalEmail)
+          if(optionalEmail && this.state && optionalEmail!=this.state.optionalEmail){
+            this.setState({optionalEmail:optionalEmail})
+          }
+        }catch(e){
+          console.log(e)
         }
 
         let myCryptogs = await contracts["Cryptogs"].methods.tokensOfOwner(this.state.account).call()

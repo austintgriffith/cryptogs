@@ -6,6 +6,7 @@
     "react": "^16.2.0",
     "react-blockies": "^1.2.2",
     "react-dom": "^16.2.0",
+    "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.1",
     "react-simpletabs": "^0.7.0",
     "s3": "^4.4.0",
