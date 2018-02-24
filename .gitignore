@@ -1,3 +1,6 @@
+
+app/src/*.blockNumber.js
+app/src/*.address.js
 app/aws*
 accounts.json
 **.DS_*
