@@ -9,7 +9,7 @@ import './pogs.scss'
 import 'regenerator-runtime/runtime';
 import ContractLoader from '../modules/contractLoader.js';
 import TokenLoader from '../modules/tokenLoader.js';
-import ShallowEqualsById from '../modules/ShallowEqualsById.js';
+import ShallowEqualsById from '../modules/shallowEqualsById.js';
 var Web3 = require('web3');
 let contractLoadingInterval;
 export default createClass({
