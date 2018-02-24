@@ -19,12 +19,14 @@ contract Cryptogs is NFT, Ownable {
 
     uint256 public constant RARITYMULTIPLIER = 1000000000000000;
 
-    uint8 public constant FLIPPINESS = 89;
-    uint8 public constant FLIPPINESSROUNDBONUS = 10;
+    uint8 public constant FLIPPINESS = 64;
+    uint8 public constant FLIPPINESSROUNDBONUS = 16;
     uint8 public constant TIMEOUTBLOCKS = 40;
 
 
-
+    /*
+      if you think this is rad, tell us:
+     */
     mapping (address => string) public optionalEmail;
     function thisIsRad(string optional) public returns (bool){
       optionalEmail[msg.sender]=optional;
@@ -51,16 +53,63 @@ contract Cryptogs is NFT, Ownable {
     Item[] private items;
 
     function mint(bytes32 _image,address _owner) public onlyOwner returns (uint){
-      Item memory _item = Item({
-        image: _image
-      });
-      uint256 newId = items.push(_item) - 1;
+      uint256 newId = _mint(_image);
       _transfer(0, _owner, newId);
-      tokensOfImage[items[newId].image]++;
       Mint(items[newId].image,tokenIndexToOwner[newId]);
       return newId;
     }
     event Mint(bytes32 _image,address _owner);
+
+    function _mint(bytes32 _image) internal returns (uint){
+      Item memory _item = Item({
+        image: _image
+      });
+      uint256 newId = items.push(_item) - 1;
+      tokensOfImage[items[newId].image]++;
+      return newId;
+    }
+
+    Pack[] private packs;
+    struct Pack{
+      uint256[10] tokens;
+      uint256 price;
+    }
+    function mintPack(uint256 _price,bytes32 _image1,bytes32 _image2,bytes32 _image3,bytes32 _image4,bytes32 _image5,bytes32 _image6,bytes32 _image7,bytes32 _image8,bytes32 _image9,bytes32 _image10) public onlyOwner returns (bool){
+      uint256[10] memory tokens;
+      tokens[0] = _mint(_image1);
+      tokens[1] = _mint(_image2);
+      tokens[2] = _mint(_image3);
+      tokens[3] = _mint(_image4);
+      tokens[4] = _mint(_image5);
+      tokens[5] = _mint(_image6);
+      tokens[6] = _mint(_image7);
+      tokens[7] = _mint(_image8);
+      tokens[8] = _mint(_image9);
+      tokens[9] = _mint(_image10);
+      Pack memory _pack = Pack({
+        tokens: tokens,
+        price: _price
+      });
+      MintPack(packs.push(_pack) - 1, _price,tokens[0],tokens[1],tokens[2],tokens[3],tokens[4],tokens[5],tokens[6],tokens[7],tokens[8],tokens[9]);
+      return true;
+    }
+    event MintPack(uint256 packId,uint256 price,uint256 token1,uint256 token2,uint256 token3,uint256 token4,uint256 token5,uint256 token6,uint256 token7,uint256 token8,uint256 token9,uint256 token10);
+
+    function buyPack(uint256 packId) public payable returns (bool) {
+      //make sure pack is for sale
+      require( packs[packId].price > 0 );
+      //make sure they sent in enough value
+      require( msg.value >= packs[packId].price );
+      //give tokens to owner
+      for(uint8 i=0;i<10;i++){
+        tokenIndexToOwner[packs[packId].tokens[i]]=msg.sender;
+        _transfer(0, msg.sender, packs[packId].tokens[i]);
+      }
+      //clear the price so it is no longer for sale
+      delete packs[packId];
+      BuyPack(msg.sender,packId,msg.value);
+    }
+    event BuyPack(address sender, uint256 packId, uint256 price);
 
     //lets keep a count of how many of a specific image is created too
     //that will allow us to calculate rarity on-chain if we want
@@ -381,11 +430,19 @@ contract Cryptogs is NFT, Ownable {
 
 
     function drainStack(bytes32 _stack, bytes32 _counterStack) public returns (bool) {
-      //make sure it's the owner of the first stack (player one) doing the flip
+      //this function is for the case of a timeout in the commit / reveal
+      // if a player realizes they are going to lose, they can refuse to reveal
+      // therefore we must have a timeout of TIMEOUTBLOCKS and if that time is reached
+      // the other player can get in and drain the remaining tokens from the game
       require( stacks[_stack].owner==msg.sender || stacks[_counterStack].owner==msg.sender );
-      require( lastActor[_stack]!=msg.sender );
-      require( block.number - lastBlock[_stack] > TIMEOUTBLOCKS);
-      require( mode[_stack]<9 );//make sure game is still going
+      //the counter must be a counter of stack 1
+      require( stackCounter[_counterStack]==_stack );
+      //the bad guy shouldn't be able to drain
+      require( lastActor[_stack]==msg.sender );
+      //must be after timeout period
+      require( block.number - lastBlock[_stack] >= TIMEOUTBLOCKS);
+      //game must still be going
+      require( mode[_stack]<9 );
 
       for(uint8 i=0;i<10;i++){
         if(mixedStack[_stack][i]>0){
@@ -395,8 +452,12 @@ contract Cryptogs is NFT, Ownable {
           slammerTimeContract.transferBack(msg.sender,tempId);
         }
       }
-    }
 
+      FinishGame(_stack);
+      mode[_stack]=9;
+      DrainStack(_stack,_counterStack,msg.sender);
+    }
+    event DrainStack(bytes32 stack,bytes32 counterStack,address sender);
 
     function totalSupply() public view returns (uint) {
         return items.length - 1;
@@ -420,8 +481,23 @@ contract Cryptogs is NFT, Ownable {
             return result;
         }
     }
+
+    function withdraw(uint256 _amount) public onlyOwner returns (bool) {
+      require(this.balance >= _amount);
+      assert(owner.send(_amount));
+      return true;
+    }
+
+    function withdrawToken(address _token,uint256 _amount) public onlyOwner returns (bool) {
+      StandardToken token = StandardToken(_token);
+      token.transfer(msg.sender,_amount);
+      return true;
+    }
 }
 
+contract StandardToken {
+  function transfer(address _to, uint256 _value) public returns (bool) { }
+}
 
 contract SlammerTime {
   function startSlammerTime(address _player1,uint256[5] _id1,address _player2,uint256[5] _id2) public returns (bool) { }

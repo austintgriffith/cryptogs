@@ -6,7 +6,11 @@ class MetaMask extends Component {
     super(props);
     this.state = {
       metamask:0,
-      network:0
+      network:0,
+      textStyle:{
+        fontSize:18,
+        verticalAlign:"middle"
+      }
     }
   }
   componentDidMount(){
@@ -77,6 +81,13 @@ class MetaMask extends Component {
         connecting...
       </span>
     )
+
+    let metamaskImage = (
+      <img style={{maxHeight:40,marginTop:10,paddingRight:5,verticalAlign:"middle"}}
+      src="/metamask.png"
+      />
+    )
+
     if(this.props.blockNumber&&this.props.blockNumber>0){
       blockDisplay = (
         <a style={{marginLeft:10}} target="_blank" href={this.props.etherscan+"block/"+this.props.blockNumber}>
@@ -89,12 +100,10 @@ class MetaMask extends Component {
       //not installed
       metamask = (
         <a target="_blank"  href="https://metamask.io/">
-        <span style={this.props.textStyle}>
+        {metamaskImage}
+        <span style={this.state.textStyle}>
           Unable to connect to network
         </span>
-        <img style={{maxHeight:45,padding:5,verticalAlign:"middle"}}
-        src="metamask.png"
-        />
         </a>
       )
     }else if(!this.state.metamask){
@@ -105,12 +114,10 @@ class MetaMask extends Component {
       metamask = (
         <div style={{zIndex:999999}} onClick={mmClick}>
           <a target="_blank" href="https://metamask.io/">
-          <span style={this.props.textStyle}>
+          {metamaskImage}
+          <span style={this.state.textStyle}>
             Install MetaMask to play
           </span>
-          <img style={{maxHeight:45,padding:5,verticalAlign:"middle"}}
-          src="metamask.png"
-          />
           </a>
         </div>
       )
@@ -118,12 +125,10 @@ class MetaMask extends Component {
       //not installed
       metamask = (
         <div>
-        <span style={this.props.textStyle}>
+        {metamaskImage}
+        <span style={this.state.textStyle}>
           MetaMask is on the wrong network
         </span>
-        <img style={{maxHeight:45,padding:5,verticalAlign:"middle"}}
-         src="metamask.png"
-        />
         </div>
       )
     }else if(this.state.metamask==2){
@@ -132,33 +137,26 @@ class MetaMask extends Component {
         metamask = (
           <div style={{padding:4}}>
 
+          {metamaskImage}
+
               <span style={{
-                float:'left',
                 marginTop:3,
-                paddingRight:10,
                 zIndex:210,
                 fontWeight:'bold',
                 fontSize:21,
                 color:"#222",
-                textAlign:"right"
               }}>
                 <div>Please switch your network to Ropsten</div>
               </span>
-              <img style={{maxHeight:45,padding:5,verticalAlign:"middle"}}
-                src="metamask.png"
-              />
+
 
           </div>
         )
       }else{
         metamask = (
           <div>
-            <span style={this.props.textStyle}>
-                Unlock MetaMask to play
-            </span>
-            <img style={{maxHeight:45,padding:5,verticalAlign:"middle"}}
-              src="metamask.png"
-            />
+            {metamaskImage}
+            Unlock MetaMask to play
           </div>
         )
       }
@@ -166,12 +164,11 @@ class MetaMask extends Component {
 
       metamask = (
         <div>
-        <span style={this.props.textStyle}>
+        {metamaskImage}
+        <span style={this.state.textStyle}>
           Error Connecting
         </span>
-        <img style={{maxHeight:45,padding:5,verticalAlign:"middle"}}
-         src="metamask.png"
-        />
+
         </div>
       )
 
@@ -193,7 +190,7 @@ class MetaMask extends Component {
               }}>
               <a target="_blank" href={this.props.etherscan+"address/"+this.state.accounts[0]}>
                 <div>
-                  {this.state.accounts.length > 0 ? this.state.accounts[0] : "Loading..."}
+                  {this.state.accounts.length > 0 ? this.state.accounts[0].substring(0,16) : "Loading..."}
                 </div>
               </a>
                 <div>
@@ -216,7 +213,7 @@ class MetaMask extends Component {
 
     }
     return (
-      <div style={{float:'left',padding:2,paddingRight:10}}>
+      <div style={{float:'left',padding:2,paddingRight:10,marginLeft:this.props.currentStyles.marginLeft}}>
       {metamask}
       </div>
     )

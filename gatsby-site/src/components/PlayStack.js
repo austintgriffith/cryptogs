@@ -20,16 +20,17 @@ class PlayStack extends Component {
   }
   async loadStackData(){
     let stack
-    let {contracts} = this.props.context
+    let {contracts,web3} = this.props.context
     //console.log("contracts",contracts)
     let update = {}
 
-    console.log("this.state.stack:",this.state.stack)
-
     update.stackData = await contracts['Cryptogs'].methods.getStack(this.state.stack).call()
+    for(let t=1;t<=5;t++){
+      let token = await contracts['Cryptogs'].methods.getToken(update.stackData["token"+t]).call()//this.state.allStacks[id]
+      update.stackData["token"+t+"Image"] = web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
+    }
     update.stackMode = await contracts['Cryptogs'].methods.mode(this.state.stack).call()
 
-    console.log("MODE:",update.stackMode)
 
     if(update.stackMode==0){
       let counterStackEvents = await contracts['Cryptogs'].getPastEvents("CounterStack", {
@@ -39,8 +40,15 @@ class PlayStack extends Component {
       });
       let counterStacks = []
       for(let e in counterStackEvents){
-        counterStacks.push(counterStackEvents[e].returnValues)
+        let thisStackData = await contracts['Cryptogs'].methods.getStack(counterStackEvents[e].returnValues._counterStack).call()
+        for(let t=1;t<=5;t++){
+          let token = await contracts['Cryptogs'].methods.getToken(thisStackData["token"+t]).call()//this.state.allStacks[id]
+          thisStackData["token"+t+"Image"] = web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
+        }
+        thisStackData._counterStack = counterStackEvents[e].returnValues._counterStack
+        counterStacks.push(thisStackData)
       }
+
       update.counterStacks = counterStacks
     }else{
       update.lastBlock = await contracts['Cryptogs'].methods.lastBlock(this.state.stack).call()
@@ -171,6 +179,19 @@ class PlayStack extends Component {
         console.log("RESULT:",receipt)
       })
   }
+  drainStack(){
+    let {contracts,account} = this.props.context
+    console.log("drainStack",this.state.stack,this.state.counterStack)
+    contracts["Cryptogs"].methods.drainStack(this.state.stack,this.state.counterStack).send({
+      from: account,
+      gas:500000,
+      gasPrice:GWEI * 1000000000
+    },(error,hash)=>{
+      console.log("CALLBACK!",error,hash)
+    }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
+      console.log("RESULT:",receipt)
+    })
+  }
   render(){
     let {account,blockNumber} = this.props.context
     let {stackMode,stackData,counterStacks,lastBlock,lastActor,TIMEOUTBLOCKS,flipEvents,throwSlammerEvents} = this.state;
@@ -185,7 +206,7 @@ class PlayStack extends Component {
     if(throwSlammerEvents && throwSlammerEvents.length>0){
       flipDisplay = throwSlammerEvents.map((throwSlammerEvent)=>{
         let flipped = []
-        for(let i=0;i<10;i++){
+        for(let i=1;i<=10;i++){
           if(throwSlammerEvent['token'+i+'Flipped']){
             flipped.push(
               <span>
@@ -199,14 +220,23 @@ class PlayStack extends Component {
           if(flipped.length>0){
             who = "You Flipped:"
           }else{
-            who = "You Wiffed"
+            if(throwSlammerEvent.success){
+              who = "You Wiffed"
+            }else{
+              who = "Your throw failed, try again."
+            }
+
           }
 
         }else{
           if(flipped.length>0){
             who = "They Flipped"
           }else{
-            who = "They Wiffed"
+            if(throwSlammerEvent.success){
+              who = "They Wiffed"
+            }else{
+              who = "Their throw failed, trying again."
+            }
           }
         }
        return (
@@ -230,6 +260,7 @@ class PlayStack extends Component {
 
       let drawCounterStacks = counterStacks.map((counterstack)=>{
         let callToAction
+        console.log("get id from ",counterstack)
         if(account.toLowerCase()==stackData.owner.toLowerCase()){
           callToAction=(
             <button onClick={this.acceptStack.bind(this,counterstack._counterStack)}>accept</button>
@@ -241,11 +272,27 @@ class PlayStack extends Component {
       })
 
       let message
+      let portInfo = ""
+      if(window.location.port!="80"){
+        portInfo=":"+window.location.port
+      }
       if(account.toLowerCase()==stackData.owner.toLowerCase()){
         if(drawCounterStacks.length>0){
-          message = "Accept an opponent's stack:"
+          message = ""
+          message = (
+            <div>
+              <div style={{padding:10,paddingTop:20}}>Share game url:</div>
+              <pre id="url" onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
+              <div style={{padding:10,paddingTop:20}}>{"Accept an opponent's stack:"}</div>
+            </div>
+          )
         }else{
-          message = "Waiting for other stacks to join..."
+          message = (
+            <div>
+              <div style={{padding:10,paddingTop:20}}>Waiting for other players to join, share game url to challenge your friends:</div>
+              <pre id="url" onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
+            </div>
+          )
         }
       }else{
         message = "Waiting for game creator to accept your stack..."
@@ -292,14 +339,12 @@ class PlayStack extends Component {
         display = (
           <div>
             Waiting for other player to raise slammer...
-            {flipDisplay}
           </div>
         )
       }else{
         display = (
           <div>
             <button onClick={this.raiseSlammer.bind(this)}>raiseSlammer</button>
-            {flipDisplay}
           </div>
         )
 
@@ -309,14 +354,12 @@ class PlayStack extends Component {
         display = (
           <div>
             Waiting for other player to throw slammer...
-            {flipDisplay}
           </div>
         )
       }else{
         display = (
           <div>
             <button onClick={this.throwSlammer.bind(this)}>throwSlammer</button>
-            {flipDisplay}
           </div>
         )
 
@@ -325,8 +368,7 @@ class PlayStack extends Component {
 
         display = (
           <div>
-            Game has finished:
-            {flipDisplay}
+            Game has finished
           </div>
         )
 
@@ -346,18 +388,34 @@ class PlayStack extends Component {
         turn = "Your Turn"
       }
 
+      let drainDisplay = ""
+      drainDisplay = (
+        <button onClick={this.drainStack.bind(this)}>drain</button>
+      )
+
       timerDisplay = (
         <div style={{float:'right'}}>
           <div>{blockNumber-lastBlock}/{TIMEOUTBLOCKS}</div>
+          <div>{drainDisplay}</div>
           <div>{turn}</div>
         </div>
       )
     }
 
+    let modeDisplay = ""
+    if(stackMode>0&&stackMode<9){
+      modeDisplay = (
+        <div style={{float:'right'}}>mode:{stackMode}</div>
+      )
+    }
+
     return (
       <div>
-      <div style={{float:'right'}}>mode:{stackMode}</div>
+      {modeDisplay}
       {timerDisplay}
+      <div style={{position:'fixed',bottom:20,right:20,backgroundColor:"#eeeeee",padding:20}}>
+        {flipDisplay}
+      </div>
       {display}
       </div>
     )
@@ -366,10 +424,17 @@ class PlayStack extends Component {
 }
 export default PlayStack;
 
-/*
 
-const JoinStack = ({ match: { params } }) => (
-<div>
-{params.stack}
-</div>
-)*/
+function selectText() {
+    let containerid = "url"
+    if (document.selection) {
+        var range = document.body.createTextRange();
+        range.moveToElementText(document.getElementById(containerid));
+        range.select();
+    } else if (window.getSelection) {
+        var range = document.createRange();
+        range.selectNode(document.getElementById(containerid));
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+    }
+}

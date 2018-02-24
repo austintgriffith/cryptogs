@@ -15,7 +15,7 @@ let loadDownTheChain = async (contract,eventName,updateFn)=>{
   }
 }
 let doSync = async (contract,eventName,updateFn,from,to)=>{
-  //console.log("EVENT:",eventName,"FROM",from,"to",to,contract)
+  console.log("EVENT:",eventName,"FROM",from,"to",to,contract)
   let events = await contract.getPastEvents(eventName, {
       fromBlock: from,
       toBlock: to

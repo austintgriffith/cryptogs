@@ -97,6 +97,18 @@ module.exports = {
       });
     });
   },
+  mintPack:(accountindex,image,price)=>{
+    describe('#testMint() ', function() {
+      it('should mint a cryptog', async function() {
+        this.timeout(120000)
+        const accounts = await clevis("accounts")
+        let imageBytes = web3.utils.fromAscii(image)
+        const result = await clevis("contract","mintPack","Cryptogs",accountindex,web3.utils.toWei(""+price, "ether"),imageBytes,imageBytes,imageBytes,imageBytes,imageBytes,imageBytes,imageBytes,imageBytes,imageBytes,imageBytes)
+        printTxResult(result)
+        console.log(tab,accounts[accountindex].blue+" minted pack ")
+      });
+    });
+  },
   submitStack:(accountindex)=>{
     describe('#submitStack() ', function() {
       it('should submit stack', async function() {

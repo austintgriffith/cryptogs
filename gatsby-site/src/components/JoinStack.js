@@ -16,6 +16,11 @@ class JoinStack extends Component {
   async loadStackData(){
     let stack
     let stackData = await this.props.context.contracts['Cryptogs'].methods.getStack(this.state.stack).call()
+    for(let t=1;t<=5;t++){
+
+      let token = await this.props.context.contracts['Cryptogs'].methods.getToken(stackData["token"+t]).call()
+      stackData["token"+t+"Image"] = this.props.context.web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
+    }
     this.setState({stackData:stackData})
   }
   joinStack(tokens){
@@ -39,6 +44,7 @@ class JoinStack extends Component {
         console.log("CALLBACK!",error,hash)
       }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
         console.log("RESULT:",receipt)
+        window.location = "/play/"+stack
       })
 	}
   render(){
