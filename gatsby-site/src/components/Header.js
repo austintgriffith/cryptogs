@@ -3,7 +3,7 @@ import createClass from 'create-react-class';
 import Link from 'gatsby-link'
 import { withPrefix} from 'gatsby-link'
 import PropTypes from 'prop-types';
-import Metamask from '../components/Metamask.js'
+import Metamask from '../components/MetaMask.js'
 import {Motion, spring, presets} from 'react-motion';
 
 export default createClass({
