@@ -4,11 +4,60 @@
   height: 800px;
 }
 
+@keyframes flightPath350 {
+    from { transform: rotate(180deg) translateX(-350px) translateY(175px) rotate(-180deg); }
+    to   { transform: rotate(0deg) translateX(0px) translateY(0px)  rotate(0deg); }
+}
+@keyframes flightPath300 {
+    from { transform: rotate(180deg) translateX(-300px) translateY(150px) rotate(-180deg); }
+    to   { transform: rotate(0deg) translateX(0px) translateY(0px)  rotate(0deg); }
+}
+@keyframes flightPath250 {
+    from { transform: rotate(180deg) translateX(-250px) translateY(125px) rotate(-180deg); }
+    to   { transform: rotate(0deg) translateX(0px) translateY(0px)  rotate(0deg); }
+}
+@keyframes flightPath200 {
+    from { transform: rotate(180deg) translateX(-200px) translateY(100px) rotate(-180deg); }
+    to   { transform: rotate(0deg) translateX(0px) translateY(0px)  rotate(0deg); }
+}
+@keyframes flightPath150 {
+    from { transform: rotate(180deg) translateX(-150px) translateY(75px) rotate(-180deg); }
+    to   { transform: rotate(0deg) translateX(0px) translateY(0px)  rotate(0deg); }
+}
+@keyframes flightPathN150 {
+    from { transform: rotate(-180deg) translateX(150px) translateY(75px) rotate(180deg); }
+    to   { transform: rotate(0deg) translateX(0px) translateY(0px)  rotate(0deg); }
+}
+@keyframes flightPathN200 {
+    from { transform: rotate(-180deg) translateX(200px) translateY(100px) rotate(180deg); }
+    to   { transform: rotate(0deg) translateX(0px) translateY(0px)  rotate(0deg); }
+}
+@keyframes flightPathN250 {
+    from { transform: rotate(-180deg) translateX(250px) translateY(125px) rotate(180deg); }
+    to   { transform: rotate(0deg) translateX(0px) translateY(0px)  rotate(0deg); }
+}
+@keyframes flightPathN300 {
+    from { transform: rotate(-180deg) translateX(300px) translateY(150px) rotate(180deg); }
+    to   { transform: rotate(0deg) translateX(0px) translateY(0px)  rotate(0deg); }
+}
+@keyframes flightPathN350 {
+    from { transform: rotate(-180deg) translateX(350px) translateY(175px) rotate(180deg); }
+    to   { transform: rotate(0deg) translateX(0px) translateY(0px)  rotate(0deg); }
+}
+
+.spinner {
+  animation-iteration-count: 1;
+  animation-timing-function:linear;
+  animation-duration:2s;
+}
+
+
 .coin__container {
   height: 160px;
   width: 160px;
   transition: all 1s ease;
 }
+
 .is-stacked .coin__container {
   height: 10px;
 }
@@ -19,27 +68,23 @@
   position: absolute;
   transform-style: preserve-3d;
   transform-origin: 50%;
-  // animation: spin $time infinite;
-  // animation-timing-function: linear;
 }
 
 .is-slam .coin__container {
   height: 160px;
   position: absolute;
-  transition: all 1s ease;
+  transition: all 0.8s ease;
 }
 
 .is-slam .coin {
-  animation: spin 1s infinite;
+  animation: spin 0.4s infinite;
   animation-timing-function: linear;
   transform: rotateX(75deg);
-  // transform: rotateX(-720deg);
-  // transition-duration: 3s;
 }
 
-.is-stopped .coin {
-  animation: none;
-  transform: rotateX(75deg);
+.is-flip .coin {
+  animation: spin 0.6s infinite;
+  animation-timing-function: linear;
 }
 
 .coin .coin__front,
@@ -81,7 +126,7 @@
   width: 10px;
   position: absolute;
   transform: rotateX(84.375deg);
-  background: #cccccc;
+  background: #999999;
 }
 
 .coin .coin__side .coin__c:before {
@@ -141,12 +186,12 @@
 }
 
 .coin .coin__front {
-  background-color: #999999;
+  background-color: #CCCCCC;
   background-position: center center;
 }
 
 .coin .coin__back {
-  background-color: #666666;
+  background-color: #CCCCCC;
 }
 
 @keyframes spin {

@@ -32,14 +32,17 @@ export default createClass({
 		}else{
 			let updateAllStacks = async (update)=>{
 				let id = update._stack
-				if(id && !this.state.allStacks[id]){
-					this.state.allStacks[id]=update;
-					console.log("UPDATE allStacks ",this.state.allStacks)
-					for(let t=1;t<=5;t++){
-						let token = await contracts['Cryptogs'].methods.getToken(this.state.allStacks[id]["_token"+t]).call()//this.state.allStacks[id]
-						this.state.allStacks[id]["_token"+t+"Image"] = web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
+				if(id){
+					if(!this.state.allStacks[id]) this.state.allStacks[id]={};
+					if(!this.state.allStacks[id].timestamp){
+						Object.assign(this.state.allStacks[id],update);
+						console.log("UPDATE allStacks ",this.state.allStacks)
+						for(let t=1;t<=5;t++){
+							let token = await contracts['Cryptogs'].methods.getToken(this.state.allStacks[id]["_token"+t]).call()//this.state.allStacks[id]
+							this.state.allStacks[id]["_token"+t+"Image"] = web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
+						}
+						this.setState({allStacks:this.state.allStacks});
 					}
-					this.setState({allStacks:this.state.allStacks});
 				}
 			}
 			EventParser(contracts["Cryptogs"],"SubmitStack",contracts["Cryptogs"].blockNumber,blockNumber,updateAllStacks);
@@ -52,7 +55,8 @@ export default createClass({
 			let updateAcceptCounterStack = async (update)=>{
 				let id = update._stack
 				let counterStack = update._counterStack
-				if(this.state.allStacks[id]&&!this.state.allStacks[id].counterStack){
+				if(!this.state.allStacks[id]) this.state.allStacks[id]={};
+				if(!this.state.allStacks[id].counterStack){
 					this.state.allStacks[id].counterStack = counterStack
 					this.state.allStacks[id].otherPlayer = await contracts['Cryptogs'].methods.stackOwner(counterStack).call()
 					this.setState({allStacks:this.state.allStacks});
@@ -66,7 +70,9 @@ export default createClass({
 
 			let updateFinishGame = async (update)=>{
 				let id = update.stack
-				if(this.state.allStacks[id]&&!this.state.allStacks[id].finished){
+				if(!this.state.allStacks[id]) this.state.allStacks[id]={};
+				if(!this.state.allStacks[id].finished){
+					console.log("STACK",id,"IS FINISHED")
 					this.state.allStacks[id].finished=true
 					this.setState({allStacks:this.state.allStacks});
 				}
@@ -101,7 +107,7 @@ export default createClass({
 						<a href={"/play/"+s}>view</a>
 					}/>
 				)
-			}else if(allStacks[s]._sender.toLowerCase() == account.toLowerCase()){
+			}else if(allStacks[s]._sender && allStacks[s]._sender.toLowerCase() == account.toLowerCase()){
 				myStacks.push(
 					<Stack key={"mystack"+s} {...allStacks[s]} callToAction={
 						<a href={"/play/"+s}>play</a>
@@ -121,7 +127,7 @@ export default createClass({
 						}/>
 					)
 				}
-			}else{
+			}else if(allStacks[s].timestamp){
 				stacks.push(
 					<Stack key={"stack"+s} {...allStacks[s]} callToAction={
 						<a href={"/join/"+s}>join</a>
