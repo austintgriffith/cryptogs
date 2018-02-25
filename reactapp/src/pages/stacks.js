@@ -140,7 +140,8 @@ export default createClass({
 
 		return (
       <div>
-				<div><a href="/create">Create a game</a></div>
+				<div style={{float:'right',padding:30,paddingRight:100}}><button onClick={()=>{window.location="/create"}}>Create Game</button></div>
+				<div style={{ clear:"both"}}></div>
 				<div style={sectionStyle}>Your Games:</div>
 				<div>{myStacks}</div>
 				<div style={sectionStyle}>Open Games:</div>

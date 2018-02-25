@@ -1,4 +1,4 @@
- async function tokenLoader(account,cryptogsContract,web3,updateFn){
+export default async function(account,cryptogsContract,web3,updateFn){
   let myTokens = []
   if(account&&cryptogsContract){
     let mine = await cryptogsContract.methods.tokensOfOwner(account).call()
@@ -9,4 +9,3 @@
     updateFn(myTokens)
   }
 }
-export default tokenLoader

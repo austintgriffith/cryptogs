@@ -4,7 +4,7 @@ import Cryptog from '../components/Cryptog.js'
 import StackSelect from '../components/StackSelect.js'
 
 let loadInterval
-const GWEI = 1
+const GWEI = 10
 
 class PlayStack extends Component {
   constructor(props) {
@@ -125,7 +125,7 @@ class PlayStack extends Component {
     this.setState(update,()=>{
       if(update.flippingPogs){
         setTimeout(()=>{
-          this.setState({flippingPogs:false,flippingPogsAngle:75})
+          this.setState({flippingPogs:false,flippingPogsAngle:65})
         },2000)
       }
     })
@@ -303,8 +303,8 @@ class PlayStack extends Component {
    if(stackMode>0&&stackMode<9){
      for(let m in this.state.mixedStack){
        mixedStack.push(
-         <div key={"mixedStack"+m} style={{position:'absolute',left:0,top:(-7*m),zIndex:m}}>
-          <Cryptog  angle={75} id={this.state.mixedStack[m].id} image={this.state.mixedStack[m].image}/>
+         <div key={"mixedStack"+m} style={{position:'absolute',left:0,top:(-10*m),zIndex:m}}>
+          <Cryptog  angle={65} scale={0.9} id={this.state.mixedStack[m].id} image={this.state.mixedStack[m].image}/>
          </div>
        )
      }
@@ -328,7 +328,7 @@ class PlayStack extends Component {
        console.log("-----flightStack",m,animationName,top,left)
        flightStack.push(
          <div key={"flightStack"+m} className={'spinner'} style={{animationName:animationName,position:"absolute",left:left,top:top}}>
-          <Cryptog  angle={this.state.flippingPogsAngle} id={this.state.flippedThisRound[m].id} flying={this.state.flippingPogs} image={this.state.flippedThisRound[m].image}/>
+          <Cryptog scale={0.9} angle={this.state.flippingPogsAngle} id={this.state.flippedThisRound[m].id} flying={this.state.flippingPogs} image={this.state.flippedThisRound[m].image}/>
          </div>
        )
      }
@@ -366,7 +366,7 @@ class PlayStack extends Component {
           message = (
             <div>
               <div style={{padding:10,paddingTop:20}}>Share game url:</div>
-              <pre id="url" onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
+              <pre id="url" style={{fontSize:14}} onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
               <div style={{padding:10,paddingTop:20}}>{"Accept an opponent's stack:"}</div>
             </div>
           )
@@ -374,12 +374,12 @@ class PlayStack extends Component {
           message = (
             <div>
               <div style={{padding:10,paddingTop:20}}>Waiting for other players to join, share game url to challenge your friends:</div>
-              <pre id="url" onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
+              <pre id="url" style={{fontSize:14}} onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
             </div>
           )
         }
       }else{
-        message = "Waiting for game creator to accept your stack..."
+        message = "Waiting for the game creator to accept your stack..."
       }
 
       display = (
@@ -395,12 +395,14 @@ class PlayStack extends Component {
           <div onClick={this.startCoinFlip.bind(this)}>
             <Cryptog key={"coinflip"} id={0} flipping={this.state.coinFlipping} image={"unicorn.png"}/>
             <button>startCoinFlip</button>
+            <div>(to determine who goes first)</div>
           </div>
         )
       }else{
         display = (
           <div>
-            Waiting for coin flip...
+            Waiting for game creator to start coin flip to determine who goes first...
+            <Cryptog key={"coinflip"} id={0} flipping={this.state.coinFlipping} image={"unicorn.png"}/>
           </div>
         )
       }
@@ -416,7 +418,8 @@ class PlayStack extends Component {
       }else{
         display = (
           <div>
-            Waiting for coin flip to land...
+          Waiting for game creator to stop coin flip...
+          <Cryptog key={"coinflip"} id={0} flipping={this.state.coinFlipping} image={"unicorn.png"}/>
           </div>
         )
       }
@@ -499,11 +502,11 @@ class PlayStack extends Component {
       <div>
       {modeDisplay}
       {timerDisplay}
-      <div style={{position:'fixed',bottom:20,right:20,backgroundColor:"#eeeeee",padding:20}}>
+      <div style={{zIndex:-1,fontSize:12,position:'fixed',top:200,right:20,backgroundColor:"#eeeeee",padding:20}}>
         {flipDisplay}
       </div>
       {display}
-      <div style={{position:'absolute',left:window.innerWidth/2-50,top:window.innerHeight/2}}>
+      <div style={{position:'absolute',left:window.innerWidth/3,top:(window.innerHeight*2/3)}}>
         {mixedStack}
         {flightStack}
 

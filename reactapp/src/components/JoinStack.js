@@ -55,8 +55,10 @@ class JoinStack extends Component {
     }
     return (
       <div>
-        <Stack {...this.state.stackData}/>
-        <StackSelect message={"Select 5 tokens to join existing game."} myTokens={this.props.context.myTokens} goFn={this.joinStack.bind(this)} />
+        <div style={{opacity:0.7}}>
+          <Stack {...this.state.stackData}/>
+        </div>
+        <StackSelect message={"Select five of your pogs to join existing game:"} myTokens={this.props.context.myTokens} goFn={this.joinStack.bind(this)} />
       </div>
     )
   }

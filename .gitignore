@@ -1,3 +1,4 @@
+reactapp/src/contracts/*
 app/src/*.blockNumber.js
 app/src/*.address.js
 */*.compiled

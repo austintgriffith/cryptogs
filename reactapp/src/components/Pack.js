@@ -20,6 +20,7 @@ export default createClass({
         <div>
           <div style={{marginTop:25,opacity:0.5,fontSize:12}}>for sale</div>
           <div style={{opacity:0.9,fontSize:20}}>Ξ{price}</div>
+          <button>Purchase</button>
         </div>
       )
 
