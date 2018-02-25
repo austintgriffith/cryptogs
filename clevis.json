@@ -3,11 +3,6 @@
   "gasprice": 10,
   "ethprice": 400,
   "deploygas": 4000000,
-<<<<<<< HEAD
   "xfergas": 1000000,
-  "DEBUG": true
-=======
-  "xfergas": 2000000,
   "DEBUG": false
->>>>>>> dca01f882904b1ed8eb2ec5302aa57a2df116bbc
 }

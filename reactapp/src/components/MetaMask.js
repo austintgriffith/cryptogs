@@ -146,7 +146,7 @@ class MetaMask extends Component {
                 fontSize:21,
                 color:"#222",
               }}>
-                <div>Please switch your network to Ropsten</div>
+                Please switch your network to Ropsten
               </span>
 
 

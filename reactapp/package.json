@@ -1,0 +1,23 @@
+{
+  "name": "reactapp",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "create-react-class": "^15.6.3",
+    "react": "^16.2.0",
+    "react-blockies": "^1.2.2",
+    "react-dom": "^16.2.0",
+    "react-helmet": "^5.2.0",
+    "react-motion": "^0.5.2",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "1.1.1",
+    "react-stack-grid": "^0.7.1",
+    "web3": "^1.0.0-beta.30"
+  },
+  "scripts": {
+    "start": "PORT=8000 react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}

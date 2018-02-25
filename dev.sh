@@ -16,7 +16,7 @@ create window with profile "Default"
 tell the current window
 tell the current session
 delay 1
-write text "cd ~/cryptogs;atom .;cd gatsby-site/;gatsby develop"
+write text "cd ~/cryptogs;atom .;cd reactapp/;npm start"
 delay 1
 end tell
 end tell
