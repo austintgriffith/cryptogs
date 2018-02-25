@@ -1,10 +1,7 @@
-<<<<<<< HEAD
-
 app/src/*.blockNumber.js
 app/src/*.address.js
-=======
 */*.compiled
->>>>>>> dca01f882904b1ed8eb2ec5302aa57a2df116bbc
+reactapp/aws.json
 app/aws*
 accounts.json
 **.DS_*
