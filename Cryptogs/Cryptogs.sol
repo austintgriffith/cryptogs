@@ -207,6 +207,8 @@ contract Cryptogs is NFT, Ownable {
     }
     event CounterStack(address indexed _sender,uint256 indexed timestamp,bytes32 indexed _stack, bytes32 _counterStack, uint256 _token1, uint256 _token2, uint256 _token3, uint256 _token4, uint256 _token5);
 
+    mapping (bytes32 => bytes32) public counterOfStack;
+
     mapping (bytes32 => uint8) public mode;
     mapping (bytes32 => uint8) public round;
     mapping (bytes32 => uint32) public lastBlock;
@@ -237,6 +239,7 @@ contract Cryptogs is NFT, Ownable {
       lastBlock[_stack]=uint32(block.number);
       lastActor[_stack]=stacks[_counterStack].owner;
       mode[_stack]=1;
+      counterOfStack[_stack]=_counterStack;
 
       //// LOL @
       mixedStack[_stack][0] = stacks[_stack].ids[0];
@@ -257,6 +260,10 @@ contract Cryptogs is NFT, Ownable {
 
     mapping (bytes32 => bytes32) public commit;
 
+    function getMixedStack(bytes32 _stack) external view returns(uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256){
+      uint256[10] thisStack = mixedStack[_stack];
+      return (thisStack[0],thisStack[1],thisStack[2],thisStack[3],thisStack[4],thisStack[5],thisStack[6],thisStack[7],thisStack[8],thisStack[9]);
+    }
 
     //tx 4: player one commits and flips coin up
     //at this point, the timeout goes into effect and if any transaction including
@@ -272,6 +279,7 @@ contract Cryptogs is NFT, Ownable {
       require(stacks[_stack].owner==msg.sender);
       //the counter must be a counter of stack 1
       require(stackCounter[_counterStack]==_stack);
+      require(counterOfStack[_stack]==_counterStack);
       //make sure that we are in mode 1
       require(mode[_stack]==1);
       //store the commit for the next tx
@@ -289,6 +297,7 @@ contract Cryptogs is NFT, Ownable {
       require(stacks[_stack].owner==msg.sender);
       //the counter must be a counter of stack 1
       require(stackCounter[_counterStack]==_stack);
+      require(counterOfStack[_stack]==_counterStack);
       //make sure that we are in mode 2
       require(mode[_stack]==2);
 
@@ -335,6 +344,7 @@ contract Cryptogs is NFT, Ownable {
       }
       //the counter must be a counter of stack 1
       require(stackCounter[_counterStack]==_stack);
+      require(counterOfStack[_stack]==_counterStack);
       //make sure that we are in mode 3
       require(mode[_stack]==3);
       //store the commit for the next tx
@@ -358,6 +368,7 @@ contract Cryptogs is NFT, Ownable {
       }
       //the counter must be a counter of stack 1
       require(stackCounter[_counterStack]==_stack);
+      require(counterOfStack[_stack]==_counterStack);
       //make sure that we are in mode 4
       require(mode[_stack]==4);
 
@@ -437,6 +448,7 @@ contract Cryptogs is NFT, Ownable {
       require( stacks[_stack].owner==msg.sender || stacks[_counterStack].owner==msg.sender );
       //the counter must be a counter of stack 1
       require( stackCounter[_counterStack]==_stack );
+      require( counterOfStack[_stack]==_counterStack );
       //the bad guy shouldn't be able to drain
       require( lastActor[_stack]==msg.sender );
       //must be after timeout period

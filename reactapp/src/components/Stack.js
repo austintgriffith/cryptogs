@@ -14,8 +14,7 @@ export default createClass({
       for(let t=1;t<=5;t++){
         cryptogs.push(<Cryptog key={"tos"+this.props["_token"+t]} id={this.props["_token"+t]} image={this.props["_token"+t+"Image"]}/>)
       }
-    }else{
-
+    }else if(this.props.owner){
        account = this.props.owner.toLowerCase()
        for(let t=1;t<=5;t++){
          cryptogs.push(<Cryptog key={"tos"+this.props["token"+t]} id={this.props["token"+t]} image={this.props["token"+t+"Image"]}/>)

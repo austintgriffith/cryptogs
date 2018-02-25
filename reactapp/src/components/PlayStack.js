@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Stack from '../components/Stack.js'
+import Cryptog from '../components/Cryptog.js'
 import StackSelect from '../components/StackSelect.js'
 
 let loadInterval
@@ -9,8 +10,10 @@ class PlayStack extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      stackMode:0,
       stack:props.match.params.stack,
-      counterStacks:[]
+      counterStacks:[],
+      stackedUpCryptogs:[],
     }
     this.loadStackData()
     loadInterval = setInterval(this.loadStackData.bind(this),707)
@@ -51,6 +54,7 @@ class PlayStack extends Component {
 
       update.counterStacks = counterStacks
     }else{
+
       update.lastBlock = await contracts['Cryptogs'].methods.lastBlock(this.state.stack).call()
       update.lastActor = await contracts['Cryptogs'].methods.lastActor(this.state.stack).call()
       update.TIMEOUTBLOCKS = await contracts['Cryptogs'].methods.TIMEOUTBLOCKS().call()
@@ -63,6 +67,44 @@ class PlayStack extends Component {
         update.counterStack = acceptCounterStackEvents[e].returnValues._counterStack
       }
     }
+
+    if(update.stackMode==2&&!this.state.coinFlipping){
+      update.coinFlipping=true
+    }else if(update.stackMode==1&&this.state.coinFlipping){
+      update.coinFlipping=false
+    }
+
+      let possibleFlightPaths = [350,300,250,200,150,-150,-200,-250,-300,-350];
+    if(update.stackMode!=this.state.stackMode){
+      let mixedStackIds = await contracts['Cryptogs'].methods.getMixedStack(this.state.stack).call()
+
+      update.mixedStack = []
+      update.flippedThisRound = []
+
+      for(let i in mixedStackIds){
+        if(mixedStackIds[i]>0){
+          let token = await contracts['Cryptogs'].methods.getToken(mixedStackIds[i]).call()//this.state.allStacks[id]
+          let image = web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
+          update.mixedStack.push({id:mixedStackIds[i],image:image})
+        }else{
+          console.log("item",i,"is out")
+          if(this.state.mixedStack &&this.state.mixedStack[i]&& this.state.mixedStack[i].id!=0){
+
+
+            //let arrayofonerandompath = possibleFlightPaths.splice(Math.floor(Math.random()*possibleFlightPaths.length),1);
+            //this.state.mixedStack[i].thisFlightPath = arrayofonerandompath[0]
+            this.state.mixedStack[i].thisFlightPath=possibleFlightPaths[i]
+            console.log("and it happened this round, flight path will be",this.state.mixedStack[i].thisFlightPath)
+            update.flippedThisRound.push(this.state.mixedStack[i])
+            update.flippingPogs=true;
+            update.flippingPogsAngle=false;
+          }
+        }
+      }
+      console.log("TRANSITION TO",update.mixedStack,update.flippedThisRound)
+
+    }
+
 
     if(update.stackMode>2){
       //  event ThrowSlammer(bytes32 indexed stack, bool success, address whoDoneIt, uint32 blockNumber, bool token1Flipped, bool token2Flipped, bool token3Flipped, bool token4Flipped, bool token5Flipped, bool token6Flipped, bool token7Flipped, bool token8Flipped, bool token9Flipped, bool token10Flipped);
@@ -80,7 +122,13 @@ class PlayStack extends Component {
 
 
 
-    this.setState(update)
+    this.setState(update,()=>{
+      if(update.flippingPogs){
+        setTimeout(()=>{
+          this.setState({flippingPogs:false,flippingPogsAngle:75})
+        },2000)
+      }
+    })
   }
   acceptStack(counterStack){
     console.log("ACCEPT",this.state.stack,counterStack)
@@ -98,6 +146,7 @@ class PlayStack extends Component {
     this.setState({counterStack:counterStack})
   }
   startCoinFlip(){
+
     console.log("START COIN FLIP",this.state.stack,this.state.counterStack)
     let {contracts,account,web3} = this.props.context
 
@@ -209,7 +258,7 @@ class PlayStack extends Component {
         for(let i=1;i<=10;i++){
           if(throwSlammerEvent['token'+i+'Flipped']){
             flipped.push(
-              <span>
+              <span key={"log"+i}>
                 #{i}
               </span>
             )
@@ -240,7 +289,7 @@ class PlayStack extends Component {
           }
         }
        return (
-         <div>
+         <div key={"logdiv"+throwSlammerEvent.blockNumber}>
          <span>#{throwSlammerEvent.blockNumber}</span>
          <span style={{margin:5}}>{who}</span>
          {flipped}
@@ -249,6 +298,42 @@ class PlayStack extends Component {
        )
      })
    }
+
+   let mixedStack = []
+   if(stackMode>0&&stackMode<9){
+     for(let m in this.state.mixedStack){
+       mixedStack.push(
+         <div key={"mixedStack"+m} style={{position:'absolute',left:0,top:(-7*m),zIndex:m}}>
+          <Cryptog  angle={75} id={this.state.mixedStack[m].id} image={this.state.mixedStack[m].image}/>
+         </div>
+       )
+     }
+   }
+
+
+
+   let flightStack = []
+   if(stackMode==3){
+     for(let m in this.state.flippedThisRound){
+       let thisFlightPath = this.state.flippedThisRound[m].thisFlightPath
+       let possibleFlightPathsText = ""
+       if(thisFlightPath<0) {
+         possibleFlightPathsText = (thisFlightPath)*-1
+       }else{
+         possibleFlightPathsText = "N"+(thisFlightPath)
+       }
+       let animationName = "flightPath"+possibleFlightPathsText
+       let top = (m*15)+(Math.abs(thisFlightPath)/2)
+       let left = thisFlightPath
+       console.log("-----flightStack",m,animationName,top,left)
+       flightStack.push(
+         <div key={"flightStack"+m} className={'spinner'} style={{animationName:animationName,position:"absolute",left:left,top:top}}>
+          <Cryptog  angle={this.state.flippingPogsAngle} id={this.state.flippedThisRound[m].id} flying={this.state.flippingPogs} image={this.state.flippedThisRound[m].image}/>
+         </div>
+       )
+     }
+   }
+
 
     let display = ""
     if(stackMode==0){
@@ -260,10 +345,9 @@ class PlayStack extends Component {
 
       let drawCounterStacks = counterStacks.map((counterstack)=>{
         let callToAction
-        console.log("get id from ",counterstack)
         if(account.toLowerCase()==stackData.owner.toLowerCase()){
           callToAction=(
-            <button onClick={this.acceptStack.bind(this,counterstack._counterStack)}>accept</button>
+            <button key={"counterstackbutton"+counterstack._counterStack} onClick={this.acceptStack.bind(this,counterstack._counterStack)}>accept</button>
           )
         }
         return (
@@ -308,8 +392,9 @@ class PlayStack extends Component {
     }else if(stackMode==1){
       if(account.toLowerCase()==stackData.owner.toLowerCase()){
         display = (
-          <div>
-            <button onClick={this.startCoinFlip.bind(this)}>startCoinFlip</button>
+          <div onClick={this.startCoinFlip.bind(this)}>
+            <Cryptog key={"coinflip"} id={0} flipping={this.state.coinFlipping} image={"unicorn.png"}/>
+            <button>startCoinFlip</button>
           </div>
         )
       }else{
@@ -324,6 +409,7 @@ class PlayStack extends Component {
       if(account.toLowerCase()==stackData.owner.toLowerCase()){
         display = (
           <div>
+            <Cryptog key={"coinflip"} id={0} flipping={this.state.coinFlipping} image={"unicorn.png"}/>
             <button onClick={this.endCoinFlip.bind(this)}>endCoinFlip</button>
           </div>
         )
@@ -347,7 +433,6 @@ class PlayStack extends Component {
             <button onClick={this.raiseSlammer.bind(this)}>raiseSlammer</button>
           </div>
         )
-
       }
     }else if(stackMode==4){
       if(account.toLowerCase()==lastActor.toLowerCase()){
@@ -409,6 +494,7 @@ class PlayStack extends Component {
       )
     }
 
+    let m=1
     return (
       <div>
       {modeDisplay}
@@ -417,6 +503,11 @@ class PlayStack extends Component {
         {flipDisplay}
       </div>
       {display}
+      <div style={{position:'absolute',left:window.innerWidth/2-50,top:window.innerHeight/2}}>
+        {mixedStack}
+        {flightStack}
+
+      </div>
       </div>
     )
 
@@ -424,6 +515,14 @@ class PlayStack extends Component {
 }
 export default PlayStack;
 
+/*
+<div className={"spinner"} style={{
+  animationName:"flightPathN350",
+  position:"absolute",left:350,top:175
+}} >
+ <Cryptog angle={30} id={0} flying={this.state.flippingPogs} image={"unicorn.png"}/>
+</div>
+ */
 
 function selectText() {
     let containerid = "url"

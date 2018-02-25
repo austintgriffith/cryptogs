@@ -21,7 +21,7 @@ function bigHeader(str){
 function rand(min, max) {
   return Math.floor( Math.random() * (max - min) + min );
 }
-const contractsDir = "gatsby-site/src/contracts/"
+const contractsDir = "reactapp/src/contracts/"
 function loadAbi(contract){
   let abi = fs.readFileSync(contract+"/"+contract+".abi").toString().trim()
   console.log(tab,contract.cyan,"ABI:",(""+abi.length).yellow)

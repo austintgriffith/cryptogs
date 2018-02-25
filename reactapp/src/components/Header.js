@@ -1,7 +1,5 @@
 import React from 'react'
 import createClass from 'create-react-class';
-import Link from 'gatsby-link'
-import { withPrefix} from 'gatsby-link'
 import PropTypes from 'prop-types';
 import Metamask from '../components/MetaMask.js'
 import {Motion, spring, presets} from 'react-motion';
@@ -24,21 +22,21 @@ export default createClass({
 					}}
 				</Motion>
 				<h1 style={{ float:"right",padding:10 }}>
-					<Link to="/" style={{color: '#333333',textDecoration: 'none'}}>
+					<a href="/" style={{color: '#333333',textDecoration: 'none'}}>
 						CryptoPogs
-					</Link>
+					</a>
 				</h1>
         <div style={{margin: '0 auto',maxWidth: 960,height: 70,padding:10,textAlign:'right'}}>
 					<h4 style={{marginTop:20,letterSpacing:-0.8}}>
-						<Link to={"/address/"+account} style={{color: '#666666',padding:10}}>
+						<a href={"/address/"+account} style={{color: '#666666',padding:10}}>
 							My Pogs
-						</Link>
-						<Link to="/stacks" style={{color: '#666666',padding:10}}>
+						</a>
+						<a href="/stacks" style={{color: '#666666',padding:10}}>
 							Play Pogs
-						</Link>
-						<Link to="/" style={{color: '#666666',padding:10}}>
+						</a>
+						<a href="/" style={{color: '#666666',padding:10}}>
 							Buy Pogs
-						</Link>
+						</a>
 					</h4>
         </div>
       </div>

@@ -7,7 +7,7 @@ export default createClass({
     if(this.props.size){
       size=this.props.size
     }
-    let angle = 25
+    let angle = 28
     if(this.props.angle){
       angle=this.props.angle
     }
@@ -15,13 +15,20 @@ export default createClass({
     if(this.props.scale){
       scale=this.props.scale
     }
+    let className = "is-stopped"
+    if(this.props.flipping){
+      className = "is-flip"
+    }
+    if(this.props.flying){
+      className = "is-slam"
+    }
     return (
-      <div>
+      <div className={className}>
         <div className="coin__container" style={{
             transform: "scale("+scale+")"
         }}>
 
-            <div className="coin" style={{
+            <div className="coin is-slam" style={{
                 zIndex: this.props.zIndex,
                 transform:"rotateX("+angle+"deg)"
             }}>
