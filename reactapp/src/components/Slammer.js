@@ -18,9 +18,16 @@ export default createClass({
       style["animationTimingFunction"] ="linear";
     }
 
+    let scale = 1
+    if(this.props.scale){
+      scale=this.props.scale
+    }
+
     return(
       <div>
-          <div className="slammer__container">
+          <div className="slammer__container" style={{
+              transform: "scale("+scale+")"
+          }}>
 
 
 

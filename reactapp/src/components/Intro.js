@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import createClass from 'create-react-class';
 import Cryptog from '../components/Cryptog.js'
-
+import Slammer from '../components/Slammer.js'
 
 export default createClass({
   render(){
@@ -36,9 +36,32 @@ export default createClass({
           <Cryptog angle={65} scale={displayScale} id={0} image={"ethereumlogo.png"}/>
         </div>
 
-        <div style={{position:'absolute',right:displayStackRight+80,top:-50}}>
-          <Cryptog angle={65} scale={displayScale} id={0} creeprolling={true} image={"dragon.png"}/>
+        <div style={{position:'absolute',right:displayStackRight-145,top:45}}>
+          <Cryptog angle={65} scale={displayScale} id={0} image={"unicorn.png"}/>
         </div>
+
+        <div style={{position:'absolute',right:displayStackRight+95,top:-50}}>
+          <Cryptog scale={displayScale} id={0} angle={131} image={"dragon.png"}/>
+        </div>
+
+        <div style={{position:'absolute',right:displayStackRight-75,top:-60}}>
+          <Cryptog scale={displayScale} id={0} angle={105} image={"dragon.png"}/>
+        </div>
+
+        <div style={{position:'absolute',right:displayStackRight-160,top:-45}}>
+          <Cryptog  scale={displayScale} id={0} angle={55} image={"dragon.png"}/>
+        </div>
+
+
+        <div style={{position:'absolute',right:displayStackRight,top:-35}}>
+          <Slammer scale={displayScale} angle={45} image={"ethslammer.png"}/>
+        </div>
+
+        <div style={{position:'absolute',right:displayStackRight-110,top:0}}>
+          <Cryptog angle={80} scale={displayScale} id={0} image={"fish.png"}/>
+        </div>
+
+
 
         <div style={{position:'absolute',right:displayStackRight-60,top:55}}>
           <Cryptog angle={65} scale={displayScale} id={0} image={"ethereumlogo.png"}/>
@@ -48,10 +71,11 @@ export default createClass({
 
 
     )
+    //creeprolling={true}
 
 
     return (
-      <div className={"messageGray"} style={{marginTop:65,color:"#666666",fontSize:15}}>
+      <div className={"messageGray"} style={{marginTop:85,color:"#666666",fontSize:15}}>
         <div style={{position:'relative'}}>
 
           <div style={{zIndex:2,fontWeight:'bold',paddingBottom:20}}>{"Whip out your slammer and get rad on the blockchain!"}</div>
