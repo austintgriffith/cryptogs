@@ -200,7 +200,7 @@ export default createClass({
 
 		return (
       <div>
-				<div style={{float:'right',padding:30,paddingRight:100,cursor:"pointer"}}><button onClick={()=>{
+				<div style={{float:'right',padding:30,paddingRight:100}}><button style={{cursor:"pointer"}}onClick={()=>{
 					if(account){
 						window.location = "/create"
 					}else{

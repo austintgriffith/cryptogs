@@ -97,13 +97,20 @@ module.exports = {
       });
     });
   },
-  mintPack:(accountindex,image,price)=>{
+  mintPack:(accountindex,images,price)=>{
     describe('#testMint() ', function() {
       it('should mint a cryptog', async function() {
         this.timeout(120000)
         const accounts = await clevis("accounts")
-        let imageBytes = web3.utils.fromAscii(image)
-        const result = await clevis("contract","mintPack","Cryptogs",accountindex,web3.utils.toWei(""+price, "ether"),imageBytes,imageBytes,imageBytes,imageBytes,imageBytes,imageBytes,imageBytes,imageBytes,imageBytes,imageBytes)
+        let imageBytes = []
+
+        console.log(images)
+
+        for(let i in images){
+          imageBytes[i] = web3.utils.fromAscii(images[i])
+        }
+
+        const result = await clevis("contract","mintPack","Cryptogs",accountindex,web3.utils.toWei(""+price, "ether"),imageBytes[0],imageBytes[1],imageBytes[2],imageBytes[3],imageBytes[4],imageBytes[5],imageBytes[6],imageBytes[7],imageBytes[8],imageBytes[9])
         printTxResult(result)
         console.log(tab,accounts[accountindex].blue+" minted pack ")
       });

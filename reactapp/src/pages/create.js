@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import PropTypes from 'prop-types'
 import StackSelect from '../components/StackSelect.js'
 
-const GWEI = 1
+const GWEI = 10
 
 let syncInterval
 export default createClass({

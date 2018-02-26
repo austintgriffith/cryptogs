@@ -40,7 +40,7 @@ export default createClass({
             }}>
 
                 <div className="coin__front" style={{
-                    backgroundImage: 'url("/'+this.props.image+'")'
+                    backgroundImage: 'url("/cryptogs/'+this.props.image+'")'
                 }}></div>
 
                 <div className="coin__back"></div>

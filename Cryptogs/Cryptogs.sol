@@ -34,6 +34,14 @@ contract Cryptogs is NFT, Ownable {
     }
     event ThisIsRad(address sender,string optional);
 
+    string public ipfs;
+    function setIpfs(string _ipfs) public onlyOwner returns (bool){
+      ipfs=_ipfs;
+      IPFS(ipfs);
+      return true;
+    }
+    event IPFS(string ipfs);
+
 
     function Cryptogs() public {
       //0 index should be a blank item owned by no one
@@ -115,17 +123,18 @@ contract Cryptogs is NFT, Ownable {
     //that will allow us to calculate rarity on-chain if we want
     mapping (bytes32 => uint256) public tokensOfImage;
 
-    function getToken(uint256 _id) public view returns (address owner,bytes32 image) {
+    function getToken(uint256 _id) public view returns (address owner,bytes32 image,uint256 rarity) {
       return (
         tokenIndexToOwner[_id],
-        items[_id].image
+        items[_id].image,
+        getRarity(_id)
       );
     }
 
     //we can get the rarity percentage bar off chain by multiplying the div width by
     // rarity(<tokenid>) / RARITYMULTIPLIER
-    function rarity(uint256 _id) public constant returns (uint256) {
-      return RARITYMULTIPLIER-(RARITYMULTIPLIER * tokensOfImage[items[_id].image])/(items.length - 1);
+    function getRarity(uint256 _id) public constant returns (uint256) {
+      return uint256(RARITYMULTIPLIER-(RARITYMULTIPLIER * tokensOfImage[items[_id].image])/(items.length - 1));
     }
 
     uint256 nonce = 0;
@@ -208,7 +217,6 @@ contract Cryptogs is NFT, Ownable {
     event CounterStack(address indexed _sender,uint256 indexed timestamp,bytes32 indexed _stack, bytes32 _counterStack, uint256 _token1, uint256 _token2, uint256 _token3, uint256 _token4, uint256 _token5);
 
     mapping (bytes32 => bytes32) public counterOfStack;
-
     mapping (bytes32 => uint8) public mode;
     mapping (bytes32 => uint8) public round;
     mapping (bytes32 => uint32) public lastBlock;
@@ -425,6 +433,18 @@ contract Cryptogs is NFT, Ownable {
         if(done){
           FinishGame(_stack);
           mode[_stack]=9;
+
+          delete mixedStack[_stack];
+          delete stacks[_stack];
+          delete stackCounter[_counterStack];
+          delete stacks[_counterStack];
+          delete lastBlock[_stack];
+          delete lastActor[_stack];
+          delete counterOfStack[_stack];
+          delete round[_stack];
+          delete commitBlock[_stack];
+          delete commit[_stack];
+
         }else{
           round[_stack]++;
         }
@@ -467,6 +487,18 @@ contract Cryptogs is NFT, Ownable {
 
       FinishGame(_stack);
       mode[_stack]=9;
+
+      delete mixedStack[_stack];
+      delete stacks[_stack];
+      delete stackCounter[_counterStack];
+      delete stacks[_counterStack];
+      delete lastBlock[_stack];
+      delete lastActor[_stack];
+      delete counterOfStack[_stack];
+      delete round[_stack];
+      delete commitBlock[_stack];
+      delete commit[_stack];
+
       DrainStack(_stack,_counterStack,msg.sender);
     }
     event DrainStack(bytes32 stack,bytes32 counterStack,address sender);

@@ -2,7 +2,6 @@ import React from 'react'
 import { createElement } from 'react';
 import { BrowserRouter as Router, Route, Link, Redirect, Switch } from "react-router-dom";
 import createClass from 'create-react-class';
-import Helmet from 'react-helmet'
 import PropTypes from 'prop-types';
 import Header from './components/Header.js'
 import './index.css'
@@ -118,13 +117,6 @@ export default createClass({
 		const { count,contracts } = this.state;
 		return (
 			<div>
-				<Helmet
-					title="Title"
-					meta={[
-						{ name: 'description', content: 'description' },
-						{ name: 'keywords', content: 'keywords' },
-					]}
-				/>
 				<Header
 					syncBlockNumber={this.syncBlockNumber}
 					account={this.state.account}

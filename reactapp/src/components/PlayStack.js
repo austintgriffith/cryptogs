@@ -105,7 +105,7 @@ class PlayStack extends Component {
       update.coinFlipping=false
     }
 
-      let possibleFlightPaths = [350,300,250,200,150,-150,-200,-250,-300,-350];
+      let possibleFlightPaths = [-150,-200,-250,-300,-350,350,300,250,200,150];
     if(update.stackMode!=this.state.stackMode){
       let mixedStackIds = await contracts['Cryptogs'].methods.getMixedStack(this.state.stack).call()
 
@@ -206,9 +206,8 @@ class PlayStack extends Component {
       }else {
         update.slammerSpinning = false
       }
-
     }else{
-      update.slammerTop = -150
+      update.slammerTop = -1050
       update.slammerLeft = 0
       update.slammerAngle = 25
       update.slammerSpinning = false
@@ -442,8 +441,8 @@ class PlayStack extends Component {
    if(stackMode>0&&stackMode<9){
      for(let m in this.state.mixedStack){
        mixedStack.push(
-         <div key={"mixedStack"+m} style={{position:'absolute',left:0,top:(-10*m),zIndex:m}}>
-          <Cryptog  angle={65} scale={0.9} id={this.state.mixedStack[m].id} image={this.state.mixedStack[m].image}/>
+         <div key={"mixedStack"+m} style={{position:'absolute',left:0,top:(-10*m),zIndex:1}}>
+          <Cryptog angle={65} scale={0.9} id={this.state.mixedStack[m].id} image={this.state.mixedStack[m].image}/>
          </div>
        )
      }
@@ -473,8 +472,8 @@ class PlayStack extends Component {
        }
 
        flightStack.push(
-         <div key={"flightStack"+m} className={className} style={{zIndex:50,animationName:animationName,position:"absolute",left:left,top:top}}>
-          <Cryptog zIndex={50} scale={0.9} angle={this.state.flippingPogsAngle} id={this.state.flippedThisRound[m].id} flying={this.state.flippingPogs} image={this.state.flippedThisRound[m].image}/>
+         <div key={"flightStack"+m} className={className} style={{zIndex:50,animationName:animationName,position:"absolute",left:left,top:top,zIndex:50}}>
+          <Cryptog scale={0.9} angle={this.state.flippingPogsAngle} id={this.state.flippedThisRound[m].id} flying={this.state.flippingPogs} image={this.state.flippedThisRound[m].image}/>
          </div>
        )
      }
@@ -613,27 +612,35 @@ class PlayStack extends Component {
       )
     }
 
+    let slammerOpacity = 0.7
+
     let timerDisplay = ""
     if(lastBlock&&lastActor){
 
       let turn
+
       if(account.toLowerCase()==lastActor.toLowerCase()){
         turn = "Their Turn"
       }else{
         turn = "Your Turn"
+        slammerOpacity=1
       }
 
       let drainDisplay = ""
-      drainDisplay = (
-        <button onClick={this.drainStack.bind(this)}>drain</button>
-      )
+      if(blockNumber-lastBlock >= TIMEOUTBLOCKS){
+        drainDisplay = (
+          <button onClick={this.drainStack.bind(this)}>drain</button>
+        )
+      }
+
 
       if(stackMode<9){
         timerDisplay = (
           <div style={{float:'right'}}>
-            <div>{blockNumber-lastBlock}/{TIMEOUTBLOCKS}</div>
+            <div style={{fontSize:30}}>{turn}</div>
+            <div style={{fontSize:12,opacity:0.2}}>{blockNumber-lastBlock}/{TIMEOUTBLOCKS} blocks to timeout</div>
             <div>{drainDisplay}</div>
-            <div>{turn}</div>
+
           </div>
         )
       }
@@ -650,27 +657,31 @@ class PlayStack extends Component {
       </div>
       {display}
       <div style={{position:'absolute',left:window.innerWidth/3,top:(window.innerHeight*5/9)}}>
+
         {mixedStack}
         {flightStack}
 
+
+
         <Motion
-				defaultStyle={{
-					left:0,
+        defaultStyle={{
+          left:0,
           top:0,
-				}}
-				style={{
-					top:spring(this.state.slammerTop,{ stiffness: 100, damping: 6 }),
+        }}
+        style={{
+          top:spring(this.state.slammerTop,{ stiffness: 100, damping: 6 }),
           left:spring(this.state.slammerLeft,{ stiffness: 100, damping: 6 })
-				}}
-				>
-					{currentStyles => {
-						return (
-              <div onClick={this.slammerClick.bind(this)} style={{cursor:'pointer',position:"absolute",left:currentStyles.left,top:currentStyles.top}}>
+        }}
+        >
+          {currentStyles => {
+            return (
+              <div onClick={this.slammerClick.bind(this)} style={{opacity:slammerOpacity,cursor:'pointer',position:"absolute",left:currentStyles.left,top:currentStyles.top,zIndex:90}}>
                 <Slammer spinning={this.state.slammerSpinning} angle={this.state.slammerAngle} image={"ethslammer.png"}/>
               </div>
             )
-					}}
-				</Motion>
+          }}
+        </Motion>
+
       </div>
       </div>
     )

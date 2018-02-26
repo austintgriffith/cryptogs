@@ -32,7 +32,10 @@
 [ ] deploy to mainnet with a big ass warning sign... the app will have to detect which contract goes with which network
 
 [ ] randomize stack order on the way in or something so the mixed stack isn't always based on mint order
-
+[ ] IPFS in contract
+[ ] rarity as part of the getToken call
+[ ] the "They flipped you flippped" should be replaced with blockies (because it says they for both people with a third account)
+[ ] the flipped pogs number should be replaced with the actual pog 
 -----
 gameplay
 -----

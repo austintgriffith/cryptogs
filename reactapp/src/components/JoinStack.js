@@ -3,7 +3,7 @@ import Stack from '../components/Stack.js'
 import StackSelect from '../components/StackSelect.js'
 
 let waitInterval
-const GWEI = 1
+const GWEI = 10
 
 class JoinStack extends Component {
   constructor(props) {

@@ -10,7 +10,7 @@ export default createClass({
     }
 
     let style = {
-        zIndex: 10,
+        zIndex: 90,
         transform:"rotateX("+angle+"deg)",
     }
     if(this.props.spinning){
@@ -34,7 +34,7 @@ export default createClass({
               <div className={"slammer"} style={style}>
 
                   <div className="slammer__front" style={{
-                      backgroundImage: 'url("/'+this.props.image+'")'
+                      backgroundImage: 'url("/cryptogs/'+this.props.image+'")'
                   }}></div>
 
                   <div className="slammer__back"></div>

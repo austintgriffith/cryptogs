@@ -8,7 +8,9 @@ import Intro from '../components/Intro.js'
 let loadInterval
 let initialIntervalLoaded
 
-const GWEI=1
+const MINTEDPACKDISPLAYLIMIT = 5
+
+const GWEI=10
 
 export default createClass({
 	displayName: 'IndexPage',
@@ -84,29 +86,34 @@ export default createClass({
 		if(!mintedPacks) return (<div style={{opacity:0.3}}>connecting...</div>)
 
 		let mintedPackRender = []
+
+		let displycount = 0
+
 		for(let p in mintedPacks){
 			if(!mintedPacks[p].bought){
-				mintedPackRender.push(
-					<Pack id={p} key={"pack"+p} {...mintedPacks[p]} PackClick={
-						(p)=>{
-							if(!account){
-								metaMaskHintFn()
-							}else{
-								contracts["Cryptogs"].methods.buyPack(p).send({
-						        from: account,
-										value: web3.utils.toWei(mintedPacks[p].price,"ether"),
-						        gas:490000,
-						        gasPrice:GWEI * 1000000000
-						      },(error,hash)=>{
-						        console.log("CALLBACK!",error,hash)
-						      }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
-						        console.log("RESULT:",receipt)
-										window.location = "/address/"+account
-						      })
+				if(displycount++<MINTEDPACKDISPLAYLIMIT){
+					mintedPackRender.push(
+						<Pack id={p} key={"pack"+p} {...mintedPacks[p]} PackClick={
+							(p)=>{
+								if(!account){
+									metaMaskHintFn()
+								}else{
+									contracts["Cryptogs"].methods.buyPack(p).send({
+							        from: account,
+											value: web3.utils.toWei(mintedPacks[p].price,"ether"),
+							        gas:490000,
+							        gasPrice:GWEI * 1000000000
+							      },(error,hash)=>{
+							        console.log("CALLBACK!",error,hash)
+							      }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
+							        console.log("RESULT:",receipt)
+											window.location = "/address/"+account
+							      })
+								}
 							}
-						}
-					}/>
-				)
+						}/>
+					)
+				}
 			}
 		}
 
