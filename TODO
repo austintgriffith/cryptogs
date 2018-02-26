@@ -4,6 +4,8 @@
       -because sometimes it takes so long you forget you are waiting and try to fire off another one
       (it also needs to handle and ERROR by probably still forwarding to the page it means to go to?
         could you continue to query the status of the tx for a minutes?)
+[ ] the contracts folder should hold different stuff for different networks
+[ ] remove / revoke stack option so timeout drain attack can't happen while you are away
 [ ] mobile responsive, viewport, test in cipher browser
 [ ] game log should be more toward the top right and should include events like coin flip result and final count
 [ ] rarity display for single pog and entire stack
@@ -32,10 +34,7 @@
 [ ] deploy to mainnet with a big ass warning sign... the app will have to detect which contract goes with which network
 
 [ ] randomize stack order on the way in or something so the mixed stack isn't always based on mint order
-[ ] IPFS in contract
-[ ] rarity as part of the getToken call
-[ ] the "They flipped you flippped" should be replaced with blockies (because it says they for both people with a third account)
-[ ] the flipped pogs number should be replaced with the actual pog 
+
 -----
 gameplay
 -----

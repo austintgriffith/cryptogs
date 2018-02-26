@@ -1,3 +1,6 @@
+
+
+
 const fs = require("fs")
 const awsCreds = JSON.parse(fs.readFileSync("aws.json").toString().trim())
 
