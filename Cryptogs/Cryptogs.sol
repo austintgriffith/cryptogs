@@ -21,7 +21,7 @@ contract Cryptogs is NFT, Ownable {
 
     uint8 public constant FLIPPINESS = 64;
     uint8 public constant FLIPPINESSROUNDBONUS = 16;
-    uint8 public constant TIMEOUTBLOCKS = 40;
+    uint8 public constant TIMEOUTBLOCKS = 60;
 
 
     /*
@@ -329,7 +329,7 @@ contract Cryptogs is NFT, Ownable {
       }
 
     }
-    event CoinFlipSuccess(bytes32 stack,address whosTurn,bool heads);
+    event CoinFlipSuccess(bytes32 indexed stack,address whosTurn,bool heads);
     event CoinFlipFail(bytes32 stack);
 
 

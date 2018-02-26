@@ -19,6 +19,8 @@ import PlayPage from './pages/play.js'
 import JoinPage from './pages/join.js'
 import FourOhFourPage from './pages/404.js'
 
+const DEBUG = false
+
 var Web3 = require('web3');
 let contractLoadingInterval;
 export default createClass({
@@ -43,6 +45,7 @@ export default createClass({
 		};
 	},
 	metaMaskHintFn(){
+		window.scrollTo(0,0);
 		this.setState({metamaskHint:100})
 		setTimeout(()=>{
 			this.setState({metamaskHint:10})
@@ -63,6 +66,7 @@ export default createClass({
 		} catch(e) {
 			console.log(e)
 		}
+		this.waitForContracts()
 	},
 	componentWillUnmount(){
 		if (this._timer){
@@ -73,9 +77,8 @@ export default createClass({
     this.setState({etherscan:url})
   },
 	init(account) {
-		console.log("INIT")
+		if(DEBUG) console.log("INIT")
 		this.setState({account:account})
-		this.waitForContracts()
 	},
 	waitForContracts(){
 		if(this.state && this.state.contractsLoaded){
@@ -93,7 +96,7 @@ export default createClass({
 		setInterval(()=>{
 			TokenLoader(this.state.account,this.state.contracts["Cryptogs"],this.state.web3,(update)=>{
 				if(!ShallowEqualsById(update,this.state.myTokens,"image")){
-					console.log("UPDATE MY TOKENS",update)
+					if(DEBUG) console.log("UPDATE MY TOKENS",update)
 					this.setState({myTokens:update});
 				}
 			});
@@ -130,6 +133,7 @@ export default createClass({
 					etherscan={this.state.etherscan}
 					setEtherscan={this.setEtherscan}
 					metamaskHint={this.state.metamaskHint}
+					metaMaskHintFn={this.metaMaskHintFn}
 				/>
 				<div style={{margin: '0 auto',maxWidth: 960,padding: '0px 1.0875rem 1.45rem',paddingTop: 0,}}>
           <Router>

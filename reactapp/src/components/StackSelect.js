@@ -28,7 +28,7 @@ class StackSelect extends Component {
 
     let images = []
     let tokenDisplay = myTokens.map((token)=>{
-      let style={}
+      let style={cursor:"pointer"}
       if(this.state.selectedTokens[token.id]){
         style.opacity=0.3
       }
@@ -38,7 +38,7 @@ class StackSelect extends Component {
     let selectedTokens = []
     for(let id in this.state.selectedTokens){
       if(this.state.selectedTokens[id]){
-        selectedTokens.push( <div onClick={this.tokenClick.bind(this,id,true)} key={"selectedcryptog"+id} id={"selected"+id} ><Cryptog image={images[id]}/></div> )
+        selectedTokens.push( <div style={{cursor:"pointer"}} onClick={this.tokenClick.bind(this,id,true)} key={"selectedcryptog"+id} id={"selected"+id} ><Cryptog image={images[id]}/></div> )
       }
     }
     let gobutton = ""
@@ -60,7 +60,7 @@ class StackSelect extends Component {
           {selectedTokens}
         </StackGrid>
         {this.props.message}
-        <div style={{float:'right'}}>count ({tokenDisplay.length})</div>
+        <div style={{float:'right',opacity:0.3}}>({tokenDisplay.length})</div>
         <StackGrid style={{marginTop:50}} columnWidth={110}>
           {tokenDisplay}
         </StackGrid>

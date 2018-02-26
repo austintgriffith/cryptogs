@@ -3,6 +3,7 @@ import createClass from 'create-react-class';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 import Pack from '../components/Pack.js'
+import Intro from '../components/Intro.js'
 
 let loadInterval
 let initialIntervalLoaded
@@ -94,7 +95,7 @@ export default createClass({
 								contracts["Cryptogs"].methods.buyPack(p).send({
 						        from: account,
 										value: web3.utils.toWei(mintedPacks[p].price,"ether"),
-						        gas:1000000,
+						        gas:490000,
 						        gasPrice:GWEI * 1000000000
 						      },(error,hash)=>{
 						        console.log("CALLBACK!",error,hash)
@@ -103,7 +104,6 @@ export default createClass({
 										window.location = "/address/"+account
 						      })
 							}
-
 						}
 					}/>
 				)
@@ -131,6 +131,7 @@ export default createClass({
 
 		return (
 			<div>
+				<Intro web3={web3}/>
 				{mintedPackRender}
 			</div>
 		)

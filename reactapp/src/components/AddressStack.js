@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import Stack from '../components/Stack.js'
 import Cryptog from '../components/Cryptog.js'
+import Spinner from '../components/Spinner.js'
 import StackGrid from 'react-stack-grid'
+import Blockies from 'react-blockies'
 let loadInterval
 
 class AddressStack extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tokenData:[]
+      tokenData:[],
+      hovers:[]
     }
     this.loadTokenData()
     loadInterval = setInterval(this.loadTokenData.bind(this),701)
@@ -29,7 +32,7 @@ class AddressStack extends Component {
     this.setState({tokenData:tokens})
   }
   render(){
-    let {tokenData} = this.state
+    let {tokenData,hovers} = this.state
     if(!tokenData){
       return (
         <div style={{opacity:0.3}}>Loading...</div>
@@ -37,13 +40,32 @@ class AddressStack extends Component {
     }
 
 		let tokenDisplay = tokenData.map((token)=>{
-			return <Cryptog key={"cryptog"+token.id} id={token.id} image={token.image}/>
+			return (
+        <Spinner guts={
+          (spinning)=>{
+            return (
+              <Cryptog key={"cryptog"+token.id} id={token.id} slowrolling={spinning} image={token.image} zIndex={1}/>
+            )
+          }
+        }/>
+      )
 		})
+
     return (
       <div>
-        <div style={{float:'right',marginTop:-20}}>({tokenData.length})</div>
+
+        <div style={{float:'left',marginTop:-40}}>
+          <span style={{verticalAlign:'middle'}}>
+          <Blockies
+            seed={this.props.match.params.address.toLowerCase()}
+            scale={4}
+          />
+          </span>
+          <span style={{fontSize:20,paddingLeft:5}}>{this.props.match.params.address}</span>
+        </div>
+        <div style={{float:'right',marginTop:-40}}>({tokenData.length})</div>
         <StackGrid
-          style={{marginTop:50}}
+          style={{marginTop:90}}
           columnWidth={110}
         >
            {tokenDisplay}

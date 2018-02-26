@@ -22,6 +22,12 @@ export default createClass({
     if(this.props.flying){
       className = "is-slam"
     }
+    if(this.props.slowrolling){
+      className = "is-slowroll"
+    }
+    if(this.props.creeprolling){
+      className = "is-creeproll"
+    }
     return (
       <div className={className}>
         <div className="coin__container" style={{

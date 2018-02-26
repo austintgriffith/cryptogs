@@ -29,7 +29,9 @@
   (then you can link to that when they are sitting there waiting for coin flip etc)
 
 [ ] you need to be able to revoke a stack - if someone submits a counter and then days later it is accepted, the other player could drain it after the coinflip
+[ ] deploy to mainnet with a big ass warning sign... the app will have to detect which contract goes with which network
 
+[ ] randomize stack order on the way in or something so the mixed stack isn't always based on mint order
 
 -----
 gameplay

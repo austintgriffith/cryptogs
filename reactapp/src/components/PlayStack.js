@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
 import Stack from '../components/Stack.js'
 import Cryptog from '../components/Cryptog.js'
+import Slammer from '../components/Slammer.js'
+import Spinner from '../components/Spinner.js'
 import StackSelect from '../components/StackSelect.js'
+import {Motion, spring, presets} from 'react-motion';
 
 let loadInterval
 const GWEI = 10
+let slammerTimeout
+const DEBUG = false
 
 class PlayStack extends Component {
   constructor(props) {
@@ -14,6 +19,11 @@ class PlayStack extends Component {
       stack:props.match.params.stack,
       counterStacks:[],
       stackedUpCryptogs:[],
+      coinFlipResult:false,
+      slammerSpinning:false,
+      slammerAngle:15,
+      slammerTop:-200,
+      slammerLeft:-200
     }
     this.loadStackData()
     loadInterval = setInterval(this.loadStackData.bind(this),707)
@@ -33,6 +43,27 @@ class PlayStack extends Component {
       update.stackData["token"+t+"Image"] = web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
     }
     update.stackMode = await contracts['Cryptogs'].methods.mode(this.state.stack).call()
+
+    if(update.stackMode==9&&this.state.stackMode!=9){
+      update.stackMode=8;
+      setTimeout(()=>{
+        this.setState({stackMode:9})
+      },4000)
+    }
+
+    if(update.stackMode>0 && !this.state.coinFlipResult){
+      let coinFlipSuccessEvents = await contracts['Cryptogs'].getPastEvents("CoinFlipSuccess", {
+        filter: {stack: this.state.stack},
+        fromBlock: contracts['Cryptogs'].blockNumber,
+        toBlock: 'latest'
+      });
+      if(DEBUG) console.log("COIN FLIP RESULT",coinFlipSuccessEvents)
+      if(coinFlipSuccessEvents&&coinFlipSuccessEvents[0]&&coinFlipSuccessEvents[0].returnValues){
+        this.state.coinFlipResult = coinFlipSuccessEvents[0].returnValues
+      }
+    }
+
+
 
 
     if(update.stackMode==0){
@@ -78,30 +109,61 @@ class PlayStack extends Component {
     if(update.stackMode!=this.state.stackMode){
       let mixedStackIds = await contracts['Cryptogs'].methods.getMixedStack(this.state.stack).call()
 
+      if(DEBUG) console.log("mixedStackIds:",JSON.stringify(mixedStackIds),"lastMixedStackIds",JSON.stringify(this.state.mixedStackIds))
+
+      update.mixedStackIds = mixedStackIds;
+
       update.mixedStack = []
       update.flippedThisRound = []
 
-      for(let i in mixedStackIds){
+      for(let i=0;i<10;i++){
+        if(DEBUG) console.log("mixedStackDebug",i,mixedStackIds[i])
         if(mixedStackIds[i]>0){
           let token = await contracts['Cryptogs'].methods.getToken(mixedStackIds[i]).call()//this.state.allStacks[id]
           let image = web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
           update.mixedStack.push({id:mixedStackIds[i],image:image})
-        }else{
-          console.log("item",i,"is out")
-          if(this.state.mixedStack &&this.state.mixedStack[i]&& this.state.mixedStack[i].id!=0){
+        }else if(update.stackMode==3||update.stackMode==8){
+
+          if(this.state.mixedStackIds){
+
+            if(DEBUG) console.log("its a flip if ",this.state.mixedStackIds[i],"!=",update.mixedStackIds[i])
+            if(this.state.mixedStackIds[i]!=update.mixedStackIds[i]){
+
+              if(DEBUG) console.log("item",i,"is out")
+
+              let tokenId = this.state.mixedStackIds[i]
+              let token = await contracts['Cryptogs'].methods.getToken(tokenId).call()//this.state.allStacks[id]
+              let image = web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
 
 
-            //let arrayofonerandompath = possibleFlightPaths.splice(Math.floor(Math.random()*possibleFlightPaths.length),1);
-            //this.state.mixedStack[i].thisFlightPath = arrayofonerandompath[0]
-            this.state.mixedStack[i].thisFlightPath=possibleFlightPaths[i]
-            console.log("and it happened this round, flight path will be",this.state.mixedStack[i].thisFlightPath)
-            update.flippedThisRound.push(this.state.mixedStack[i])
-            update.flippingPogs=true;
-            update.flippingPogsAngle=false;
+              let flippedTokenThisRound = {id:tokenId,image:image,thisFlightPath:possibleFlightPaths[i]}
+              if(DEBUG) console.log("FLIPPED TOKEN THIS ROUND",flippedTokenThisRound)
+              //let arrayofonerandompath = possibleFlightPaths.splice(Math.floor(Math.random()*possibleFlightPaths.length),1);
+              //this.state.mixedStack[i].thisFlightPath = arrayofonerandompath[0]
+              /*let alreadyFound = false
+              for(let f in update.flippedThisRound){
+                console.log("making sure ",update.flippedThisRound[f].id,"isnt alreaady == ",this.state.mixedStack[i].id)
+                if(update.flippedThisRound[f].id == this.state.mixedStack[i].id){
+                  alreadyFound=true
+                }
+              }
+              if(alreadyFound){
+                console.log("Skipping, already in...")
+              }else{*/
+                update.flippedThisRound.push(flippedTokenThisRound)
+                update.flippingPogs=true;
+                update.flippingPogsSlideOut=false;
+                update.flippingPogsAngle=false;
+              //}
+
+            }
+
           }
+
+
         }
       }
-      console.log("TRANSITION TO",update.mixedStack,update.flippedThisRound)
+      if(DEBUG) console.log("TRANSITION TO",update.mixedStack,JSON.stringify(update.flippedThisRound),JSON.stringify(this.state.flippedThisRound))
 
     }
 
@@ -120,13 +182,51 @@ class PlayStack extends Component {
       }
     }
 
+    if(update.stackMode==3){
+      update.slammerTop = -160
+      update.slammerLeft = 0
+      update.slammerAngle = 65
+      update.slammerSpinning = false
+    }else if(update.stackMode==4){
+      update.slammerTop = -350
+      update.slammerLeft = 0
+      update.slammerAngle = 100
+      update.slammerSpinning = false
+    }else if(update.stackMode<1){
+      update.slammerTop = -2000
+      update.slammerLeft = 0
+      update.slammerAngle = 25
+      update.slammerSpinning = false
+    }else if(update.stackMode<3){
+      update.slammerTop = -270
+      update.slammerLeft = 0
+      update.slammerAngle = 15
+      if(update.stackMode==2){
+        update.slammerSpinning = true
+      }else {
+        update.slammerSpinning = false
+      }
+
+    }else{
+      update.slammerTop = -150
+      update.slammerLeft = 0
+      update.slammerAngle = 25
+      update.slammerSpinning = false
+    }
+
 
 
     this.setState(update,()=>{
       if(update.flippingPogs){
+        this.setState({slammerTop:-80,slammerAngle:45})
         setTimeout(()=>{
           this.setState({flippingPogs:false,flippingPogsAngle:65})
-        },2000)
+          setTimeout(()=>{
+            this.setState({flippingPogsSlideOut:true})
+          },5000)
+          this.setState({slammerTop:-120,slammerAngle:60})
+        },1000)
+
       }
     })
   }
@@ -241,13 +341,52 @@ class PlayStack extends Component {
       console.log("RESULT:",receipt)
     })
   }
+  slammerClick(){
+    let {account} = this.props.context
+    let {lastActor} = this.state;
+    if(account.toLowerCase()!=lastActor.toLowerCase()){
+      console.log("SLAMMER CLICK")
+      if(this.state.stackMode==3){
+        this.raiseSlammer()
+      }else if(this.state.stackMode==4){
+        this.throwSlammer()
+      }else if(this.state.stackMode==1){
+        this.startCoinFlip()
+      }else if(this.state.stackMode==2){
+        this.endCoinFlip()
+      }
+    }else{
+      if(!slammerTimeout){
+        let ogSlammerTop = this.state.slammerTop
+        this.setState({slammerTop:this.state.slammerTop+25})
+        slammerTimeout = setTimeout(()=>{
+          this.setState({slammerTop:ogSlammerTop})
+          clearTimeout(slammerTimeout)
+          slammerTimeout=false;
+        })
+      }
+
+    }
+  }
   render(){
     let {account,blockNumber} = this.props.context
-    let {stackMode,stackData,counterStacks,lastBlock,lastActor,TIMEOUTBLOCKS,flipEvents,throwSlammerEvents} = this.state;
+    let {coinFlipResult,stackMode,stackData,counterStacks,lastBlock,lastActor,TIMEOUTBLOCKS,flipEvents,throwSlammerEvents} = this.state;
     if(!stackData){
       return (
         <div style={{opacity:0.3}}>Loading...</div>
       )
+    }
+
+
+
+    let coinFlipResultText = ""
+
+    if(coinFlipResult){
+      if(coinFlipResult.whosTurn.toLowerCase()==account.toLowerCase()){
+        coinFlipResultText= "You won the slammer toss, you go first. "
+      }else{
+        coinFlipResultText= "They won the slammer toss, they go first. "
+      }
     }
 
     let flipDisplay = ""
@@ -313,7 +452,7 @@ class PlayStack extends Component {
 
 
    let flightStack = []
-   if(stackMode==3){
+   if(stackMode==3||stackMode==8){
      for(let m in this.state.flippedThisRound){
        let thisFlightPath = this.state.flippedThisRound[m].thisFlightPath
        let possibleFlightPathsText = ""
@@ -323,12 +462,19 @@ class PlayStack extends Component {
          possibleFlightPathsText = "N"+(thisFlightPath)
        }
        let animationName = "flightPath"+possibleFlightPathsText
-       let top = (m*15)+(Math.abs(thisFlightPath)/2)
+       let top = (Math.abs(thisFlightPath)/2)//(m*15)+
        let left = thisFlightPath
-       console.log("-----flightStack",m,animationName,top,left)
+       //console.log("-----flightStack",m,animationName,top,left)
+
+       let className = "spinner"
+       //console.log("this.state.flippingPogsSlideOut",this.state.flippingPogsSlideOut)
+       if(this.state.flippingPogsSlideOut){
+         className = "slideNorth"
+       }
+
        flightStack.push(
-         <div key={"flightStack"+m} className={'spinner'} style={{animationName:animationName,position:"absolute",left:left,top:top}}>
-          <Cryptog scale={0.9} angle={this.state.flippingPogsAngle} id={this.state.flippedThisRound[m].id} flying={this.state.flippingPogs} image={this.state.flippedThisRound[m].image}/>
+         <div key={"flightStack"+m} className={className} style={{zIndex:50,animationName:animationName,position:"absolute",left:left,top:top}}>
+          <Cryptog zIndex={50} scale={0.9} angle={this.state.flippingPogsAngle} id={this.state.flippedThisRound[m].id} flying={this.state.flippingPogs} image={this.state.flippedThisRound[m].image}/>
          </div>
        )
      }
@@ -347,7 +493,7 @@ class PlayStack extends Component {
         let callToAction
         if(account.toLowerCase()==stackData.owner.toLowerCase()){
           callToAction=(
-            <button key={"counterstackbutton"+counterstack._counterStack} onClick={this.acceptStack.bind(this,counterstack._counterStack)}>accept</button>
+            <button style={{marginTop:20,marginLeft:20,cursor:'pointer'}} key={"counterstackbutton"+counterstack._counterStack} onClick={this.acceptStack.bind(this,counterstack._counterStack)}>accept</button>
           )
         }
         return (
@@ -379,7 +525,13 @@ class PlayStack extends Component {
           )
         }
       }else{
-        message = "Waiting for the game creator to accept your stack..."
+
+          message = (
+            <div style={{padding:20}}>
+              {"Waiting for the game creator to accept a stack..."}
+            </div>
+          )
+
       }
 
       display = (
@@ -392,17 +544,14 @@ class PlayStack extends Component {
     }else if(stackMode==1){
       if(account.toLowerCase()==stackData.owner.toLowerCase()){
         display = (
-          <div onClick={this.startCoinFlip.bind(this)}>
-            <Cryptog key={"coinflip"} id={0} flipping={this.state.coinFlipping} image={"unicorn.png"}/>
-            <button>startCoinFlip</button>
-            <div>(to determine who goes first)</div>
+          <div>
+            Click the slammer to determine who goes first...
           </div>
         )
       }else{
         display = (
           <div>
-            Waiting for game creator to start coin flip to determine who goes first...
-            <Cryptog key={"coinflip"} id={0} flipping={this.state.coinFlipping} image={"unicorn.png"}/>
+            Waiting for game creator to start slammer flip to determine who goes first...
           </div>
         )
       }
@@ -411,15 +560,13 @@ class PlayStack extends Component {
       if(account.toLowerCase()==stackData.owner.toLowerCase()){
         display = (
           <div>
-            <Cryptog key={"coinflip"} id={0} flipping={this.state.coinFlipping} image={"unicorn.png"}/>
-            <button onClick={this.endCoinFlip.bind(this)}>endCoinFlip</button>
+            Click the slammer to stop it to determine who goes first...
           </div>
         )
       }else{
         display = (
-          <div>
-          Waiting for game creator to stop coin flip...
-          <Cryptog key={"coinflip"} id={0} flipping={this.state.coinFlipping} image={"unicorn.png"}/>
+          <div style={{marginTop:20}}>
+            Waiting for game creator to stop slammer flip...
           </div>
         )
       }
@@ -433,7 +580,7 @@ class PlayStack extends Component {
       }else{
         display = (
           <div>
-            <button onClick={this.raiseSlammer.bind(this)}>raiseSlammer</button>
+            Click the slammer to prepare to throw...
           </div>
         )
       }
@@ -447,7 +594,7 @@ class PlayStack extends Component {
       }else{
         display = (
           <div>
-            <button onClick={this.throwSlammer.bind(this)}>throwSlammer</button>
+            Click the slammer to throw...
           </div>
         )
 
@@ -455,14 +602,14 @@ class PlayStack extends Component {
     }else if(stackMode==9){
 
         display = (
-          <div>
-            Game has finished
+          <div style={{opacity:0.3,marginTop:100,fontWeight:'bold',padding:50,fontSize:99,letterSpacing:-2}}>
+            Game Over
           </div>
         )
 
     }else{
       display = (
-        <div>PLAY</div>
+        <div style={{opacity:0.3}}>Loading...</div>
       )
     }
 
@@ -481,35 +628,49 @@ class PlayStack extends Component {
         <button onClick={this.drainStack.bind(this)}>drain</button>
       )
 
-      timerDisplay = (
-        <div style={{float:'right'}}>
-          <div>{blockNumber-lastBlock}/{TIMEOUTBLOCKS}</div>
-          <div>{drainDisplay}</div>
-          <div>{turn}</div>
-        </div>
-      )
-    }
+      if(stackMode<9){
+        timerDisplay = (
+          <div style={{float:'right'}}>
+            <div>{blockNumber-lastBlock}/{TIMEOUTBLOCKS}</div>
+            <div>{drainDisplay}</div>
+            <div>{turn}</div>
+          </div>
+        )
+      }
 
-    let modeDisplay = ""
-    if(stackMode>0&&stackMode<9){
-      modeDisplay = (
-        <div style={{float:'right'}}>mode:{stackMode}</div>
-      )
     }
 
     let m=1
     return (
       <div>
-      {modeDisplay}
       {timerDisplay}
       <div style={{zIndex:-1,fontSize:12,position:'fixed',top:200,right:20,backgroundColor:"#eeeeee",padding:20}}>
+        {coinFlipResultText}
         {flipDisplay}
       </div>
       {display}
-      <div style={{position:'absolute',left:window.innerWidth/3,top:(window.innerHeight*2/3)}}>
+      <div style={{position:'absolute',left:window.innerWidth/3,top:(window.innerHeight*5/9)}}>
         {mixedStack}
         {flightStack}
 
+        <Motion
+				defaultStyle={{
+					left:0,
+          top:0,
+				}}
+				style={{
+					top:spring(this.state.slammerTop,{ stiffness: 100, damping: 6 }),
+          left:spring(this.state.slammerLeft,{ stiffness: 100, damping: 6 })
+				}}
+				>
+					{currentStyles => {
+						return (
+              <div onClick={this.slammerClick.bind(this)} style={{cursor:'pointer',position:"absolute",left:currentStyles.left,top:currentStyles.top}}>
+                <Slammer spinning={this.state.slammerSpinning} angle={this.state.slammerAngle} image={"ethslammer.png"}/>
+              </div>
+            )
+					}}
+				</Motion>
       </div>
       </div>
     )

@@ -1,6 +1,9 @@
 const EVENTLOADCHUNK = 5120;
 let LASTBLOCK;
 let ENDBLOCK;
+
+const DEBUG = false;
+
 export default function(contract,eventName,endingBlock,startingBlock,updateFn){
   LASTBLOCK=parseInt(startingBlock)
   ENDBLOCK=parseInt(endingBlock)
@@ -15,7 +18,7 @@ let loadDownTheChain = async (contract,eventName,updateFn)=>{
   }
 }
 let doSync = async (contract,eventName,updateFn,from,to)=>{
-  console.log("EVENT:",eventName,"FROM",from,"to",to,contract)
+  if(DEBUG) console.log("EVENT:",eventName,"FROM",from,"to",to,contract)
   let events = await contract.getPastEvents(eventName, {
       fromBlock: from,
       toBlock: to

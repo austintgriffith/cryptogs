@@ -6,6 +6,8 @@ import Stack from '../components/Stack.js'
 import EventParser from '../modules/eventParser.js';
 import LiveParser from '../modules/liveParser.js';
 
+const DEBUG = false;
+
 let loadInterval
 export default createClass({
 	displayName: 'StacksPage',
@@ -14,6 +16,7 @@ export default createClass({
 		contracts: PropTypes.array,
 		account: PropTypes.string,
 		blockNumber: PropTypes.number,
+		metaMaskHintFn: PropTypes.func
 	},
 	getInitialState(){
 		return {allStacks:[]}
@@ -28,7 +31,7 @@ export default createClass({
 	async loadStackData(){
 		let {contracts,web3,blockNumber} = this.context
 		if(!contracts || !contracts["Cryptogs"] || !blockNumber){
-			console.log("Waiting for contracts...")
+			if(DEBUG) console.log("Waiting for contracts...")
 		}else{
 			let updateAllStacks = async (update)=>{
 				let id = update._stack
@@ -36,7 +39,7 @@ export default createClass({
 					if(!this.state.allStacks[id]) this.state.allStacks[id]={};
 					if(!this.state.allStacks[id].timestamp){
 						Object.assign(this.state.allStacks[id],update);
-						console.log("UPDATE allStacks ",this.state.allStacks)
+						if(DEBUG) console.log("UPDATE allStacks ",this.state.allStacks)
 						for(let t=1;t<=5;t++){
 							let token = await contracts['Cryptogs'].methods.getToken(this.state.allStacks[id]["_token"+t]).call()//this.state.allStacks[id]
 							this.state.allStacks[id]["_token"+t+"Image"] = web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
@@ -49,6 +52,23 @@ export default createClass({
 			setInterval(()=>{
 				LiveParser(contracts["Cryptogs"],"SubmitStack",blockNumber,updateAllStacks)
 			},731)
+
+
+			//event AcceptCounterStack(address indexed _sender,bytes32 indexed _stack, bytes32 indexed _counterStack);
+			let updateCounterStack = async (update)=>{
+				let id = update._stack;
+				if(!this.state.allStacks[id]) this.state.allStacks[id]={};
+				if(!this.state.allStacks[id].senders) this.state.allStacks[id].senders=[];
+				if(update._sender && this.state.allStacks[id].senders.indexOf(update._sender.toLowerCase())<0){
+					this.state.allStacks[id].senders.push(update._sender.toLowerCase())
+					if(DEBUG) console.log("UPDATE WITH COUNTERSTACKS",this.state.allStacks)
+					this.setState({allStacks:this.state.allStacks});
+				}
+			}
+			EventParser(contracts["Cryptogs"],"CounterStack",contracts["Cryptogs"].blockNumber,blockNumber,updateCounterStack);
+			setInterval(()=>{
+				LiveParser(contracts["Cryptogs"],"CounterStack",blockNumber,updateCounterStack)
+			},737)
 
 
 			//event AcceptCounterStack(address indexed _sender,bytes32 indexed _stack, bytes32 indexed _counterStack);
@@ -65,14 +85,14 @@ export default createClass({
 			EventParser(contracts["Cryptogs"],"AcceptCounterStack",contracts["Cryptogs"].blockNumber,blockNumber,updateAcceptCounterStack);
 			setInterval(()=>{
 				LiveParser(contracts["Cryptogs"],"AcceptCounterStack",blockNumber,updateAcceptCounterStack)
-			},731)
+			},751)
 
 
 			let updateFinishGame = async (update)=>{
 				let id = update.stack
 				if(!this.state.allStacks[id]) this.state.allStacks[id]={};
 				if(!this.state.allStacks[id].finished){
-					console.log("STACK",id,"IS FINISHED")
+					if(DEBUG) console.log("STACK",id,"IS FINISHED")
 					this.state.allStacks[id].finished=true
 					this.setState({allStacks:this.state.allStacks});
 				}
@@ -80,13 +100,13 @@ export default createClass({
 			EventParser(contracts["Cryptogs"],"FinishGame",contracts["Cryptogs"].blockNumber,blockNumber,updateFinishGame);
 			setInterval(()=>{
 				LiveParser(contracts["Cryptogs"],"FinishGame",blockNumber,updateAllStacks)
-			},731)
+			},791)
 
 			clearInterval(loadInterval)
 		}
 	},
 	render(){
-		const { contracts,account } = this.context
+		const { contracts,account,metaMaskHintFn } = this.context
 		if(!contracts.Cryptogs){
 			return (
 				<div style={{opacity:0.3}}>Loading...</div>
@@ -99,38 +119,78 @@ export default createClass({
 		let liveStacks = []
 		let finishedStacks = []
 
-
+		let simpleArray = []
 		for(let s in allStacks){
-			if(allStacks[s].finished){
-				finishedStacks.push(
-					<Stack key={"mystack"+s} {...allStacks[s]} callToAction={
-						<a href={"/play/"+s}>view</a>
-					}/>
-				)
-			}else if(allStacks[s]._sender && allStacks[s]._sender.toLowerCase() == account.toLowerCase()){
+			simpleArray.push(allStacks[s])
+		}
+		let allStacksFlipped = simpleArray.sort(function(a, b) {
+        return a.timestamp<b.timestamp
+    });
+
+		for(let s in allStacksFlipped){
+			if(allStacksFlipped[s].finished&&allStacksFlipped[s]._sender){
+				if(finishedStacks.length<5){
+					finishedStacks.push(
+						<Stack key={"mystack"+s} {...allStacksFlipped[s]} callToAction={
+							<button onClick={()=>{
+								if(account){
+									window.location="/play/"+allStacksFlipped[s]._stack
+								}else{
+									metaMaskHintFn()
+								}
+							}} style={{cursor:'pointer',marginTop:20,marginLeft:20}}>view</button>
+						}/>
+					)
+				}
+
+			}else if(account && ((allStacksFlipped[s]._sender && allStacksFlipped[s]._sender.toLowerCase() == account.toLowerCase()) || (allStacksFlipped[s].senders && allStacksFlipped[s].senders.indexOf(account.toLowerCase())>=0) )){
 				myStacks.push(
-					<Stack key={"mystack"+s} {...allStacks[s]} callToAction={
-						<a href={"/play/"+s}>play</a>
+					<Stack key={"mystack"+s} {...allStacksFlipped[s]} callToAction={
+						<button onClick={()=>{
+							if(account){
+								window.location="/play/"+allStacksFlipped[s]._stack
+							}else{
+								metaMaskHintFn()
+							}
+						}} style={{cursor:'pointer',marginTop:20,marginLeft:20}}>play</button>
 					}/>
 				)
-			}else if(allStacks[s].otherPlayer){
-				if(allStacks[s].otherPlayer.toLowerCase() == account.toLowerCase()){
+			}else if(allStacksFlipped[s].otherPlayer){
+				if(allStacksFlipped[s].otherPlayer.toLowerCase() == account.toLowerCase()){
 					myStacks.push(
-						<Stack key={"mystack"+s} {...allStacks[s]} callToAction={
-							<a href={"/play/"+s}>play</a>
+						<Stack key={"mystack"+s} {...allStacksFlipped[s]} callToAction={
+							<button onClick={()=>{
+								if(account){
+									window.location="/play/"+allStacksFlipped[s]._stack
+								}else{
+									metaMaskHintFn()
+								}
+							}} style={{cursor:'pointer',marginTop:20,marginLeft:20}}>play</button>
 						}/>
 					)
 				}else{
 					liveStacks.push(
-						<Stack key={"mystack"+s} {...allStacks[s]} callToAction={
-							<a href={"/play/"+s}>play</a>
+						<Stack key={"mystack"+s} {...allStacksFlipped[s]} callToAction={
+							<button onClick={()=>{
+								if(account){
+									window.location="/play/"+allStacksFlipped[s]._stack
+								}else{
+									metaMaskHintFn()
+								}
+							}} style={{cursor:'pointer',marginTop:20,marginLeft:20}}>play</button>
 						}/>
 					)
 				}
-			}else if(allStacks[s].timestamp){
+			}else if(allStacksFlipped[s].timestamp){
 				stacks.push(
-					<Stack key={"stack"+s} {...allStacks[s]} callToAction={
-						<a href={"/join/"+s}>join</a>
+					<Stack key={"stack"+s} {...allStacksFlipped[s]} callToAction={
+						<button onClick={()=>{
+							if(account){
+								window.location="/join/"+allStacksFlipped[s]._stack
+							}else{
+								metaMaskHintFn()
+							}
+						}} style={{cursor:'pointer',marginTop:20,marginLeft:20}}>join</button>
 					}/>
 				)
 			}
@@ -140,7 +200,13 @@ export default createClass({
 
 		return (
       <div>
-				<div style={{float:'right',padding:30,paddingRight:100}}><button onClick={()=>{window.location="/create"}}>Create Game</button></div>
+				<div style={{float:'right',padding:30,paddingRight:100,cursor:"pointer"}}><button onClick={()=>{
+					if(account){
+						window.location = "/create"
+					}else{
+						metaMaskHintFn()
+					}
+				}}>Create Game</button></div>
 				<div style={{ clear:"both"}}></div>
 				<div style={sectionStyle}>Your Games:</div>
 				<div>{myStacks}</div>
