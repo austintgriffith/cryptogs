@@ -44,10 +44,10 @@ exec('npm run build', (err, stdout, stderr) => {
   console.log(`${stderr}`);
 
   //clean out / so it works on nested locations like ipfs
-  let index = fs.readFileSync("build/index.html").toString();
-  index = index.split("\"\/").join("\"");
-  console.log(index);
-  fs.writeFileSync("build/index.html",index);
+//  let index = fs.readFileSync("build/index.html").toString();
+//  index = index.split("\"\/").join("\"");
+//  console.log(index);
+//  fs.writeFileSync("build/index.html",index);
 
   fs.readdir( params.localDir , function( err, files ) {
       //the deployment address needs to be here so this needs to happen from the live box!
