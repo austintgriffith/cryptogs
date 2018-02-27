@@ -1,3 +1,6 @@
+[ ] SEO and unfurl image
+[ ] Logo image?
+[ ] make the front page 2x2 grid go to a 1x4 when it gets small 
 [ ] live games on stacks page should say "watch" if you are a thrid party
 [ ] a third party is invited to slam it should check that account is neither player and display different
 [ ] when a game is finished the log should roll down front and center to show how that game went and who took what
@@ -17,7 +20,7 @@
 [ ] make sure metamask looks good in every state
 [x] contracts may be able to clean up a lot of their storage when a game finishes
 [ ] cryptog page
-[ ] some kind of GWEI slider instead of hardcoded
+[ ] some kind of GWEI gas slider instead of hardcoded
 [x] cryptog hover action
 [x] cryptog images should be in their own folder
 [-] loader component

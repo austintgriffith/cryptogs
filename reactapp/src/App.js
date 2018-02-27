@@ -15,6 +15,7 @@ import AddressPage from './pages/address.js'
 import StacksPage from './pages/stacks.js'
 import CreatePage from './pages/create.js'
 import PlayPage from './pages/play.js'
+import BuyPage from './pages/buy.js'
 import JoinPage from './pages/join.js'
 import FourOhFourPage from './pages/404.js'
 import Loader from './components/Loader.js'
@@ -146,6 +147,7 @@ export default createClass({
   					     <Route exact path="/" component={IndexPage} />
                  <Route path={`/stacks`} component={StacksPage} />
                  <Route path={`/create`} component={CreatePage} />
+								 <Route path={`/buy`} component={BuyPage} />
                  <Route path={`/address/:address`} component={AddressPage} />
                  <Route path={`/play/:stack`} component={PlayPage} />
                  <Route path={`/join/:stack`} component={JoinPage} />

@@ -12,20 +12,11 @@ const MINTEDPACKDISPLAYLIMIT = 10
 const GWEI=10
 
 export default createClass({
-	displayName: 'IndexPage',
-	contextTypes: {
-		web3: PropTypes.object,
-		contracts: PropTypes.array,
-		account: PropTypes.string,
-		myTokens: PropTypes.array,
-		metaMaskHintFn: PropTypes.func
-	},
+	displayName: 'BuyPage',
 	render(){
-		let {web3} = this.context
 		return (
 			<div>
-				<Intro web3={web3}/>
-				<BuyPacks compact={true} />
+				<BuyPacks />
 			</div>
 		)
 	}

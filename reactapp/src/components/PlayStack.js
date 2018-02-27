@@ -388,7 +388,7 @@ class PlayStack extends Component {
       })
   }
   drainStack(){
-    let {contracts,account} = this.props.context
+    let {contracts,account,showLoadingScreen} = this.props.context
     console.log("drainStack",this.state.stack,this.state.counterStack)
     contracts["Cryptogs"].methods.drainStack(this.state.stack,this.state.counterStack).send({
       from: account,
@@ -396,8 +396,10 @@ class PlayStack extends Component {
       gasPrice:GWEI * 1000000000
     },(error,hash)=>{
       console.log("CALLBACK!",error,hash)
+      showLoadingScreen(hash)
     }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
       console.log("RESULT:",receipt)
+      showLoadingScreen(false)
     })
   }
   slammerClick(){

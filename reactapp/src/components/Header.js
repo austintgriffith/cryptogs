@@ -40,7 +40,7 @@ export default createClass({
 						<a href="/stacks" style={{color: '#666666',padding:10}}>
 							Play Pogs
 						</a>
-						<a href="/" style={{color: '#666666',padding:10}}>
+						<a href="/buy" style={{color: '#666666',padding:10}}>
 							Buy Pogs
 						</a>
 					</h4>
