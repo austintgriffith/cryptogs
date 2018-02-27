@@ -14,7 +14,8 @@ export default createClass({
 		contracts: PropTypes.array,
 		account: PropTypes.string,
 		myTokens: PropTypes.array,
-		blockNumber: PropTypes.number
+		blockNumber: PropTypes.number,
+		showLoadingScreen: PropTypes.func,
 	},
 	render(){
 		const { account,contracts } = this.context

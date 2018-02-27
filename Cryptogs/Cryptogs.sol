@@ -216,6 +216,35 @@ contract Cryptogs is NFT, Ownable {
     }
     event CounterStack(address indexed _sender,uint256 indexed timestamp,bytes32 indexed _stack, bytes32 _counterStack, uint256 _token1, uint256 _token2, uint256 _token3, uint256 _token4, uint256 _token5);
 
+    function cancelStack(bytes32 _stack) public returns (bool) {
+      //it must be your stack
+      require(msg.sender==stacks[_stack].owner);
+      //make sure there is no mode set yet
+      require(mode[_stack]==0);
+      //make sure they aren't trying to cancel a counterstack using this function
+      require(stackCounter[_stack]==0x00000000000000000000000000000000);
+
+      delete stacks[_stack];
+
+      CancelStack(msg.sender,now,_stack);
+    }
+    event CancelStack(address indexed _sender,uint256 indexed timestamp,bytes32 indexed _stack);
+
+    function cancelCounterStack(bytes32 _stack,bytes32 _counterstack) public returns (bool) {
+      //it must be your stack
+      require(msg.sender==stacks[_counterstack].owner);
+      //the counter must be a counter of stack 1
+      require(stackCounter[_counterstack]==_stack);
+      //make sure there is no mode set yet
+      require(mode[_stack]==0);
+
+      delete stacks[_counterstack];
+      delete stackCounter[_counterstack];
+
+      CancelCounterStack(msg.sender,now,_stack,_counterstack);
+    }
+    event CancelCounterStack(address indexed _sender,uint256 indexed timestamp,bytes32 indexed _stack,bytes32 _counterstack);
+
     mapping (bytes32 => bytes32) public counterOfStack;
     mapping (bytes32 => uint8) public mode;
     mapping (bytes32 => uint8) public round;

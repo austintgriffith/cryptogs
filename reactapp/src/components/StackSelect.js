@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Cryptog from '../components/Cryptog.js'
 import StackGrid from 'react-stack-grid'
+import MMButton from '../components/MMButton.js'
 
 class StackSelect extends Component {
   constructor(props) {
@@ -42,22 +43,26 @@ class StackSelect extends Component {
       }
     }
     let gobutton = ""
+
+
     if(selectedTokens.length<=0){
       selectedTokens.push(<div key={"holder"} style={{height:113}}></div>)
     }else if(selectedTokens.length==5){
       //take out the margin right but figure out how to get zinex right
       //normally I'm unable to click it!!! POS
       gobutton = (
-        <button style={{cursor:'pointer',marginRight:-50}} onClick={this.props.goFn.bind(this,this.state.selectedTokens)}>GO</button>
+        <div style={{marginTop:60,marginLeft:40}}>
+          <MMButton color={"#6ac360"} onClick={this.props.goFn.bind(this,this.state.selectedTokens)}>submit</MMButton>
+        </div>
       )
     }
     return (
       <div>
-        <div style={{float:'right'}}>
-          {gobutton}
-        </div>
         <StackGrid style={{marginTop:50}} columnWidth={110}>
           {selectedTokens}
+          <div key="gobutton">
+            {gobutton}
+          </div>
         </StackGrid>
         {this.props.message}
         <div style={{float:'right',opacity:0.3}}>({tokenDisplay.length})</div>

@@ -3,6 +3,7 @@ import createClass from 'create-react-class';
 import Blockies from 'react-blockies'
 import StackGrid from 'react-stack-grid'
 import Cryptog from '../components/Cryptog.js'
+import MMButton from '../components/MMButton.js'
 import Spinner from '../components/Spinner.js'
 export default createClass({
   render(){
@@ -23,9 +24,9 @@ export default createClass({
 
     let button = (
       <div>
-        <div style={{marginTop:35,opacity:0.5,fontSize:12}}>for sale</div>
+        <div style={{marginTop:30,opacity:0.5,fontSize:12}}>for sale</div>
         <div style={{opacity:0.9,fontSize:20}}>Ξ{price}</div>
-        <button>Purchase</button>
+        <MMButton color={"#6ac360"}>Purchase</MMButton>
       </div>
     )
 

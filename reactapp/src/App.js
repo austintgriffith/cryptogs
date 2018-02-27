@@ -17,6 +17,7 @@ import CreatePage from './pages/create.js'
 import PlayPage from './pages/play.js'
 import JoinPage from './pages/join.js'
 import FourOhFourPage from './pages/404.js'
+import Loader from './components/Loader.js'
 
 const DEBUG = false
 
@@ -31,7 +32,8 @@ export default createClass({
 		account: PropTypes.string,
 		myTokens: PropTypes.array,
 		blockNumber: PropTypes.number,
-		metaMaskHintFn: PropTypes.func
+		metaMaskHintFn: PropTypes.func,
+		showLoadingScreen: PropTypes.func,
 	},
 	getChildContext(){
 		return {
@@ -40,8 +42,12 @@ export default createClass({
 			account: this.state.account,
 			myTokens: this.state.myTokens,
 			blockNumber: this.state.blockNumber,
-			metaMaskHintFn: this.metaMaskHintFn
+			metaMaskHintFn: this.metaMaskHintFn,
+			showLoadingScreen: this.showLoadingScreen,
 		};
+	},
+	showLoadingScreen(tx){
+		this.setState({loadingTx:tx})
 	},
 	metaMaskHintFn(){
 		window.scrollTo(0,0);
@@ -55,6 +61,7 @@ export default createClass({
 			web3: {},
 			contracts: [],
 			metamaskHint: 10,
+			loadingTx:false
 		};
 	},
 	componentDidMount(){
@@ -85,8 +92,8 @@ export default createClass({
 		}else{
 			contractLoadingInterval = setInterval(()=>{
 				if(this.state && this.state.contractsLoaded){
-					clearInterval(contractLoadingInterval)
 					this.loadBlockNumber(this.whenContractsAreReady);
+					clearInterval(contractLoadingInterval)
 				}
 			},707)
 		}
@@ -114,7 +121,13 @@ export default createClass({
 		});
 	},
 	render(){
-		const { count,contracts } = this.state;
+		const { count,contracts,loadingTx } = this.state;
+		let loader = ""
+		if(loadingTx){
+			loader = (
+				<Loader etherscan={this.state.etherscan} web3={this.state.web3} blockNumber={this.state.blockNumber} loadingTx={loadingTx} />
+			)
+		}
 		return (
 			<div>
 				<Header
@@ -140,6 +153,7 @@ export default createClass({
             </Switch>
           </Router>
 				</div>
+				{loader}
 			</div>
     )
 

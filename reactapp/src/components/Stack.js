@@ -4,6 +4,7 @@ import Blockies from 'react-blockies'
 import StackGrid from 'react-stack-grid'
 import Cryptog from '../components/Cryptog.js'
 import Spinner from '../components/Spinner.js'
+
 export default createClass({
   render(){
     let {callToAction} = this.props

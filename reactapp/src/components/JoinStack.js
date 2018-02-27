@@ -24,7 +24,7 @@ class JoinStack extends Component {
     this.setState({stackData:stackData})
   }
   joinStack(tokens){
-		const { account,contracts } = this.props.context
+		const { account,contracts,showLoadingScreen } = this.props.context
     const { stack } = this.state
 
 		let finalArray = []
@@ -42,9 +42,11 @@ class JoinStack extends Component {
         gasPrice:GWEI * 1000000000
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
+        showLoadingScreen(hash)
       }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
         console.log("RESULT:",receipt)
         window.location = "/play/"+stack
+        showLoadingScreen(false)
       })
 	}
   render(){

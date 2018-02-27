@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import Stack from '../components/Stack.js'
 import EventParser from '../modules/eventParser.js';
 import LiveParser from '../modules/liveParser.js';
-
+import MMButton from '../components/MMButton.js'
 const DEBUG = false;
 
 let loadInterval
@@ -102,6 +102,37 @@ export default createClass({
 				LiveParser(contracts["Cryptogs"],"FinishGame",blockNumber,updateAllStacks)
 			},791)
 
+
+			//CancelStack(address indexed _sender,uint256 indexed timestamp,bytes32 indexed _stack);
+			let updateCancelStack = async (update)=>{
+				let id = update._stack
+				if(!this.state.allStacks[id]) this.state.allStacks[id]={};
+				if(!this.state.allStacks[id].canceled){
+					if(DEBUG) console.log("STACK",id,"IS CANCELED")
+					this.state.allStacks[id].canceled=true
+					this.setState({allStacks:this.state.allStacks});
+				}
+			}
+			EventParser(contracts["Cryptogs"],"CancelStack",contracts["Cryptogs"].blockNumber,blockNumber,updateCancelStack);
+			setInterval(()=>{
+				LiveParser(contracts["Cryptogs"],"CancelStack",blockNumber,updateCancelStack)
+			},991)
+
+			let updateCancelCounterStack = async (update)=>{
+				let id = update._stack
+				if(!this.state.allStacks[id]) this.state.allStacks[id]={};
+				if(!this.state.allStacks[id].canceledSenders) this.state.allStacks[id].canceledSenders=[];
+				if(this.state.allStacks[id].canceledSenders.indexOf(update._sender.toLowerCase())<0){
+					if(DEBUG) console.log("COUNTER STACK OWNER ",update._sende,"CANCELED")
+					this.state.allStacks[id].canceledSenders.push(update._sender.toLowerCase())
+					this.setState({allStacks:this.state.allStacks});
+				}
+			}
+			EventParser(contracts["Cryptogs"],"CancelCounterStack",contracts["Cryptogs"].blockNumber,blockNumber,updateCancelCounterStack);
+			setInterval(()=>{
+				LiveParser(contracts["Cryptogs"],"CancelCounterStack",blockNumber,updateCancelCounterStack)
+			},997)
+
 			clearInterval(loadInterval)
 		}
 	},
@@ -126,71 +157,98 @@ export default createClass({
 		let allStacksFlipped = simpleArray.sort(function(a, b) {
         return a.timestamp<b.timestamp
     });
-
 		for(let s in allStacksFlipped){
 			if(allStacksFlipped[s].finished&&allStacksFlipped[s]._sender){
 				if(finishedStacks.length<5){
 					finishedStacks.push(
 						<Stack key={"mystack"+s} {...allStacksFlipped[s]} callToAction={
-							<button onClick={()=>{
-								if(account){
-									window.location="/play/"+allStacksFlipped[s]._stack
-								}else{
-									metaMaskHintFn()
-								}
-							}} style={{cursor:'pointer',marginTop:20,marginLeft:20}}>view</button>
+
+							<div  style={{marginTop:20,marginLeft:30}}>
+								<MMButton color={"#6081c3"} onClick={()=>{
+									if(account){
+										window.location="/play/"+allStacksFlipped[s]._stack
+									}else{
+										metaMaskHintFn()
+									}
+								}}>view</MMButton>
+							</div>
+
 						}/>
 					)
 				}
 
-			}else if(account && ((allStacksFlipped[s]._sender && allStacksFlipped[s]._sender.toLowerCase() == account.toLowerCase()) || (allStacksFlipped[s].senders && allStacksFlipped[s].senders.indexOf(account.toLowerCase())>=0) )){
+			}else if(account &&
+				(!allStacksFlipped[s].canceled) &&
+					(
+						(allStacksFlipped[s]._sender && allStacksFlipped[s]._sender.toLowerCase() == account.toLowerCase()) ||
+						(
+							(allStacksFlipped[s].senders && allStacksFlipped[s].senders.indexOf(account.toLowerCase())>=0) &&
+							(!allStacksFlipped[s].canceledSenders || allStacksFlipped[s].canceledSenders.indexOf(account.toLowerCase())<0)
+						)
+					)
+				){
+					console.log("allStacksFlipped[s].canceledSenders",allStacksFlipped[s].canceledSenders)
 				myStacks.push(
 					<Stack key={"mystack"+s} {...allStacksFlipped[s]} callToAction={
-						<button onClick={()=>{
-							if(account){
-								window.location="/play/"+allStacksFlipped[s]._stack
-							}else{
-								metaMaskHintFn()
-							}
-						}} style={{cursor:'pointer',marginTop:20,marginLeft:20}}>play</button>
-					}/>
-				)
-			}else if(allStacksFlipped[s].otherPlayer){
-				if(allStacksFlipped[s].otherPlayer.toLowerCase() == account.toLowerCase()){
-					myStacks.push(
-						<Stack key={"mystack"+s} {...allStacksFlipped[s]} callToAction={
-							<button onClick={()=>{
+						<div  style={{marginTop:20,marginLeft:30}}>
+							<MMButton color={"#6081c3"} onClick={()=>{
 								if(account){
 									window.location="/play/"+allStacksFlipped[s]._stack
 								}else{
 									metaMaskHintFn()
 								}
-							}} style={{cursor:'pointer',marginTop:20,marginLeft:20}}>play</button>
+							}}>view</MMButton>
+						</div>
+					}/>
+				)
+			}else if(allStacksFlipped[s].otherPlayer && !allStacksFlipped[s].canceled &&
+					(
+						!allStacksFlipped[s].canceledSenders ||
+						allStacksFlipped[s].canceledSenders.indexOf(account.toLowerCase()) < 0
+					)
+				){
+				if(allStacksFlipped[s].otherPlayer.toLowerCase() == account.toLowerCase()){
+					console.log("allStacksFlipped[s].canceledSenders",allStacksFlipped[s].canceledSenders)
+					myStacks.push(
+						<Stack key={"mystack"+s} {...allStacksFlipped[s]} callToAction={
+							<div style={{marginTop:20,marginLeft:30}}>
+								<MMButton color={"#6081c3"} onClick={()=>{
+									if(account){
+										window.location="/play/"+allStacksFlipped[s]._stack
+									}else{
+										metaMaskHintFn()
+									}
+								}}>play</MMButton>
+							</div>
 						}/>
 					)
 				}else{
 					liveStacks.push(
 						<Stack key={"mystack"+s} {...allStacksFlipped[s]} callToAction={
-							<button onClick={()=>{
-								if(account){
-									window.location="/play/"+allStacksFlipped[s]._stack
-								}else{
-									metaMaskHintFn()
-								}
-							}} style={{cursor:'pointer',marginTop:20,marginLeft:20}}>play</button>
+							<div  style={{marginTop:20,marginLeft:20}}>
+								<MMButton color={"#6081c3"} onClick={()=>{
+									if(account){
+										window.location="/play/"+allStacksFlipped[s]._stack
+									}else{
+										metaMaskHintFn()
+									}
+								}}>view</MMButton>
+							</div>
 						}/>
 					)
 				}
-			}else if(allStacksFlipped[s].timestamp){
+			}else if(allStacksFlipped[s].timestamp && (!allStacksFlipped[s].canceled) ){
 				stacks.push(
 					<Stack key={"stack"+s} {...allStacksFlipped[s]} callToAction={
-						<button onClick={()=>{
-							if(account){
-								window.location="/join/"+allStacksFlipped[s]._stack
-							}else{
-								metaMaskHintFn()
-							}
-						}} style={{cursor:'pointer',marginTop:20,marginLeft:20}}>join</button>
+						<div style={{marginTop:16,marginLeft:30}}>
+							<MMButton color={"#6081c3"} onClick={()=>{
+								if(account){
+									window.location="/join/"+allStacksFlipped[s]._stack
+								}else{
+									metaMaskHintFn()
+								}
+							}}>Join</MMButton>
+						</div>
 					}/>
 				)
 			}
@@ -200,13 +258,15 @@ export default createClass({
 
 		return (
       <div>
-				<div style={{float:'right',padding:30,paddingRight:100}}><button style={{cursor:"pointer"}}onClick={()=>{
-					if(account){
-						window.location = "/create"
-					}else{
-						metaMaskHintFn()
-					}
-				}}>Create Game</button></div>
+				<div style={{float:'right',padding:30,paddingRight:100}}>
+					<MMButton color={"#6ac360"} onClick={()=>{
+						if(account){
+							window.location = "/create"
+						}else{
+							metaMaskHintFn()
+						}
+					}}>Create Game</MMButton>
+				</div>
 				<div style={{ clear:"both"}}></div>
 				<div style={sectionStyle}>Your Games:</div>
 				<div>{myStacks}</div>

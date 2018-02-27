@@ -8,6 +8,14 @@ body {
   margin: 0;
 }
 
+.grow { transition: all .1s ease-in-out; outline: none;}
+.grow:hover { transform: scale(1.1); outline: none;}
+.grow:active { transform: scale(0.95); filter:grayscale(100%); outline: none;}
+
+@keyframes slide {
+    100% { bottom: 0; }
+}
+
 a {
     text-decoration: none;
     color:#666666;

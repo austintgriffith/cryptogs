@@ -431,6 +431,13 @@ module.exports = {
         assert(result==0,"metamask ERRORS")
       });
     });
+    describe(bigHeader('MINTPACKS'), function() {
+      it('should mint packs', async function() {
+        this.timeout(6000000)
+        const result = await clevis("test","mintPack")
+        assert(result==0,"mintpack ERRORS")
+      });
+    });
     describe(bigHeader('PUBLISH'), function() {
       it('should publish conract address to app', async function() {
         this.timeout(6000000)

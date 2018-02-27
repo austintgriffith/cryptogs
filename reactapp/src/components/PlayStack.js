@@ -5,6 +5,7 @@ import Slammer from '../components/Slammer.js'
 import Spinner from '../components/Spinner.js'
 import StackSelect from '../components/StackSelect.js'
 import {Motion, spring, presets} from 'react-motion';
+import MMButton from '../components/MMButton.js'
 
 let loadInterval
 const GWEI = 10
@@ -33,7 +34,7 @@ class PlayStack extends Component {
   }
   async loadStackData(){
     let stack
-    let {contracts,web3} = this.props.context
+    let {contracts,web3,showLoadingScreen} = this.props.context
     //console.log("contracts",contracts)
     let update = {}
 
@@ -81,6 +82,18 @@ class PlayStack extends Component {
         }
         thisStackData._counterStack = counterStackEvents[e].returnValues._counterStack
         counterStacks.push(thisStackData)
+      }
+
+      // event CancelCounterStack(address indexed _sender,uint256 indexed timestamp,bytes32 indexed _stack,bytes32 _counterstack);
+      let cancelCounterStackEvents = await contracts['Cryptogs'].getPastEvents("CancelCounterStack", {
+        filter: {_stack: this.state.stack},
+        fromBlock: contracts['Cryptogs'].blockNumber,
+        toBlock: 'latest'
+      });
+
+      for(let e in cancelCounterStackEvents){
+        if(!update.stackData.canceledCounterStacks) update.stackData.canceledCounterStacks = []
+        update.stackData.canceledCounterStacks.push(cancelCounterStackEvents[e].returnValues._counterstack)
       }
 
       update.counterStacks = counterStacks
@@ -207,9 +220,9 @@ class PlayStack extends Component {
         update.slammerSpinning = false
       }
     }else{
-      update.slammerTop = -1050
-      update.slammerLeft = 0
-      update.slammerAngle = 25
+      update.slammerTop = 0
+      update.slammerLeft = -1000
+      update.slammerAngle = 90
       update.slammerSpinning = false
     }
 
@@ -231,7 +244,7 @@ class PlayStack extends Component {
   }
   acceptStack(counterStack){
     console.log("ACCEPT",this.state.stack,counterStack)
-    let {contracts,account} = this.props.context
+    let {contracts,account,showLoadingScreen} = this.props.context
     //acceptCounterStack(address _slammerTime, bytes32 _stack, bytes32 _counterStack)
     contracts["Cryptogs"].methods.acceptCounterStack(contracts["SlammerTime"]._address,this.state.stack,counterStack).send({
       from: account,
@@ -239,15 +252,53 @@ class PlayStack extends Component {
       gasPrice:GWEI * 1000000000
     },(error,hash)=>{
       console.log("CALLBACK!",error,hash)
+      showLoadingScreen(hash)
     }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
       console.log("RESULT:",receipt)
+      showLoadingScreen(false)
     })
     this.setState({counterStack:counterStack})
+  }
+  cancelStack(stack){
+    console.log("CANCEL STACK")
+    let {contracts,account,showLoadingScreen} = this.props.context
+    //acceptCounterStack(address _slammerTime, bytes32 _stack, bytes32 _counterStack)
+    contracts["Cryptogs"].methods.cancelStack(stack).send({
+      from: account,
+      gas:250000,
+      gasPrice:GWEI * 1000000000
+    },(error,hash)=>{
+      console.log("CALLBACK!",error,hash)
+      showLoadingScreen(hash)
+    }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
+      console.log("RESULT:",receipt)
+      window.location = "/stacks/"
+      showLoadingScreen(false)
+    })
+
+  }
+  cancelCounterStack(stack,counterstack){
+    console.log("CANCEL STACK")
+    let {contracts,account,showLoadingScreen} = this.props.context
+    //acceptCounterStack(address _slammerTime, bytes32 _stack, bytes32 _counterStack)
+    contracts["Cryptogs"].methods.cancelCounterStack(stack,counterstack).send({
+      from: account,
+      gas:350000,
+      gasPrice:GWEI * 1000000000
+    },(error,hash)=>{
+      console.log("CALLBACK!",error,hash)
+      showLoadingScreen(hash)
+    }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
+      console.log("RESULT:",receipt)
+      window.location = "/stacks/"
+      showLoadingScreen(false)
+    })
+
   }
   startCoinFlip(){
 
     console.log("START COIN FLIP",this.state.stack,this.state.counterStack)
-    let {contracts,account,web3} = this.props.context
+    let {contracts,account,web3,showLoadingScreen} = this.props.context
 
     let commit = web3.utils.sha3(Math.random()+this.state.account+"COINFLIP!")
     console.log("commit:",commit)
@@ -263,13 +314,16 @@ class PlayStack extends Component {
         gasPrice:GWEI * 1000000000
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
+        showLoadingScreen(hash)
       }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
         console.log("RESULT:",receipt)
+        showLoadingScreen(false)
       })
   }
+
   endCoinFlip(){
     console.log("END COIN FLIP",this.state.stack,this.state.counterStack,this.state.commit)
-    let {contracts,account,web3} = this.props.context
+    let {contracts,account,web3,showLoadingScreen} = this.props.context
 
     let reveal = this.state.commit
     //if reveal isn't saved in the state, send 0's to start over with the coin flip
@@ -282,13 +336,15 @@ class PlayStack extends Component {
         gasPrice:GWEI * 1000000000
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
+        showLoadingScreen(hash)
       }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
         console.log("RESULT:",receipt)
+        showLoadingScreen(false)
       })
   }
   raiseSlammer(){
     console.log("raiseSlammer",this.state.stack,this.state.counterStack)
-    let {contracts,account,web3} = this.props.context
+    let {contracts,account,web3,showLoadingScreen} = this.props.context
 
     let commit = web3.utils.sha3(Math.random()+this.state.account+"SLAMMERTIMEJABRONIES!")
     console.log("commit:",commit)
@@ -304,13 +360,15 @@ class PlayStack extends Component {
         gasPrice:GWEI * 1000000000
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
+        showLoadingScreen(hash)
       }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
         console.log("RESULT:",receipt)
+        showLoadingScreen(false)
       })
   }
   throwSlammer(){
     console.log("throwSlammer",this.state.stack,this.state.counterStack,this.state.commit)
-    let {contracts,account,web3} = this.props.context
+    let {contracts,account,web3,showLoadingScreen} = this.props.context
 
     let reveal = this.state.commit
     //if reveal isn't saved in the state, send 0's to start over with the coin flip
@@ -323,8 +381,10 @@ class PlayStack extends Component {
         gasPrice:GWEI * 1000000000
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
+        showLoadingScreen(hash)
       }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
         console.log("RESULT:",receipt)
+        showLoadingScreen(false)
       })
   }
   drainStack(){
@@ -482,27 +542,46 @@ class PlayStack extends Component {
 
     let display = ""
     if(stackMode==0){
+      let callToAction
+      if(account.toLowerCase()==stackData.owner.toLowerCase()){
+        callToAction=(
+          <div key={"cancelstackbutton"+this.state.stack} style={{marginTop:20,marginLeft:20}}>
+            <MMButton color={"#f7861c"} onClick={this.cancelStack.bind(this,this.state.stack)}>cancel</MMButton>
+          </div>
+
+        )
+      }
 
       let stackDisplay = (
-        <Stack key={"mainstack"} {...stackData}/>
+        <Stack key={"mainstack"} {...stackData} callToAction={callToAction}/>
       )
 
 
       let drawCounterStacks = counterStacks.map((counterstack)=>{
-        let callToAction
-        if(account.toLowerCase()==stackData.owner.toLowerCase()){
-          callToAction=(
-            <button style={{marginTop:20,marginLeft:20,cursor:'pointer'}} key={"counterstackbutton"+counterstack._counterStack} onClick={this.acceptStack.bind(this,counterstack._counterStack)}>accept</button>
+        if(!stackData.canceledCounterStacks || stackData.canceledCounterStacks.indexOf(counterstack._counterStack)<0){
+          let callToAction
+          if(account.toLowerCase()==stackData.owner.toLowerCase()){
+            callToAction=(
+              <div key={"counterstackbutton"+counterstack._counterStack} style={{marginTop:16,marginLeft:16}}>
+                <MMButton color={"#6ac360"} onClick={this.acceptStack.bind(this,counterstack._counterStack)}>accept</MMButton>
+              </div>
+            )
+          }else if(counterstack.owner.toLowerCase()==account.toLowerCase()){
+            callToAction=(
+              <div key={"counterstackcancelbutton"+counterstack._counterStack} style={{marginTop:20,marginLeft:20}}>
+                <MMButton color={"#f7861c"} onClick={this.cancelCounterStack.bind(this,this.state.stack,counterstack._counterStack)}>cancel</MMButton>
+              </div>
+            )
+          }
+          return (
+              <Stack key={"counterstack"+counterstack._counterStack} {...counterstack} callToAction={callToAction}/>
           )
         }
-        return (
-            <Stack key={"counterstack"+counterstack._counterStack} {...counterstack} callToAction={callToAction}/>
-        )
       })
 
       let message
       let portInfo = ""
-      if(window.location.port!="80"){
+      if(window.location.port && window.location.port!="80"){
         portInfo=":"+window.location.port
       }
       if(account.toLowerCase()==stackData.owner.toLowerCase()){
@@ -629,7 +708,7 @@ class PlayStack extends Component {
       let drainDisplay = ""
       if(blockNumber-lastBlock >= TIMEOUTBLOCKS){
         drainDisplay = (
-          <button onClick={this.drainStack.bind(this)}>drain</button>
+          <MMButton color={"#fe2311"} onClick={this.drainStack.bind(this)}>drain</MMButton>
         )
       }
 

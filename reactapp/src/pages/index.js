@@ -8,7 +8,7 @@ import Intro from '../components/Intro.js'
 let loadInterval
 let initialIntervalLoaded
 
-const MINTEDPACKDISPLAYLIMIT = 5
+const MINTEDPACKDISPLAYLIMIT = 10
 
 const GWEI=10
 

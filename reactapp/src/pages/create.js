@@ -14,6 +14,7 @@ export default createClass({
 		contracts: PropTypes.array,
 		account: PropTypes.string,
 		myTokens: PropTypes.array,
+		showLoadingScreen: PropTypes.func,
 	},
 	getInitialState(){
 		return {
@@ -24,7 +25,7 @@ export default createClass({
 	submitStack(tokens){
 		console.log("GO tokens",tokens)
 
-		const { account,contracts } = this.context
+		const { account,contracts,showLoadingScreen } = this.context
 		let finalArray = []
 		for(let id in tokens){
 			if(tokens[id]){
@@ -40,8 +41,10 @@ export default createClass({
         gasPrice:GWEI * 1000000000
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
+				showLoadingScreen(hash)
       }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
-        console.log("RESULT:",receipt)
+				console.log("RESULT:",receipt)
+				showLoadingScreen(false)
 				this.findSubmitStackAndGo()
       })
 	},

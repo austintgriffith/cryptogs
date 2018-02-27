@@ -8,7 +8,7 @@ export default createClass({
 	render(){
 		let {metamaskHint,account,metaMaskHintFn} = this.props
 		return (
-      <div style={{background: '#F4F4F4',marginBottom: '1.45rem'}}>
+      <div style={{background: '#F9F9F9',marginBottom: '1.45rem'}}>
 				<Motion
 				defaultStyle={{
 					marginLeft:10

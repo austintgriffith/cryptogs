@@ -1,3 +1,6 @@
+[ ] live games on stacks page should say "watch" if you are a thrid party
+[ ] a third party is invited to slam it should check that account is neither player and display different
+[ ] when a game is finished the log should roll down front and center to show how that game went and who took what
 [ ] loader comes up right after transaction, is dismissable, and has a link to the tx on etherscan
     (the button you pushed to get the window should go gray)
     (even if it is dismissable, if you have a pending tx the loader should float and stick to a corner so you can pull it up)
@@ -10,13 +13,13 @@
 [ ] 40 might be too short for a TIMEOUTBLOCKS
 [ ] adjust gas limits so they are as accurate as possible without running out
 [ ] make sure metamask looks good in every state
-[ ] contracts may be able to clean up a lot of their storage when a game finishes
+[x] contracts may be able to clean up a lot of their storage when a game finishes
 [ ] cryptog page
 [ ] some kind of GWEI slider instead of hardcoded
-[ ] cryptog hover action
-[ ] cryptog images should be in their own folder
-[ ] loader component
-[ ] button style
+[x] cryptog hover action
+[x] cryptog images should be in their own folder
+[-] loader component
+[x] button style
 [ ] clean up animations
 [ ] audit contracts
 [ ] is this legal?
@@ -28,17 +31,17 @@
 [ ] do a write up about why things take a long time and why so many transactions are needed for random
   (then you can link to that when they are sitting there waiting for coin flip etc)
 
-[ ] you need to be able to revoke a stack - if someone submits a counter and then days later it is accepted, the other player could drain it after the coinflip
+[x] you need to be able to revoke a stack - if someone submits a counter and then days later it is accepted, the other player could drain it after the coinflip
 [ ] deploy to mainnet with a big ass warning sign... the app will have to detect which contract goes with which network
 
 [ ] randomize stack order on the way in or something so the mixed stack isn't always based on mint order
 [ ] IPFS in contract
-[ ] rarity as part of the getToken call
+[x] rarity as part of the getToken call
 [ ] the "They flipped you flippped" should be replaced with blockies (because it says they for both people with a third account)
-[ ] the flipped pogs number should be replaced with the actual pog 
+[ ] the flipped pogs number should be replaced with the actual pog
 -----
 gameplay
 -----
-[ ] make sure you can drain and no one else can after the 40 block time out window
+[x] make sure you can drain and no one else can after the 40 block time out window
 [ ] make sure the onlyOwner actions are for sure only able to be run by the owner
-[ ] look through each tx with a fresh mind and double check the funtionality
+[ ] look through each tx with a fresh mind and double check the functionality too many late nights
