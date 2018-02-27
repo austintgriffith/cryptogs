@@ -18,7 +18,8 @@ export default createClass({
 		contracts: PropTypes.array,
 		account: PropTypes.string,
 		myTokens: PropTypes.array,
-		metaMaskHintFn: PropTypes.func
+		metaMaskHintFn: PropTypes.func,
+		showLoadingScreen: PropTypes.func,
 	},
 	render(){
 		let {web3} = this.context

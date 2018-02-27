@@ -272,7 +272,7 @@ class PlayStack extends Component {
       showLoadingScreen(hash)
     }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
       console.log("RESULT:",receipt)
-      window.location = "/stacks/"
+      window.location = "/stacks"
       showLoadingScreen(false)
     })
 
@@ -290,7 +290,7 @@ class PlayStack extends Component {
       showLoadingScreen(hash)
     }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
       console.log("RESULT:",receipt)
-      window.location = "/stacks/"
+      window.location = "/stacks"
       showLoadingScreen(false)
     })
 
