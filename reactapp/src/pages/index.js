@@ -19,7 +19,8 @@ export default createClass({
 		contracts: PropTypes.array,
 		account: PropTypes.string,
 		myTokens: PropTypes.array,
-		metaMaskHintFn: PropTypes.func
+		metaMaskHintFn: PropTypes.func,
+		showLoadingScreen: PropTypes.func,
 	},
 	getInitialState(){
 		return {mintedPacks:[],shouldHaveLoaded:false}
@@ -79,7 +80,7 @@ export default createClass({
 		}
 	},
 	render(){
-		const { account,contracts,web3,metaMaskHintFn } = this.context
+		const { account,contracts,web3,metaMaskHintFn,showLoadingScreen } = this.context
 		if(!contracts || !contracts['Cryptogs'] ) return (<div style={{opacity:0.3}}>loading...</div>)
 
 		const { mintedPacks,shouldHaveLoaded } = this.state
@@ -105,9 +106,11 @@ export default createClass({
 							        gasPrice:GWEI * 1000000000
 							      },(error,hash)=>{
 							        console.log("CALLBACK!",error,hash)
+											showLoadingScreen(hash)
 							      }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
 							        console.log("RESULT:",receipt)
 											window.location = "/address/"+account
+											showLoadingScreen(false)
 							      })
 								}
 							}
