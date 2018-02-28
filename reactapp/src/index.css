@@ -8,10 +8,20 @@ body {
   margin: 0;
 }
 
+.submitGreen { color: #6ac360 }
+.actionBlue { color: #6081c3 }
+.cancelYellow { color: #f7861c }
+.dangerRed { color: #fe2311 }
+
 .grow { transition: all .1s ease-in-out; outline: none;}
 .grow:hover { transform: scale(1.1); outline: none;}
 .grow:active { transform: scale(0.95); filter:grayscale(100%); outline: none;}
 
+.actionable {
+  font-size:26px;
+  font-weight:bold;
+  latter-spacing:-0.5;
+}
 
 .centercontainer{
     width: %100;

@@ -35,6 +35,7 @@ export default createClass({
 		blockNumber: PropTypes.number,
 		metaMaskHintFn: PropTypes.func,
 		showLoadingScreen: PropTypes.func,
+		network: PropTypes.number,
 	},
 	getChildContext(){
 		return {
@@ -45,6 +46,7 @@ export default createClass({
 			blockNumber: this.state.blockNumber,
 			metaMaskHintFn: this.metaMaskHintFn,
 			showLoadingScreen: this.showLoadingScreen,
+			network: this.state.network,
 		};
 	},
 	showLoadingScreen(tx){

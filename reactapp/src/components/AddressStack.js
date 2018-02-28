@@ -4,6 +4,7 @@ import Cryptog from '../components/Cryptog.js'
 import Spinner from '../components/Spinner.js'
 import StackGrid from 'react-stack-grid'
 import Blockies from 'react-blockies'
+import MMButton from '../components/MMButton.js'
 let loadInterval
 
 class AddressStack extends Component {
@@ -11,16 +12,17 @@ class AddressStack extends Component {
     super(props);
     this.state = {
       tokenData:[],
-      hovers:[]
+      hovers:[],
+      hasLoadedFirst:false
     }
     this.loadTokenData()
-    loadInterval = setInterval(this.loadTokenData.bind(this),701)
+    setTimeout(this.loadTokenData.bind(this),701)
+    loadInterval = setInterval(this.loadTokenData.bind(this),1577)
   }
   componentWillUnmount(){
     clearInterval(loadInterval)
   }
   async loadTokenData(){
-    console.log("Loading token data")
     let tokenData = await this.props.context.contracts['Cryptogs'].methods.tokensOfOwner(this.props.match.params.address).call()
     let tokens = []
     for(let t in tokenData){
@@ -29,12 +31,16 @@ class AddressStack extends Component {
       tokenObject.image = this.props.context.web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
       tokens.push(tokenObject)
     }
-    console.log("token data loaded...")
-    this.setState({tokenData:tokens})
+    this.setState({tokenData:tokens,hasLoadedFirst:true})
   }
   render(){
-    let {tokenData,hovers} = this.state
+    let {hasLoadedFirst,tokenData,hovers} = this.state
     if(!tokenData){
+      return (
+        <div style={{opacity:0.3}}>Loading...</div>
+      )
+    }
+    if(!hasLoadedFirst){
       return (
         <div style={{opacity:0.3}}>Loading...</div>
       )
@@ -45,15 +51,25 @@ class AddressStack extends Component {
         <Spinner guts={
           (spinning)=>{
             return (
-              <Cryptog key={"cryptog"+token.id} id={token.id} slowrolling={spinning} image={token.image} zIndex={1}/>
+              <Cryptog key={"cryptog"+token.id} id={token.id} scale={0.90} slowrolling={spinning} image={token.image} zIndex={1}/>
             )
           }
         }/>
       )
 		})
 
+    let callToAction = (
+      <div className={"centercontainer"}>
+        <div style={{padding:40,marginBottom:60}}>
+          <MMButton color={"#6ac360"} onClick={()=>{window.location="/stacks"}}>Play Pogs!</MMButton>
+        </div>
+      </div>
+    )
+
     return (
       <div>
+
+        {callToAction}
 
         <div style={{float:'left',marginTop:-40}}>
           <span style={{verticalAlign:'middle'}}>
@@ -67,7 +83,7 @@ class AddressStack extends Component {
         <div style={{float:'right',marginTop:-40}}>({tokenData.length})</div>
         <StackGrid
           style={{marginTop:90}}
-          columnWidth={110}
+          columnWidth={115}
         >
            {tokenDisplay}
         </StackGrid>

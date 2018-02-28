@@ -21,12 +21,14 @@ export default createClass({
 		myTokens: PropTypes.array,
 		metaMaskHintFn: PropTypes.func,
 		showLoadingScreen: PropTypes.func,
+		network: PropTypes.number,
 	},
+
 	render(){
-		let {web3} = this.context
+		let {web3,network} = this.context
 		return (
 			<div>
-				<Intro web3={web3}/>
+				<Intro web3={web3} network={network}/>
 				<BuyPacks compact={true} />
 				<Slack />
 			</div>

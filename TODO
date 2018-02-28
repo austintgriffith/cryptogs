@@ -1,5 +1,6 @@
 [ ] SEO and unfurl image
-[ ] Port play stack to event parser! 
+[ ] follow the process through from buying pogs to a full game and make sure there is a call to action -- first: my pogs needs a play pogs or create game pu
+[ ] Port play stack to event parser!
 [ ] deploy with new deploy.network mechanics to test
 [ ] watch "Loading token data" messages on address page and make sure token loads dont take forever on ropsten - maybe a loader screen?
 [ ] slack channel with invite on page, but #design channel to get pog designers together so we aren't stepping on toes
@@ -33,7 +34,7 @@
 [x] button style
 [ ] clean up animations
 [ ] audit contracts
-[ ] is this legal?
+[ ] is this legal? what about copyrights of 'pogs'?
 [ ] privacy policy and terms of usage
 [ ] team/about page
 [ ] register social accounts

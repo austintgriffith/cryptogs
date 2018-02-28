@@ -25,11 +25,14 @@ export default createClass({
 		blockNumber: PropTypes.number,
 	},
 	getInitialState(){
-		return {mintedPacks:[],shouldHaveLoaded:false}
+		return {mintedPacks:[],shouldHaveLoaded:false,debounce:true}
 	},
 	componentDidMount(){
 		this.loadPackData()
 		loadInterval = setInterval(this.loadPackData,107)
+		setTimeout(()=>{
+			this.setState({debounce:false})
+		},2000)
 	},
 	componentWillUnmount(){
 		clearInterval(loadInterval)
@@ -82,13 +85,30 @@ export default createClass({
 		}
 	},
 	render(){
+
     const { compact } = this.props
 		const { account,contracts,web3,metaMaskHintFn,showLoadingScreen } = this.context
-		if(!contracts || !contracts['Cryptogs'] ) return (<div style={{opacity:0.3}}>loading...</div>)
 
-		const { mintedPacks,shouldHaveLoaded } = this.state
-		if(!mintedPacks) return (<div style={{opacity:0.3}}>connecting...</div>)
+
+
+		const { mintedPacks,shouldHaveLoaded,debounce } = this.state
+		if(!mintedPacks || debounce) return (<div style={{opacity:0.3}}><div className={"centercontainer"}>
+			<div style={{padding:40}}>
+				connecting...
+			</div>
+		</div></div>)
     let mintedPackRender
+
+		if(!contracts || !contracts['Cryptogs'] ) {
+			return (
+				<div className={"centercontainer"}>
+					<div style={{padding:40}}>
+						<MMButton color={"#6ac360"} onClick={()=>{metaMaskHintFn()}}>Play Pogs!</MMButton>
+					</div>
+				</div>
+			)
+
+		}
 
     if(compact){
 

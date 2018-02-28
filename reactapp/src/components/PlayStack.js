@@ -35,11 +35,13 @@ class PlayStack extends Component {
   }
   async loadStackData(){
     let stack
-    let {contracts,web3,showLoadingScreen} = this.props.context
+    let {account,contracts,web3,showLoadingScreen} = this.props.context
     //console.log("contracts",contracts)
     let update = {}
 
     update.stackData = await contracts['Cryptogs'].methods.getStack(this.state.stack).call()
+    update.player1 = update.stackData.owner
+
     for(let t=1;t<=5;t++){
       let token = await contracts['Cryptogs'].methods.getToken(update.stackData["token"+t]).call()//this.state.allStacks[id]
       update.stackData["token"+t+"Image"] = web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
@@ -110,8 +112,12 @@ class PlayStack extends Component {
       });
       for(let e in acceptCounterStackEvents){
         update.counterStack = acceptCounterStackEvents[e].returnValues._counterStack
+        update.counterStackData = await contracts['Cryptogs'].methods.getStack(update.counterStack).call()
+        update.player2 = update.counterStackData.owner
       }
     }
+
+    update.spectator = (account && this.state.player1 && account.toLowerCase()!= this.state.player1.toLowerCase() && this.state.player2 && account.toLowerCase()!= this.state.player2.toLowerCase())
 
     if(update.stackMode==2&&!this.state.coinFlipping){
       update.coinFlipping=true
@@ -409,7 +415,8 @@ class PlayStack extends Component {
   }
   slammerClick(){
     let {account} = this.props.context
-    let {lastActor} = this.state;
+    let {lastActor,spectator} = this.state;
+    if(spectator) return 0;
     if(account.toLowerCase()!=lastActor.toLowerCase()){
       console.log("SLAMMER CLICK")
       if(this.state.stackMode==3){
@@ -436,7 +443,7 @@ class PlayStack extends Component {
   }
   render(){
     let {account,blockNumber} = this.props.context
-    let {coinFlipResult,stackMode,stackData,counterStacks,lastBlock,lastActor,TIMEOUTBLOCKS,flipEvents,throwSlammerEvents} = this.state;
+    let {coinFlipResult,stackMode,stackData,counterStacks,lastBlock,lastActor,TIMEOUTBLOCKS,flipEvents,throwSlammerEvents,player1,player2,spectator} = this.state;
     if(!stackData){
       return (
         <div style={{opacity:0.3}}>Loading...</div>
@@ -512,11 +519,20 @@ class PlayStack extends Component {
     let coinFlipResultText = ""
 
     if(coinFlipResult){
-      if(coinFlipResult.whosTurn.toLowerCase()==account.toLowerCase()){
-        coinFlipResultText= "You won the slammer toss, you go first. "
+      if(spectator){
+        if(coinFlipResult.whosTurn.toLowerCase()==player1.toLowerCase()){
+          coinFlipResultText= "Player 1 won the slammer toss, they go first. "
+        }else{
+          coinFlipResultText= "Player 2 won slammer toss, they go first. "
+        }
       }else{
-        coinFlipResultText= "They won the slammer toss, they go first. "
+        if(coinFlipResult.whosTurn.toLowerCase()==account.toLowerCase()){
+          coinFlipResultText= "You won the slammer toss, you go first. "
+        }else{
+          coinFlipResultText= "They won the slammer toss, they go first. "
+        }
       }
+
     }
 
     let flipDisplay = ""
@@ -534,29 +550,58 @@ class PlayStack extends Component {
           }
         }
         let who = ""
-        if(throwSlammerEvent.whoDoneIt.toLowerCase()==account.toLowerCase()){
-          if(flipped.length>0){
-            who = "You Flipped:"
-          }else{
-            if(throwSlammerEvent.success){
-              who = "You Wiffed"
+
+        if(spectator){
+          if(throwSlammerEvent.whoDoneIt.toLowerCase()==player1.toLowerCase()){
+            if(flipped.length>0){
+              who = "Player 1 Flipped:"
             }else{
-              who = "Your throw failed, try again."
+              if(throwSlammerEvent.success){
+                who = "Player 1 Wiffed"
+              }else{
+                who = "Player 1's throw failed, trying again."
+              }
+
             }
 
-          }
-
-        }else{
-          if(flipped.length>0){
-            who = "They Flipped"
           }else{
-            if(throwSlammerEvent.success){
-              who = "They Wiffed"
+            if(flipped.length>0){
+              who = "Player 2 Flipped"
             }else{
-              who = "Their throw failed, trying again."
+              if(throwSlammerEvent.success){
+                who = "Player 2 Wiffed"
+              }else{
+                who = "Player 2's throw failed, trying again."
+              }
+            }
+          }
+        }else{
+          if(throwSlammerEvent.whoDoneIt.toLowerCase()==account.toLowerCase()){
+            if(flipped.length>0){
+              who = "You Flipped:"
+            }else{
+              if(throwSlammerEvent.success){
+                who = "You Wiffed"
+              }else{
+                who = "Your throw failed, try again."
+              }
+
+            }
+
+          }else{
+            if(flipped.length>0){
+              who = "They Flipped"
+            }else{
+              if(throwSlammerEvent.success){
+                who = "They Wiffed"
+              }else{
+                who = "Their throw failed, trying again."
+              }
             }
           }
         }
+
+
        return (
          <div key={"logdiv"+throwSlammerEvent.blockNumber}>
          <span>#{throwSlammerEvent.blockNumber}</span>
@@ -662,7 +707,7 @@ class PlayStack extends Component {
             <div>
               <div style={{padding:10,paddingTop:20}}>Share game url:</div>
               <pre id="url" style={{fontSize:14}} onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
-              <div style={{padding:10,paddingTop:20}}>{"Accept an opponent's stack:"}</div>
+              <div style={{padding:10,paddingTop:20}} className={"actionable"}>{"Accept an opponent's stack:"}</div>
             </div>
           )
         }else{
@@ -676,8 +721,8 @@ class PlayStack extends Component {
       }else{
 
           message = (
-            <div style={{padding:20}}>
-              {"Waiting for the game creator to accept a stack..."}
+            <div style={{padding:20}} className={"actionable"}>
+              {"Waiting for the player 1 to accept a stack..."}
             </div>
           )
 
@@ -693,14 +738,14 @@ class PlayStack extends Component {
     }else if(stackMode==1){
       if(account.toLowerCase()==stackData.owner.toLowerCase()){
         display = (
-          <div>
+          <div className={"actionable"}>
             Click the slammer to determine who goes first...
           </div>
         )
       }else{
         display = (
           <div>
-            Waiting for game creator to start slammer flip to determine who goes first...
+            Waiting for player 1 to start slammer flip to determine who goes first...
           </div>
         )
       }
@@ -708,51 +753,64 @@ class PlayStack extends Component {
     }else if(stackMode==2){
       if(account.toLowerCase()==stackData.owner.toLowerCase()){
         display = (
-          <div>
+          <div className={"actionable"}>
             Click the slammer to stop it to determine who goes first...
           </div>
         )
       }else{
         display = (
           <div style={{marginTop:20}}>
-            Waiting for game creator to stop slammer flip...
+            Waiting for player 1 to stop slammer flip...
           </div>
         )
       }
     }else if(stackMode==3){
-      if(account.toLowerCase()==lastActor.toLowerCase()){
-        display = (
-          <div>
-            Waiting for other player to raise slammer...
-          </div>
-        )
-      }else{
-        display = (
-          <div>
-            Click the slammer to prepare to throw...
-          </div>
-        )
+      if(!spectator){
+        if(account.toLowerCase()==lastActor.toLowerCase()){
+          display = (
+            <div>
+              Waiting for other player to raise slammer...
+            </div>
+          )
+        }else{
+          display = (
+            <div className={"actionable"}>
+              Click the slammer to prepare to throw...
+            </div>
+          )
+        }
       }
     }else if(stackMode==4){
-      if(account.toLowerCase()==lastActor.toLowerCase()){
-        display = (
-          <div>
-            Waiting for other player to throw slammer...
-          </div>
-        )
-      }else{
-        display = (
-          <div>
-            Click the slammer to throw...
-          </div>
-        )
+      if(!spectator){
+        if(account.toLowerCase()==lastActor.toLowerCase()){
+          display = (
+            <div>
+              Waiting for other player to throw slammer...
+            </div>
+          )
+        }else{
+          display = (
+            <div className={"actionable"}>
+              Click the slammer to throw...
+            </div>
+          )
 
+        }
       }
     }else if(stackMode==9){
-
+      coinFlipResultText=""
+      flipDisplay=""
         display = (
+          <div>
           <div style={{opacity:0.3,marginTop:100,fontWeight:'bold',padding:50,fontSize:99,letterSpacing:-2}}>
             Game Over
+
+          </div>
+          <div className={"centercontainer"}>
+            <div style={{padding:40,marginTop:80}}>
+              <MMButton color={"#6ac360"} onClick={()=>{window.location="/stacks"}}>Play Pogs!</MMButton>
+            </div>
+          </div>
           </div>
         )
 
@@ -764,20 +822,33 @@ class PlayStack extends Component {
 
     let slammerOpacity = 0.7
 
+
+
+
     let timerDisplay = ""
     if(lastBlock&&lastActor){
 
       let turn
-
-      if(account.toLowerCase()==lastActor.toLowerCase()){
-        turn = "Their Turn"
+      if(spectator){
+        if(player1.toLowerCase()==lastActor.toLowerCase()){
+          turn = "Player 2's Turn"
+        }else{
+          turn = "Player 1's Turn"
+          slammerOpacity=1
+        }
       }else{
-        turn = "Your Turn"
-        slammerOpacity=1
+        if(account.toLowerCase()==lastActor.toLowerCase()){
+          turn = "Their Turn"
+        }else{
+          turn = "Your Turn"
+          slammerOpacity=1
+        }
       }
 
+
+
       let drainDisplay = ""
-      if(blockNumber-lastBlock >= TIMEOUTBLOCKS){
+      if(blockNumber-lastBlock >= TIMEOUTBLOCKS && !spectator){
         drainDisplay = (
           <MMButton color={"#fe2311"} onClick={this.drainStack.bind(this)}>drain</MMButton>
         )

@@ -71,7 +71,21 @@ export default createClass({
 
 
     )
-    //creeprolling={true}
+
+    let warningMessage = (
+      <div className={"messageRed"} style={{opacity:0.6,marginTop:40,paddingLeft:30,color:"#666666",fontSize:15}}>
+        <span style={{fontWeight:'bold'}}>Warning:</span> We are in alpha test mode. Contracts are unaudited and will be redeployed. Assets will be lost!
+      </div>
+    )
+
+    if(this.props.network==1){
+      warningMessage = (
+        <div className={"messageRed"} style={{marginTop:40,paddingLeft:30,color:"#666666",fontSize:20}}>
+          <span style={{fontWeight:'bold'}}>DANGER:</span> We are in alpha test mode. GET OFF THE MAIN NET!!!! Contracts are unaudited and will be redeployed. Assets will be lost!!! Switch to Ropsten please!
+        </div>
+      )
+    }
+
 
 
     return (
@@ -79,9 +93,7 @@ export default createClass({
         <div style={{position:'relative'}}>
           <div style={{zIndex:2,fontWeight:'bold',paddingBottom:20}}>{"Whip out your slammer and get rad on the blockchain!"}</div>
           {" Born at ETHDenver, CryptoPogs is a fully decentralized ERC721 game. Utilizing a commit/reveal scheme for pseudorandomness, CryptoPogs gaming mechanics are all on-chain. Collect rare pogs and play live with your friends! "}
-            <div className={"messageRed"} style={{opacity:0.7,marginTop:40,paddingLeft:30,color:"#666666",fontSize:15}}>
-              <span style={{fontWeight:'bold'}}>Warning:</span> We are in alpha test mode. Contracts are unaudited and will be redeployed. Assets will be lost!
-            </div>
+          {warningMessage}
           {pogDisplay}
         </div>
       </div>
