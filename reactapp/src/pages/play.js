@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import PropsRoute from '../components/PropsRoute.js'
 import Cryptog from '../components/Cryptog.js'
 import PlayStack from '../components/PlayStack.js'
+import Slack from '../components/Slack.js'
 
 let syncInterval
 export default createClass({
@@ -35,6 +36,7 @@ export default createClass({
               component={PlayStack}
 							context={this.context}
             />
+						<Slack />
           </div>
         )}
       />

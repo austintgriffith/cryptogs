@@ -29,6 +29,7 @@ class AddressStack extends Component {
       tokenObject.image = this.props.context.web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
       tokens.push(tokenObject)
     }
+    console.log("token data loaded...")
     this.setState({tokenData:tokens})
   }
   render(){

@@ -68,8 +68,12 @@ export default createClass({
 	componentDidMount(){
 		try{
 			let web3 = new Web3(window.web3.currentProvider)
-			let contracts = ContractLoader(["Cryptogs","SlammerTime"],web3);
-			this.setState({web3:web3,contracts:contracts,contractsLoaded:true})
+			web3.eth.net.getId().then((network)=>{
+				if(network>9999) network=9999;
+				let contracts = ContractLoader(["Cryptogs","SlammerTime"],web3,network);
+				this.setState({web3:web3,contracts:contracts,contractsLoaded:true,network:network})
+			})
+
 		} catch(e) {
 			console.log(e)
 		}

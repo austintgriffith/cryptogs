@@ -6,6 +6,7 @@ import Spinner from '../components/Spinner.js'
 import StackSelect from '../components/StackSelect.js'
 import {Motion, spring, presets} from 'react-motion';
 import MMButton from '../components/MMButton.js'
+import Slack from '../components/Slack.js'
 
 let loadInterval
 const GWEI = 10
@@ -184,6 +185,8 @@ class PlayStack extends Component {
     if(update.stackMode>2){
       //  event ThrowSlammer(bytes32 indexed stack, bool success, address whoDoneIt, uint32 blockNumber, bool token1Flipped, bool token2Flipped, bool token3Flipped, bool token4Flipped, bool token5Flipped, bool token6Flipped, bool token7Flipped, bool token8Flipped, bool token9Flipped, bool token10Flipped);
 
+      console.log("loading ALL slammer events (messy)")
+      let start = Date.now()
       let throwSlammerEvents = await contracts['Cryptogs'].getPastEvents("ThrowSlammer", {
         filter: {stack: this.state.stack},
         fromBlock: contracts['Cryptogs'].blockNumber,
@@ -193,6 +196,8 @@ class PlayStack extends Component {
       for(let e in throwSlammerEvents){
         update.throwSlammerEvents.push(throwSlammerEvents[e].returnValues)
       }
+      let duration = Date.now()-start
+      console.log("done loading ALL slammer events (YOU NEED TO PORT TO EVENT LOADER!)",duration)
     }
 
     if(update.stackMode==3){
@@ -438,7 +443,71 @@ class PlayStack extends Component {
       )
     }
 
+    const SHOWDEMOSCREEN=false
+    if(SHOWDEMOSCREEN){
+      let stackx = 0
+      let stackspread = 9
+      return (
+        <div style={{position:'relative',width:"100%",height:"100%"}}>
+          <div style={{position:'absolute',left:400,top:400}}>
+          <div style={{position:'absolute',left:-300,top:-200,zIndex:1}}>
+           <Cryptog angle={-45} scale={0.9} id={1} image={"buffalo.png"}/>
+          </div>
+          <div style={{position:'absolute',left:320,top:-120,zIndex:1}}>
+           <Cryptog angle={-65} scale={0.9} id={1} image={"fish.png"}/>
+          </div>
+          <div style={{position:'absolute',left:0,top:stackx+stackspread*3,zIndex:1}}>
+           <Cryptog angle={65} scale={0.9} id={1} image={"elephant.png"}/>
+          </div>
+            <div style={{position:'absolute',left:0,top:stackx+stackspread*2,zIndex:1}}>
+             <Cryptog angle={65} scale={0.9} id={1} image={"hippo.png"}/>
+            </div>
+            <div style={{position:'absolute',left:0,top:stackx+stackspread*1,zIndex:1}}>
+             <Cryptog angle={65} scale={0.9} id={1} image={"fish.png"}/>
+            </div>
+            <div style={{position:'absolute',left:0,top:stackx,zIndex:1}}>
+             <Cryptog angle={65} scale={0.9} id={1} image={"unicorn.png"}/>
+            </div>
+            <div style={{position:'absolute',left:189,top:130,zIndex:1}}>
+             <Cryptog angle={65} scale={0.9} id={1} image={"hippo.png"}/>
+            </div>
+            <div style={{position:'absolute',left:129,top:-250,zIndex:1}}>
+             <Cryptog angle={120} scale={0.9} id={1} image={"hippo.png"}/>
+            </div>
+            <div style={{position:'absolute',left:-180,top:110,zIndex:1}}>
+             <Cryptog angle={-119} scale={0.9} id={1} image={"hippo.png"}/>
+            </div>
+            <div style={{position:'absolute',left:-240,top:-20,zIndex:1}}>
+             <Cryptog angle={95} scale={0.9} id={1} image={"ethereumlogo.png"}/>
+            </div>
+            <div style={{position:'absolute',left:-340,top:20,zIndex:1}}>
+             <Cryptog angle={80} scale={0.9} id={1} image={"ethereumlogo.png"}/>
+            </div>
+            <div style={{position:'absolute',left:-360,top:20,zIndex:1,
+                        fontWeight:'bold',fontSize:140,letterSpacing:-2}}>
+              CryptoPogs.io
+            </div>
+            <div style={{position:'absolute',left:360,top:20,zIndex:1}}>
+             <Cryptog angle={100} scale={0.9} id={1} image={"ethereumlogo.png"}/>
+            </div>
+            <div style={{position:'absolute',left:-90,top:-300,zIndex:1}}>
+             <Cryptog angle={130} scale={0.9} id={1} image={"ethereumlogo.png"}/>
+            </div>
+            <div style={{position:'absolute',left:40,top:180,zIndex:1}}>
+             <Cryptog angle={65} scale={0.9} id={1} image={"ethereumlogo.png"}/>
+            </div>
 
+            <div style={{position:'absolute',left:0,top:-150,zIndex:10}}>
+            <Slammer spinning={false} angle={35} image={"ethslammer.png"}/>
+            </div>
+            <div style={{position:'absolute',left:-250,top:130,zIndex:0,width:900,height:100,
+                fontWeight:'bold',fontSize:30,letterSpacing:-0.5}}>
+              Collect and Play pogs on the Ethereum Blockchain
+            </div>
+          </div>
+        </div>
+      )
+    }
 
     let coinFlipResultText = ""
 
@@ -762,7 +831,7 @@ class PlayStack extends Component {
             )
           }}
         </Motion>
-
+        <Slack />
       </div>
       </div>
     )

@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 import Intro from '../components/Intro.js'
 import BuyPacks from '../components/BuyPacks.js'
+import Slack from '../components/Slack.js'
 
 let loadInterval
 let initialIntervalLoaded
@@ -27,6 +28,7 @@ export default createClass({
 			<div>
 				<Intro web3={web3}/>
 				<BuyPacks compact={true} />
+				<Slack />
 			</div>
 		)
 	}

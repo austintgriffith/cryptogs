@@ -22,23 +22,23 @@ function rand(min, max) {
   return Math.floor( Math.random() * (max - min) + min );
 }
 const contractsDir = "reactapp/src/contracts/"
-function loadAbi(contract){
+function loadAbi(contract,deployNetwork){
   let abi = fs.readFileSync(contract+"/"+contract+".abi").toString().trim()
   console.log(tab,contract.cyan,"ABI:",(""+abi.length).yellow)
   assert(abi,"No ABI for "+contract+"!?")
-  fs.writeFileSync(contractsDir+contract+".abi.js","module.exports = "+abi);
+  fs.writeFileSync(contractsDir+contract+"."+deployNetwork+".abi.js","module.exports = "+abi);
 }
-function loadAddress(contract){
+function loadAddress(contract,deployNetwork){
   let addr = fs.readFileSync(contract+"/"+contract+".address").toString().trim()
   console.log(tab,contract.cyan,"ADDRESS:",addr.blue)
   assert(addr,"No Address for "+contract+"!?")
-  fs.writeFileSync(contractsDir+contract+".address.js","module.exports = \""+addr+"\"");
+  fs.writeFileSync(contractsDir+contract+"."+deployNetwork+".address.js","module.exports = \""+addr+"\"");
 }
-function loadBlockNumber(contract){
+function loadBlockNumber(contract,deployNetwork){
   let blockNumber = fs.readFileSync(contract+"/"+contract+".blockNumber").toString().trim()
   console.log(tab,contract.cyan,"blockNumber:",blockNumber.blue)
   assert(blockNumber,"No blockNumber for "+contract+"!?")
-  fs.writeFileSync(contractsDir+contract+".blockNumber.js","module.exports = \""+blockNumber+"\"");
+  fs.writeFileSync(contractsDir+contract+"."+deployNetwork+".blockNumber.js","module.exports = \""+blockNumber+"\"");
 }
 
 let COMMIT
@@ -391,13 +391,18 @@ module.exports = {
         this.timeout(120000)
         const fs = require("fs")
 
-        loadAddress("Cryptogs")
-        loadAddress("SlammerTime")
+        const deployNetwork = parseInt(fs.readFileSync("deploy.network").toString().trim());
+        assert(deployNetwork>0,"NO DEPLOY NETWORK FILE DETECTED")
 
-        loadAbi("Cryptogs")
-        loadAbi("SlammerTime")
+        console.log(tab,"Deploy Network:",(""+deployNetwork).green)
 
-        loadBlockNumber("Cryptogs")
+        loadAddress("Cryptogs",deployNetwork)
+        loadAddress("SlammerTime",deployNetwork)
+
+        loadAbi("Cryptogs",deployNetwork)
+        loadAbi("SlammerTime",deployNetwork)
+
+        loadBlockNumber("Cryptogs",deployNetwork)
 
       });
     });

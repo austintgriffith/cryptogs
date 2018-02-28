@@ -43,6 +43,13 @@ a:hover {
     text-decoration-color:#cccccc;
 }
 
+.messageLittle {
+    border-radius: 10px;
+    background: #e6e6e6;
+    padding: 5px;
+}
+
+
 .messageGray {
     border-radius: 25px;
     background: #f2f2f2;

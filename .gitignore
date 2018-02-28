@@ -1,6 +1,5 @@
-reactapp/src/contracts/*
-app/src/*.blockNumber.js
-app/src/*.address.js
+deploy.network
+reactapp/src/contracts/*999*
 */*.compiled
 reactapp/aws.json
 app/aws*

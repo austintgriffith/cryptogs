@@ -1,18 +1,20 @@
 const cryptogs = require("./cryptogs.js")
 
 let animals = [
-  "buffalo.png",
-  "bull.png",
-  "elephant.png",
-  "fish.png",
-  "hippo.png",
-  "lobster.png",
-  "mountaingoat.png",
-  "octopus.png",
-  "penguin.png",
-  "rhino.png",
-  "walrus.png",
-  "zebra.png"
+  "antelope.jpg",
+  "buffalo.jpg",
+  "bull.jpg",
+  "elephant.jpg",
+  "fish.jpg",
+  "hippo.jpg",
+  "killerwhale.jpg",
+  "lobster.jpg",
+  "mountaingoat.jpg",
+  "octopus.jpg",
+  "penguin.jpg",
+  "rhino.jpg",
+  "walrus.jpg",
+  "zebra.jpg"
 ]
 
 let space = [
@@ -61,12 +63,13 @@ function grabRandomTen(arr){
   return newArr;
 }
 
-cryptogs.mintPack(0,grabRandomTen(retro),0.005)
+//cryptogs.mintPack(0,grabRandomTen(retro),0.005)
 
-cryptogs.mintPack(0,grabRandomTen(space),0.005)
+//cryptogs.mintPack(0,grabRandomTen(space),0.005)
 
 cryptogs.mintPack(0,grabRandomTen(animals),0.01)
 
+/*
 cryptogs.mintPack(0,[
   "ethereumlogo.png",
   "ethereumlogo.png",
@@ -79,3 +82,4 @@ cryptogs.mintPack(0,[
   "unicorn.png",
   "dragon.png",
 ],0.025)
+*/

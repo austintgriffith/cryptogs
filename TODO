@@ -1,6 +1,11 @@
 [ ] SEO and unfurl image
+[ ] Port play stack to event parser! 
+[ ] deploy with new deploy.network mechanics to test
+[ ] watch "Loading token data" messages on address page and make sure token loads dont take forever on ropsten - maybe a loader screen?
+[ ] slack channel with invite on page, but #design channel to get pog designers together so we aren't stepping on toes
+[ ] pack details include artist
 [ ] Logo image?
-[ ] make the front page 2x2 grid go to a 1x4 when it gets small 
+[ ] buypack load debounce- it would be better to show a loader until it settles down rather then a pack and the quickly replaced by another
 [ ] live games on stacks page should say "watch" if you are a thrid party
 [ ] a third party is invited to slam it should check that account is neither player and display different
 [ ] when a game is finished the log should roll down front and center to show how that game went and who took what
@@ -13,6 +18,7 @@
 [ ] the contracts folder should hold different stuff for different networks
 [ ] remove / revoke stack option so timeout drain attack can't happen while you are away
 [ ] mobile responsive, viewport, test in cipher browser
+  [ ] make the front page 2x2 grid go to a 1x4 when it gets small
 [ ] game log should be more toward the top right and should include events like coin flip result and final count
 [ ] rarity display for single pog and entire stack
 [ ] 40 might be too short for a TIMEOUTBLOCKS

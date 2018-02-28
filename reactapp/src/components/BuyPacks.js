@@ -4,12 +4,14 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 import MMButton from '../components/MMButton.js'
 import Pack from '../components/Pack.js'
+import EventParser from '../modules/eventParser.js';
+import LiveParser from '../modules/liveParser.js';
 
 let loadInterval
 let initialIntervalLoaded
 
 const MINTEDPACKDISPLAYLIMIT = 10
-
+const DEBUG = false
 const GWEI=10
 
 export default createClass({
@@ -20,62 +22,63 @@ export default createClass({
 		myTokens: PropTypes.array,
 		metaMaskHintFn: PropTypes.func,
 		showLoadingScreen: PropTypes.func,
+		blockNumber: PropTypes.number,
 	},
 	getInitialState(){
 		return {mintedPacks:[],shouldHaveLoaded:false}
 	},
 	componentDidMount(){
 		this.loadPackData()
-		loadInterval = setInterval(this.loadPackData,777)
+		loadInterval = setInterval(this.loadPackData,107)
 	},
 	componentWillUnmount(){
 		clearInterval(loadInterval)
 	},
 	async loadPackData(){
 		let foundNew = false
-		let {contracts,web3} = this.context
-		if(contracts && contracts['Cryptogs']) {
-			let update = {}
-
-			let mintPackEvents = await contracts['Cryptogs'].getPastEvents("MintPack", {
-				fromBlock: contracts['Cryptogs'].blockNumber,
-				toBlock: 'latest'
-			});
-
-			for(let e in mintPackEvents){
-				let id = mintPackEvents[e].returnValues.packId;
-				if(!this.state.mintedPacks[id]){
-					foundNew=true;
-					this.state.mintedPacks[id]={price:web3.utils.fromWei(mintPackEvents[e].returnValues.price,"ether"),tokens:[]};
+		let {contracts,web3,blockNumber} = this.context
+		if(contracts && contracts['Cryptogs']&&blockNumber) {
+			clearInterval(loadInterval)
+			if(DEBUG) console.log("FIRING UP PARSERS...")
+			let updateMintPack = async (update)=>{
+				let id = update.packId;
+				if(!this.state.mintedPacks[id]) this.state.mintedPacks[id]={}
+				if(!this.state.mintedPacks[id].price){
+					this.state.mintedPacks[id]={price:web3.utils.fromWei(update.price,"ether"),tokens:[]};
 					this.state.mintedPacks[id].tokens = []
 					this.state.mintedPacks[id].images = []
 					for(let i=1;i<=10;i++){
-						let tokenid = mintPackEvents[e].returnValues["token"+i];
+						let tokenid = update["token"+i];
 						let token = await contracts['Cryptogs'].methods.getToken(tokenid).call()
 						this.state.mintedPacks[id].tokens[i-1] = tokenid
 						this.state.mintedPacks[id].images[i-1] = web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
 					}
+					if(DEBUG) console.log("UPDATING MINTED PACKS",this.state.mintedPacks)
+					this.setState({mintedPacks:this.state.mintedPacks})
 				}
 			}
+			EventParser(contracts["Cryptogs"],"MintPack",contracts["Cryptogs"].blockNumber,blockNumber,updateMintPack);
+			setInterval(()=>{
+				LiveParser(contracts["Cryptogs"],"MintPack",blockNumber,updateMintPack)
+			},737)
 
-			let buyPackEvents = await contracts['Cryptogs'].getPastEvents("BuyPack", {
-				fromBlock: contracts['Cryptogs'].blockNumber,
-				toBlock: 'latest'
-			});
 
-			for(let e in buyPackEvents){
-				let id = buyPackEvents[e].returnValues.packId;
+			let updateBuyPack = async (update)=>{
+				let id = update.packId;
+				if(!this.state.mintedPacks[id]) this.state.mintedPacks[id]={}
 				if(this.state.mintedPacks[id]&&!this.state.mintedPacks[id].bought){
-					foundNew=true;
-					this.state.mintedPacks[id].bought = buyPackEvents[e].returnValues.sender
+					this.state.mintedPacks[id].bought = update.sender
+					if(DEBUG) console.log(update)
+					if(DEBUG) console.log("UPDATING MINTED PACK WITH BUY",this.state.mintedPacks)
+					this.setState({mintedPacks:this.state.mintedPacks})
 				}
 			}
+			EventParser(contracts["Cryptogs"],"BuyPack",contracts["Cryptogs"].blockNumber,blockNumber,updateBuyPack);
+			setInterval(()=>{
+				LiveParser(contracts["Cryptogs"],"BuyPack",blockNumber,updateBuyPack)
+			},777)
 
-			if(foundNew) {
-				console.log("UPDATING MINTED PACKS",this.state.mintedPacks)
-				this.setState({mintedPacks:this.state.mintedPacks})
-			}
-			this.setState({shouldHaveLoaded:true})
+
 		}
 	},
 	render(){
