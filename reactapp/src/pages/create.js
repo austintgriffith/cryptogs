@@ -4,8 +4,6 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import PropTypes from 'prop-types'
 import StackSelect from '../components/StackSelect.js'
 
-const GWEI = 10
-
 let syncInterval
 export default createClass({
 	displayName: 'CreatePage',
@@ -15,6 +13,7 @@ export default createClass({
 		account: PropTypes.string,
 		myTokens: PropTypes.array,
 		showLoadingScreen: PropTypes.func,
+		GWEI: PropTypes.number,
 	},
 	getInitialState(){
 		return {
@@ -38,7 +37,7 @@ export default createClass({
 		contracts["Cryptogs"].methods.submitStack(contracts["SlammerTime"]._address,finalArray[0],finalArray[1],finalArray[2],finalArray[3],finalArray[4],true).send({
         from: account,
         gas:350000,
-        gasPrice:GWEI * 1000000000
+        gasPrice:this.context.GWEI * 1000000000
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
 				showLoadingScreen(hash)
@@ -80,4 +79,3 @@ export default createClass({
     )
 	}
 });
-//

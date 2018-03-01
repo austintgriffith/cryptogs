@@ -6,7 +6,6 @@ import Stack from '../components/Stack.js'
 import EventParser from '../modules/eventParser.js';
 import LiveParser from '../modules/liveParser.js';
 import MMButton from '../components/MMButton.js'
-import Slack from '../components/Slack.js'
 
 const DEBUG = false;
 
@@ -278,7 +277,6 @@ export default createClass({
 				<div>{liveStacks}</div>
 				<div style={sectionStyle}>Finished Games:</div>
 				<div>{finishedStacks}</div>
-				<Slack />
       </div>
     )
 	}

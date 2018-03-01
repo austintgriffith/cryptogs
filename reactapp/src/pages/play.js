@@ -5,7 +5,6 @@ import PropTypes from 'prop-types'
 import PropsRoute from '../components/PropsRoute.js'
 import Cryptog from '../components/Cryptog.js'
 import PlayStack from '../components/PlayStack.js'
-import Slack from '../components/Slack.js'
 
 let syncInterval
 export default createClass({
@@ -17,6 +16,7 @@ export default createClass({
 		myTokens: PropTypes.array,
 		blockNumber: PropTypes.number,
 		showLoadingScreen: PropTypes.func,
+		GWEI: PropTypes.number,
 	},
 	render(){
 		const { account,contracts } = this.context
@@ -35,8 +35,8 @@ export default createClass({
               path="/play/:stack"
               component={PlayStack}
 							context={this.context}
+							GWEI={this.context.GWEI}
             />
-						<Slack />
           </div>
         )}
       />

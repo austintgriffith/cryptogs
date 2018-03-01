@@ -59,6 +59,13 @@ a:hover {
     padding: 5px;
 }
 
+.messageBorder {
+    border: 2px solid #DDDDDD;
+    border-radius: 10px;
+    background: #ffffff;
+    padding: 5px;
+}
+
 
 .messageGray {
     border-radius: 25px;

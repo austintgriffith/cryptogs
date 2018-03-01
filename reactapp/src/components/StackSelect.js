@@ -27,6 +27,8 @@ class StackSelect extends Component {
     const { myTokens } = this.props
     if(!myTokens) return (<div style={{opacity:0.3}}>loading...</div>)
 
+    let tokenCount = 0
+
     let images = []
     let tokenDisplay = myTokens.map((token)=>{
       let style={cursor:"pointer"}
@@ -34,6 +36,7 @@ class StackSelect extends Component {
         style.opacity=0.3
       }
       images[token.id]=token.image
+      tokenCount++
       return <div style={style} onClick={this.tokenClick.bind(this,token.id)} key={"cryptog"+token.id} id={token.id} ><Cryptog scale={0.75} image={token.image}/></div>
     })
     let selectedTokens = []
@@ -56,9 +59,21 @@ class StackSelect extends Component {
         </div>
       )
     }
+
+    let extraTokenDisplay = ""
+    if(tokenDisplay.length<=0){
+      extraTokenDisplay = (
+        <div className={"centercontainer"} style={{width:"100%"}}>
+          <div style={{padding:40}}>
+            <MMButton color={"#6ac360"} onClick={()=>{window.location="/buy"}}>Buy Pogs</MMButton>
+          </div>
+        </div>
+      )
+    }
+
     return (
       <div>
-        <StackGrid style={{marginTop:50}} columnWidth={110}>
+        <StackGrid style={{marginTop:50}} columnWidth={105}>
           {selectedTokens}
           <div key="gobutton">
             {gobutton}
@@ -68,9 +83,10 @@ class StackSelect extends Component {
           {this.props.message}
         </div>
         <div style={{float:'right',opacity:0.3}}>({tokenDisplay.length})</div>
-        <StackGrid style={{marginTop:50}} columnWidth={110}>
+        <StackGrid style={{marginTop:50}} columnWidth={105}>
           {tokenDisplay}
         </StackGrid>
+        {extraTokenDisplay}
       </div>
     )
   }
