@@ -92,7 +92,7 @@ export default createClass({
       <div className={"messageGray"} style={{marginTop:85,color:"#666666",fontSize:15}}>
         <div style={{position:'relative'}}>
           <div style={{zIndex:2,fontWeight:'bold',paddingBottom:20}}>{"Whip out your slammer and get rad on the blockchain!"}</div>
-          {" Born at ETHDenver, CryptoPogs is a fully decentralized ERC721 game. Utilizing a commit/reveal scheme for pseudorandomness, CryptoPogs gaming mechanics are all on-chain. Collect rare pogs and play live with your friends! "}
+          {" Born at ETHDenver, CryptoPogs is a decentralized ERC721 game. Utilizing a commit/reveal scheme for pseudorandomness, CryptoPogs gaming mechanics are all on-chain. Collect rare pogs and play live with your friends! "}
           {warningMessage}
           {pogDisplay}
         </div>
