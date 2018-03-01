@@ -1,6 +1,18 @@
 pragma solidity ^0.4.15;
 
-contract SlammerTime {
+/*
+  https://cryptopogs.io
+  --Austin Thomas Griffith for ETHDenver
+  ( this is unaudited )
+*/
+
+import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
+
+contract SlammerTime is Ownable{
+
+  string public constant purpose = "ETHDenver";
+  string public constant contact = "https://cryptopogs.io";
+  string public constant author = "Austin Thomas Griffith | austin@concurrence.io";
 
   address public cryptogs;
 
@@ -51,8 +63,22 @@ contract SlammerTime {
     return true;
   }
 
+  function withdraw(uint256 _amount) public onlyOwner returns (bool) {
+    require(this.balance >= _amount);
+    assert(owner.send(_amount));
+    return true;
+  }
+
+  function withdrawToken(address _token,uint256 _amount) public onlyOwner returns (bool) {
+    StandardToken token = StandardToken(_token);
+    token.transfer(msg.sender,_amount);
+    return true;
+  }
 }
 
+contract StandardToken {
+  function transfer(address _to, uint256 _value) public returns (bool) { }
+}
 
 
 contract Cryptogs {
