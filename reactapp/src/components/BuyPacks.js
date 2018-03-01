@@ -11,7 +11,7 @@ let loadInterval
 let initialIntervalLoaded
 
 const MINTEDPACKDISPLAYLIMIT = 10
-const DEBUG = false
+const DEBUG = true
 
 let txhash
 
@@ -51,7 +51,7 @@ export default createClass({
 				let id = update.packId;
 				if(!this.state.mintedPacks[id]) this.state.mintedPacks[id]={}
 				if(!this.state.mintedPacks[id].price){
-					this.state.mintedPacks[id]={price:web3.utils.fromWei(update.price,"ether"),tokens:[]};
+					Object.assign(this.state.mintedPacks[id],{price:web3.utils.fromWei(update.price,"ether"),tokens:[]});
 					this.state.mintedPacks[id].tokens = []
 					this.state.mintedPacks[id].images = []
 					for(let i=1;i<=10;i++){
@@ -83,7 +83,7 @@ export default createClass({
 			EventParser(contracts["Cryptogs"],"BuyPack",contracts["Cryptogs"].blockNumber,blockNumber,updateBuyPack);
 			setInterval(()=>{
 				LiveParser(contracts["Cryptogs"],"BuyPack",blockNumber,updateBuyPack)
-			},777)
+			},1011)
 
 
 		}
