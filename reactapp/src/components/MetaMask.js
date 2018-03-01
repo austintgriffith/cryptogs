@@ -25,7 +25,7 @@ class MetaMask extends Component {
     } else {
       window.web3.version.getNetwork((err,network)=>{
         network = translateNetwork(network);
-        if(network=="Mainnet" || network=="Morden" || network=="Rinkeby" || network=="Kovan"){
+        if( network=="Morden" || network=="Rinkeby" || network=="Kovan"){
           if(this.state.metamask!=2) this.setState({metamask:2,network:network})
         }else{
           let accounts

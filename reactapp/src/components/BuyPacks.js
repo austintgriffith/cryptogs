@@ -137,10 +137,11 @@ export default createClass({
 												showLoadingScreen(hash)
 												txhash=hash
   							      }).on('error',(a,b)=>{
-												console.log("ERROR","Transaction was not mined into block, wait or try again with a higher gas price. It could still get mined!")
+
+												console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
 												this.context.throwAlert(
 													<div>
-														<span>Warning: Your transation was not yet mined into a block. Increase your gas price and try again or </span>
+														<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
 														<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
 														<div style={{position:"absolute",right:20,bottom:20}}>
 															<MMButton color={"#6081c3"} onClick={()=>{
@@ -155,6 +156,7 @@ export default createClass({
 														</div>
 													</div>
 												)
+
 											}).then((receipt)=>{
   							        console.log("RESULT:",receipt)
 												showLoadingScreen(false)
@@ -212,11 +214,11 @@ export default createClass({
 												showLoadingScreen(hash)
 												txhash=hash
   							      }).on('error',(a,b)=>{
-												console.log("ERROR",a,b)
-												console.log("ERROR","Transaction was not mined into block, wait or try again with a higher gas price. It could still get mined!")
+
+												console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
 												this.context.throwAlert(
 													<div>
-														<span>Warning: Your transation was not yet mined into a block. Increase your gas price and try again or </span>
+														<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
 														<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
 														<div style={{position:"absolute",right:20,bottom:20}}>
 															<MMButton color={"#6081c3"} onClick={()=>{
@@ -231,6 +233,7 @@ export default createClass({
 														</div>
 													</div>
 												)
+
 											}).then((receipt)=>{
   							        console.log("RESULT:",receipt)
   											//window.location = "/address/"+account

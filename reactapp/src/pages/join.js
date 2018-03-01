@@ -16,6 +16,7 @@ export default createClass({
 		myTokens: PropTypes.array,
 		showLoadingScreen: PropTypes.func,
 		GWEI: PropTypes.number,
+		throwAlert: PropTypes.func,
 	},
 	render(){
 		const { account,contracts } = this.context
@@ -35,6 +36,7 @@ export default createClass({
               component={JoinStack}
 							context={this.context}
 							GWEI={this.context.GWEI}
+							throwAlert={this.context.throwAlert}
             />
           </div>
         )}

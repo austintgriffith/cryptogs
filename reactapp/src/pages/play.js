@@ -17,6 +17,7 @@ export default createClass({
 		blockNumber: PropTypes.number,
 		showLoadingScreen: PropTypes.func,
 		GWEI: PropTypes.number,
+		throwAlert: PropTypes.func,
 	},
 	render(){
 		const { account,contracts } = this.context
@@ -36,6 +37,7 @@ export default createClass({
               component={PlayStack}
 							context={this.context}
 							GWEI={this.context.GWEI}
+							throwAlert={this.context.throwAlert}
             />
           </div>
         )}

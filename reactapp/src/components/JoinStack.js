@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import Stack from '../components/Stack.js'
 import StackSelect from '../components/StackSelect.js'
+import MMButton from '../components/MMButton.js'
 
 let waitInterval
+let txhash
 
 class JoinStack extends Component {
   constructor(props) {
@@ -42,7 +44,29 @@ class JoinStack extends Component {
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
         showLoadingScreen(hash)
-      }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
+        txhash=hash
+      }).on('error',(a,b)=>{
+
+				console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+				this.props.throwAlert(
+					<div>
+						<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
+						<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
+						<div style={{position:"absolute",right:20,bottom:20}}>
+							<MMButton color={"#6081c3"} onClick={()=>{
+								this.props.throwAlert(false);
+								window.location = "/play/"+stack
+							}}>continue and wait</MMButton>
+						</div>
+						<div style={{position:"absolute",left:20,bottom:20}}>
+							<MMButton color={"#f7861c"} onClick={()=>{
+								this.props.throwAlert(false);
+							}}>close and try again</MMButton>
+						</div>
+					</div>
+				)
+
+      }).then((receipt)=>{
         console.log("RESULT:",receipt)
         window.location = "/play/"+stack
         showLoadingScreen(false)
