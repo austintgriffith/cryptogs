@@ -28,7 +28,9 @@ import cookie from 'react-cookies'
 
 
 const DEBUG = false
-const STARTINGGWEI = 2
+const MAINNETGWEI = 2.5
+const STARTINGGWEI = 25
+
 
 var Web3 = require('web3');
 let contractLoadingInterval;
@@ -82,7 +84,6 @@ export default createClass({
 	},
 	getInitialState(){
 		let GWEI =  cookie.load('GWEI')
-		if(!GWEI)  GWEI = STARTINGGWEI
 		return {
 			web3: {},
 			contracts: [],
@@ -98,7 +99,16 @@ export default createClass({
 			web3.eth.net.getId().then((network)=>{
 				if(network>9999) network=9999;
 				let contracts = ContractLoader(["Cryptogs","SlammerTime"],web3,network);
-				this.setState({web3:web3,contracts:contracts,contractsLoaded:true,network:network})
+				let update = {web3:web3,contracts:contracts,contractsLoaded:true,network:network}
+				console.log("detecting network for starting gas")
+				if(!this.state || !this.state.GWEI || this.state.GWEI == STARTINGGWEI){
+					if(network>1){
+						this.setGWEI(STARTINGGWEI)
+					}else{
+						this.setGWEI(MAINNETGWEI)
+					}
+				}
+				this.setState(update)
 			})
 
 		} catch(e) {
@@ -187,7 +197,7 @@ export default createClass({
           </Router>
 				</div>
 				{loader}
-				<GasSlider setGWEI={this.setGWEI} GWEI={this.state.GWEI}/>
+				<GasSlider setGWEI={this.setGWEI} GWEI={this.state.GWEI} network={this.state.network}/>
 				<Slack />
 				<Alert
 					message={this.state.alert}
