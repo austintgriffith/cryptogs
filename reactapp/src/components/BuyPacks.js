@@ -12,7 +12,8 @@ let initialIntervalLoaded
 
 const MINTEDPACKDISPLAYLIMIT = 10
 const DEBUG = false
-const GWEI=10
+
+let txhash
 
 export default createClass({
 	contextTypes: {
@@ -22,7 +23,10 @@ export default createClass({
 		myTokens: PropTypes.array,
 		metaMaskHintFn: PropTypes.func,
 		showLoadingScreen: PropTypes.func,
+		throwAlert: PropTypes.func,
 		blockNumber: PropTypes.number,
+		etherscan: PropTypes.string,
+		GWEI: PropTypes.number,
 	},
 	getInitialState(){
 		return {mintedPacks:[],shouldHaveLoaded:false,debounce:true}
@@ -127,11 +131,31 @@ export default createClass({
   							        from: account,
   											value: web3.utils.toWei(mintedPacks[p].price,"ether"),
   							        gas:490000,
-  							        gasPrice:GWEI * 1000000000
+  							        gasPrice:this.context.GWEI * 1000000000
   							      },(error,hash)=>{
   							        console.log("CALLBACK!",error,hash)
 												showLoadingScreen(hash)
-  							      }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
+												txhash=hash
+  							      }).on('error',(a,b)=>{
+												console.log("ERROR","Transaction was not mined into block, wait or try again with a higher gas price. It could still get mined!")
+												this.context.throwAlert(
+													<div>
+														<span>Warning: Your transation was not yet mined into a block. Increase your gas price and try again or </span>
+														<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
+														<div style={{position:"absolute",right:20,bottom:20}}>
+															<MMButton color={"#6081c3"} onClick={()=>{
+																this.context.throwAlert(false);
+																window.location = "/address/"+account
+															}}>continue and wait</MMButton>
+														</div>
+														<div style={{position:"absolute",left:20,bottom:20}}>
+															<MMButton color={"#f7861c"} onClick={()=>{
+																this.context.throwAlert(false);
+															}}>close and try again</MMButton>
+														</div>
+													</div>
+												)
+											}).then((receipt)=>{
   							        console.log("RESULT:",receipt)
 												showLoadingScreen(false)
   											window.location = "/address/"+account
@@ -182,14 +206,37 @@ export default createClass({
   							        from: account,
   											value: web3.utils.toWei(mintedPacks[p].price,"ether"),
   							        gas:490000,
-  							        gasPrice:GWEI * 1000000000
+  							        gasPrice:this.context.GWEI * 1000000000
   							      },(error,hash)=>{
   							        console.log("CALLBACK!",error,hash)
 												showLoadingScreen(hash)
-  							      }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
+												txhash=hash
+  							      }).on('error',(a,b)=>{
+												console.log("ERROR",a,b)
+												console.log("ERROR","Transaction was not mined into block, wait or try again with a higher gas price. It could still get mined!")
+												this.context.throwAlert(
+													<div>
+														<span>Warning: Your transation was not yet mined into a block. Increase your gas price and try again or </span>
+														<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
+														<div style={{position:"absolute",right:20,bottom:20}}>
+															<MMButton color={"#6081c3"} onClick={()=>{
+																this.context.throwAlert(false);
+																window.location = "/address/"+account
+															}}>continue and wait</MMButton>
+														</div>
+														<div style={{position:"absolute",left:20,bottom:20}}>
+															<MMButton color={"#f7861c"} onClick={()=>{
+																this.context.throwAlert(false);
+															}}>close and try again</MMButton>
+														</div>
+													</div>
+												)
+											}).then((receipt)=>{
   							        console.log("RESULT:",receipt)
-  											window.location = "/address/"+account
+  											//window.location = "/address/"+account
 												showLoadingScreen(false)
+
+
   							      })
   								}
   							}

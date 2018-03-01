@@ -6,10 +6,8 @@ import Spinner from '../components/Spinner.js'
 import StackSelect from '../components/StackSelect.js'
 import {Motion, spring, presets} from 'react-motion';
 import MMButton from '../components/MMButton.js'
-import Slack from '../components/Slack.js'
 
 let loadInterval
-const GWEI = 10
 let slammerTimeout
 const DEBUG = false
 
@@ -260,7 +258,7 @@ class PlayStack extends Component {
     contracts["Cryptogs"].methods.acceptCounterStack(contracts["SlammerTime"]._address,this.state.stack,counterStack).send({
       from: account,
       gas:1000000,
-      gasPrice:GWEI * 1000000000
+      gasPrice:this.props.GWEI * 1000000000
     },(error,hash)=>{
       console.log("CALLBACK!",error,hash)
       showLoadingScreen(hash)
@@ -277,7 +275,7 @@ class PlayStack extends Component {
     contracts["Cryptogs"].methods.cancelStack(stack).send({
       from: account,
       gas:250000,
-      gasPrice:GWEI * 1000000000
+      gasPrice:this.props.GWEI * 1000000000
     },(error,hash)=>{
       console.log("CALLBACK!",error,hash)
       showLoadingScreen(hash)
@@ -295,7 +293,7 @@ class PlayStack extends Component {
     contracts["Cryptogs"].methods.cancelCounterStack(stack,counterstack).send({
       from: account,
       gas:350000,
-      gasPrice:GWEI * 1000000000
+      gasPrice:this.props.GWEI * 1000000000
     },(error,hash)=>{
       console.log("CALLBACK!",error,hash)
       showLoadingScreen(hash)
@@ -307,6 +305,8 @@ class PlayStack extends Component {
 
   }
   startCoinFlip(){
+
+
 
     console.log("START COIN FLIP",this.state.stack,this.state.counterStack)
     let {contracts,account,web3,showLoadingScreen} = this.props.context
@@ -322,13 +322,14 @@ class PlayStack extends Component {
     contracts["Cryptogs"].methods.startCoinFlip(this.state.stack,this.state.counterStack,commitHash).send({
         from: account,
         gas:150000,
-        gasPrice:GWEI * 1000000000
+        gasPrice:this.props.GWEI * 1000000000
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
         showLoadingScreen(hash)
       }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
         console.log("RESULT:",receipt)
         showLoadingScreen(false)
+        alert("Your transaction was not mined into the blockchain in time, but it still could go through. Try increasing your gas price and trying again. ")
       })
   }
 
@@ -344,7 +345,7 @@ class PlayStack extends Component {
     contracts["Cryptogs"].methods.endCoinFlip(this.state.stack,this.state.counterStack,reveal).send({
         from: account,
         gas:150000,
-        gasPrice:GWEI * 1000000000
+        gasPrice:this.props.GWEI * 1000000000
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
         showLoadingScreen(hash)
@@ -368,11 +369,15 @@ class PlayStack extends Component {
     contracts["Cryptogs"].methods.raiseSlammer(this.state.stack,this.state.counterStack,commitHash).send({
         from: account,
         gas:150000,
-        gasPrice:GWEI * 1000000000
+        gasPrice:this.props.GWEI * 1000000000
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
         showLoadingScreen(hash)
-      }).on('error',(a,b)=>{console.log("ERROR",a,b)}).then((receipt)=>{
+      }).on('error',(a,b)=>{
+        console.log("ERROR",a,b)
+        showLoadingScreen(false)
+
+      }).then((receipt)=>{
         console.log("RESULT:",receipt)
         showLoadingScreen(false)
       })
@@ -389,7 +394,7 @@ class PlayStack extends Component {
     contracts["Cryptogs"].methods.throwSlammer(this.state.stack,this.state.counterStack,reveal).send({
         from: account,
         gas:500000,
-        gasPrice:GWEI * 1000000000
+        gasPrice:this.props.GWEI * 1000000000
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
         showLoadingScreen(hash)
@@ -404,7 +409,7 @@ class PlayStack extends Component {
     contracts["Cryptogs"].methods.drainStack(this.state.stack,this.state.counterStack).send({
       from: account,
       gas:500000,
-      gasPrice:GWEI * 1000000000
+      gasPrice:this.props.GWEI * 1000000000
     },(error,hash)=>{
       console.log("CALLBACK!",error,hash)
       showLoadingScreen(hash)
@@ -802,15 +807,14 @@ class PlayStack extends Component {
       flipDisplay=""
         display = (
           <div>
-          <div style={{opacity:0.3,marginTop:100,fontWeight:'bold',padding:50,fontSize:99,letterSpacing:-2}}>
-            Game Over
-
-          </div>
-          <div className={"centercontainer"}>
-            <div style={{padding:40,marginTop:80}}>
-              <MMButton color={"#6ac360"} onClick={()=>{window.location="/stacks"}}>Play Pogs!</MMButton>
+            <div style={{opacity:0.3,marginTop:100,fontWeight:'bold',padding:50,fontSize:99,letterSpacing:-2}}>
+              Game Over
             </div>
-          </div>
+            <div className={"centercontainer"}>
+              <div style={{padding:40,marginTop:80}}>
+                <MMButton color={"#6ac360"} onClick={()=>{window.location="/stacks"}}>Play Pogs!</MMButton>
+              </div>
+            </div>
           </div>
         )
 
@@ -902,7 +906,6 @@ class PlayStack extends Component {
             )
           }}
         </Motion>
-        <Slack />
       </div>
       </div>
     )

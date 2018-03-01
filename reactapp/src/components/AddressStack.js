@@ -58,13 +58,32 @@ class AddressStack extends Component {
       )
 		})
 
-    let callToAction = (
-      <div className={"centercontainer"}>
-        <div style={{padding:40,marginBottom:60}}>
-          <MMButton color={"#6ac360"} onClick={()=>{window.location="/stacks"}}>Play Pogs!</MMButton>
+    let callToAction = ""
+    let callToBuy = ""
+    if(tokenData.length<=0){
+      callToAction= (
+        <div className={"centercontainer"}>
+          <div style={{padding:40,marginBottom:60,opacity:0.3}}>
+            <MMButton color={"#6081c3"} onClick={()=>{window.location="/stacks"}}>Play Pogs!</MMButton>
+          </div>
         </div>
-      </div>
-    )
+      )
+      callToBuy = (
+        <div className={"centercontainer"}>
+          <div style={{padding:40,marginBottom:60}}>
+            <MMButton color={"#6ac360"} onClick={()=>{window.location="/buy"}}>Buy Pogs!</MMButton>
+          </div>
+        </div>
+      )
+    }else{
+      callToAction = (
+        <div className={"centercontainer"}>
+          <div style={{padding:40,marginBottom:60}}>
+            <MMButton color={"#6ac360"} onClick={()=>{window.location="/stacks"}}>Play Pogs</MMButton>
+          </div>
+        </div>
+      )
+    }
 
     return (
       <div>
@@ -87,6 +106,7 @@ class AddressStack extends Component {
         >
            {tokenDisplay}
         </StackGrid>
+        {callToBuy}
       </div>
     )
   }

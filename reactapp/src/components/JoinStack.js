@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import Stack from '../components/Stack.js'
 import StackSelect from '../components/StackSelect.js'
-import Slack from '../components/Slack.js'
 
 let waitInterval
-const GWEI = 10
 
 class JoinStack extends Component {
   constructor(props) {
@@ -40,7 +38,7 @@ class JoinStack extends Component {
 		contracts["Cryptogs"].methods.submitCounterStack(contracts["SlammerTime"]._address,stack,finalArray[0],finalArray[1],finalArray[2],finalArray[3],finalArray[4]).send({
         from: account,
         gas:350000,
-        gasPrice:GWEI * 1000000000
+        gasPrice:this.props.GWEI * 1000000000
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
         showLoadingScreen(hash)
@@ -62,7 +60,6 @@ class JoinStack extends Component {
           <Stack {...this.state.stackData}/>
         </div>
         <StackSelect message={"Select five of your pogs to join existing game:"} myTokens={this.props.context.myTokens} goFn={this.joinStack.bind(this)} />
-        <Slack />
       </div>
     )
   }

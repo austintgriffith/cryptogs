@@ -15,6 +15,7 @@ export default createClass({
 		account: PropTypes.string,
 		myTokens: PropTypes.array,
 		showLoadingScreen: PropTypes.func,
+		GWEI: PropTypes.number,
 	},
 	render(){
 		const { account,contracts } = this.context
@@ -33,6 +34,7 @@ export default createClass({
               path="/join/:stack"
               component={JoinStack}
 							context={this.context}
+							GWEI={this.context.GWEI}
             />
           </div>
         )}

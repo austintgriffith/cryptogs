@@ -19,18 +19,16 @@ export default createClass({
     }else{
       for(let t=1;t<10;t++){
         cryptogs.push(
-          <Spinner guts={
+          <Spinner key={"spinner"+tokens[t]} guts={
             (spinning)=>{
               return (
-                <Cryptog key={"cryptog"+tokens[t]} id={tokens[t]} slowrolling={spinning} image={images[t]} zIndex={1}/>
+                <Cryptog  id={tokens[t]} slowrolling={spinning} image={images[t]} zIndex={1}/>
               )
             }
           }/>
         )
       }
     }
-
-
 
     let button = (
       <div>
@@ -39,7 +37,6 @@ export default createClass({
         <MMButton color={"#6ac360"}>Purchase</MMButton>
       </div>
     )
-
 
     if(compact){
       return (
@@ -69,7 +66,6 @@ export default createClass({
         </StackGrid>
       )
     }
-
 
   }
 })

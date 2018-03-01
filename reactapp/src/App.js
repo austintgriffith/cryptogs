@@ -19,8 +19,16 @@ import BuyPage from './pages/buy.js'
 import JoinPage from './pages/join.js'
 import FourOhFourPage from './pages/404.js'
 import Loader from './components/Loader.js'
+import Slack from './components/Slack.js'
+import Alert from './components/Alert.js'
+import GasSlider from './components/GasSlider.js'
+import MMButton from './components/MMButton.js'
+import cookie from 'react-cookies'
+
+
 
 const DEBUG = false
+const STARTINGGWEI = 2
 
 var Web3 = require('web3');
 let contractLoadingInterval;
@@ -31,26 +39,39 @@ export default createClass({
 		web3: PropTypes.object,
 		contracts: PropTypes.array,
 		account: PropTypes.string,
+		etherscan: PropTypes.string,
 		myTokens: PropTypes.array,
 		blockNumber: PropTypes.number,
 		metaMaskHintFn: PropTypes.func,
 		showLoadingScreen: PropTypes.func,
+		throwAlert: PropTypes.func,
 		network: PropTypes.number,
+		GWEI: PropTypes.number,
 	},
 	getChildContext(){
 		return {
 			web3: this.state.web3,
 			contracts: this.state.contracts,
 			account: this.state.account,
+			etherscan:this.state.etherscan,
 			myTokens: this.state.myTokens,
 			blockNumber: this.state.blockNumber,
 			metaMaskHintFn: this.metaMaskHintFn,
 			showLoadingScreen: this.showLoadingScreen,
+			throwAlert: this.throwAlert,
 			network: this.state.network,
+			GWEI: this.state.GWEI,
 		};
+	},
+	throwAlert(message){
+		this.setState({alert:message})
 	},
 	showLoadingScreen(tx){
 		this.setState({loadingTx:tx})
+	},
+	setGWEI(GWEI){
+		this.setState({GWEI:GWEI})
+		cookie.save('GWEI', GWEI, { path: '/', maxAge:28800 })
 	},
 	metaMaskHintFn(){
 		window.scrollTo(0,0);
@@ -60,11 +81,15 @@ export default createClass({
 		},1000)
 	},
 	getInitialState(){
+		let GWEI =  cookie.load('GWEI')
+		if(!GWEI)  GWEI = STARTINGGWEI
 		return {
 			web3: {},
 			contracts: [],
 			metamaskHint: 10,
-			loadingTx:false
+			loadingTx:false,
+			GWEI:GWEI,
+			alert: "",
 		};
 	},
 	componentDidMount(){
@@ -162,6 +187,11 @@ export default createClass({
           </Router>
 				</div>
 				{loader}
+				<GasSlider setGWEI={this.setGWEI} GWEI={this.state.GWEI}/>
+				<Slack />
+				<Alert
+					message={this.state.alert}
+				/>
 			</div>
     )
 
