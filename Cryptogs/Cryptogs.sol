@@ -1,7 +1,7 @@
 pragma solidity ^0.4.15;
 
 /*
-  https://cryptogs.io
+  https://cryptopogs.io
   --Austin Thomas Griffith for ETHDenver
   ( PS this gas guzzling beast is totally unaudited )
 */
@@ -11,11 +11,12 @@ import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 
 contract Cryptogs is NFT, Ownable {
 
-    string public constant name = "Cryptog";
-    string public constant symbol = "TOGS";
+    string public constant name = "CryptoPogs";
+    string public constant symbol = "POGS";
 
     string public constant purpose = "ETHDenver";
-    string public constant contact = "https://cryptogs.io";
+    string public constant contact = "https://cryptopogs.io";
+    string public constant author = "Austin Thomas Griffith | austin@concurrence.io";
 
     uint256 public constant RARITYMULTIPLIER = 1000000000000000;
 
