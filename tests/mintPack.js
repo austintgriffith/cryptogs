@@ -67,7 +67,7 @@ function grabRandomTen(arr){
 
 //cryptogs.mintPack(0,grabRandomTen(space),0.005)
 
-cryptogs.mintPack(0,grabRandomTen(animals),0.01)
+cryptogs.mintPack(0,grabRandomTen(animals),0.05)
 
 /*
 cryptogs.mintPack(0,[
