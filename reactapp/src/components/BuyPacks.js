@@ -117,56 +117,60 @@ export default createClass({
     if(compact){
 
 			let buypacks = []
+			let foundOfPrice = {}
 			let displycount = 0
 			for(let p in mintedPacks){
   			if(!mintedPacks[p].bought){
-  				if(displycount++<4){
-  					buypacks.push(
-  						<Pack compact={true} id={p} key={"pack"+p} {...mintedPacks[p]} PackClick={
-  							(p)=>{
-  								if(!account){
-  									metaMaskHintFn()
-  								}else{
-  									contracts["Cryptogs"].methods.buyPack(p).send({
-  							        from: account,
-  											value: web3.utils.toWei(mintedPacks[p].price,"ether"),
-  							        gas:490000,
-  							        gasPrice:this.context.GWEI * 1000000000
-  							      },(error,hash)=>{
-  							        console.log("CALLBACK!",error,hash)
-												showLoadingScreen(hash)
-												txhash=hash
-  							      }).on('error',(a,b)=>{
+					if(!foundOfPrice[mintedPacks[p].price]){
+						foundOfPrice[mintedPacks[p].price]=true;
+						if(displycount++<4){
+	  					buypacks.push(
+	  						<Pack compact={true} id={p} key={"pack"+p} {...mintedPacks[p]} PackClick={
+	  							(p)=>{
+	  								if(!account){
+	  									metaMaskHintFn()
+	  								}else{
+	  									contracts["Cryptogs"].methods.buyPack(p).send({
+	  							        from: account,
+	  											value: web3.utils.toWei(mintedPacks[p].price,"ether"),
+	  							        gas:600000,
+	  							        gasPrice:this.context.GWEI * 1000000000
+	  							      },(error,hash)=>{
+	  							        console.log("CALLBACK!",error,hash)
+													showLoadingScreen(hash)
+													txhash=hash
+	  							      }).on('error',(a,b)=>{
 
-												console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-												this.context.throwAlert(
-													<div>
-														<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
-														<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
-														<div style={{position:"absolute",right:20,bottom:20}}>
-															<MMButton color={"#6081c3"} onClick={()=>{
-																this.context.throwAlert(false);
-																window.location = "/address/"+account
-															}}>continue and wait</MMButton>
+													console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+													this.context.throwAlert(
+														<div>
+															<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
+															<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
+															<div style={{position:"absolute",right:20,bottom:20}}>
+																<MMButton color={"#6081c3"} onClick={()=>{
+																	this.context.throwAlert(false);
+																	window.location = "/address/"+account
+																}}>continue and wait</MMButton>
+															</div>
+															<div style={{position:"absolute",left:20,bottom:20}}>
+																<MMButton color={"#f7861c"} onClick={()=>{
+																	this.context.throwAlert(false);
+																}}>close and try again</MMButton>
+															</div>
 														</div>
-														<div style={{position:"absolute",left:20,bottom:20}}>
-															<MMButton color={"#f7861c"} onClick={()=>{
-																this.context.throwAlert(false);
-															}}>close and try again</MMButton>
-														</div>
-													</div>
-												)
+													)
 
-											}).then((receipt)=>{
-  							        console.log("RESULT:",receipt)
-												showLoadingScreen(false)
-  											window.location = "/address/"+account
-  							      })
-  								}
-  							}
-  						}/>
-  					)
-  				}
+												}).then((receipt)=>{
+	  							        console.log("RESULT:",receipt)
+													showLoadingScreen(false)
+	  											window.location = "/address/"+account
+	  							      })
+	  								}
+	  							}
+	  						}/>
+	  					)
+	  				}
+					}
   			}
   		}
 
@@ -207,7 +211,7 @@ export default createClass({
   									contracts["Cryptogs"].methods.buyPack(p).send({
   							        from: account,
   											value: web3.utils.toWei(mintedPacks[p].price,"ether"),
-  							        gas:490000,
+  							        gas:600000,
   							        gasPrice:this.context.GWEI * 1000000000
   							      },(error,hash)=>{
   							        console.log("CALLBACK!",error,hash)
