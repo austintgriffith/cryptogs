@@ -48,7 +48,8 @@ export default createClass({
             width:30,
             height:28,
             backgroundImage:"url('/gas.png')",
-            position:"absolute",top:this.state.startingPixels
+            position:"absolute",top:this.state.startingPixels,
+            opacity:0.6
           }}>
             <div style={{opacity:this.state.gweiOpacity,position:'absolute',left:43,fontSize:14,width:150}} >
               {this.props.GWEI}<span style={{fontSize:9}}>gwei</span>

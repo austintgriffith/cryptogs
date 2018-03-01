@@ -32,6 +32,24 @@ let aw90s = [
   "awskullsstars.jpg",
 ]
 
+let ad90s = [
+  "ad8ball.png",
+  "adbiohaz.png",
+  "adsmile.png",
+  "adyinyang.png",
+  "adyinyanggroovy.png",
+  "ad8ball.png",
+  "adbiohaz.png",
+  "adsmile.png",
+  "adyinyang.png",
+  "adyinyanggroovy.png",
+  "ad8ball.png",
+  "adbiohaz.png",
+  "adsmile.png",
+  "adyinyang.png",
+  "adyinyanggroovy.png",
+]
+
 let space = [
   "space1.png",
   "space2.png",
@@ -85,7 +103,7 @@ function grabRandomTen(arr){
 //cryptogs.mintPack(0,grabRandomTen(animals),0.01)
 
 
-cryptogs.mintPack(0,grabRandomTen(aw90s),0.003)
+cryptogs.mintPack(0,grabRandomTen(ad90s),0.003)
 
 
 /*
