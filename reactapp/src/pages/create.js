@@ -41,7 +41,7 @@ export default createClass({
 		contracts["Cryptogs"].methods.submitStack(contracts["SlammerTime"]._address,finalArray[0],finalArray[1],finalArray[2],finalArray[3],finalArray[4],true).send({
         from: account,
         gas:350000,
-        gasPrice:this.contrext.GWEI * 1000000000
+        gasPrice:this.context.GWEI * 1000000000
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
 				showLoadingScreen(hash)
@@ -90,7 +90,7 @@ export default createClass({
 				mostRecentStack = submitStackEvents[e].returnValues._stack
 			}
 		}
-		window.location = "/play/"+mostRecentStack
+		if(mostRecentStack) window.location = "/play/"+mostRecentStack
 	},
 	render(){
 		if(this.state.loading){
