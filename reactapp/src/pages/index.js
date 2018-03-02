@@ -56,12 +56,66 @@ export default createClass({
                   </div>
               </section>
 
+							<section className="section bg-primary pt-5 pb-5">
+									<div className="container">
+											<h1 className="h2 mb-5 text-center">Playing CryptoPogs</h1>
+
+											<div className="jumbotron jumbotron--white p-5">
+
+													<div className="row align-items-center">
+															<div className="col-md-5">
+																	<img src={"/screens/screen1creategame.png"} />
+															</div>
+															<div className="col-md-7">
+																	<h2 className="h4 mb-3">Create A Game</h2>
+																	<p>{"After you purchase some pogs, you can start playing by creating a new game or joining an existing game. You'll select 5 pogs you are willing to risk against your opponent's 5 pogs."}</p>
+															</div>
+													</div>
+
+													<hr className="my-5" />
+
+													<div className="row align-items-center">
+															<div className="col-md-5">
+																	<img src={"/screens/screen2stacked.png"} />
+															</div>
+															<div className="col-md-7">
+																	<h2 className="h4 mb-3">Slammer Flip</h2>
+																	<p>{"To determine who goes first, the slammer is flipped by the game creator. It takes two transaction, one for the commit, and another for the reveal."}</p>
+															</div>
+													</div>
+
+													<hr className="my-5" />
+
+													<div className="row align-items-center">
+															<div className="col-md-5">
+																<video  width="100%" height="100%" autoplay="autoplay" loop>
+																	<source src="/screens/slam.mp4" type="video/mp4" />
+																</video>
+															</div>
+															<div className="col-md-7">
+																	<h2 className="h4 mb-3">Game Play</h2>
+																	<p>{"Players take turns raising and throwing their slammer. Any CryptoPogs the player flips over on their turn are transferred automatically to them. Play continues until all pogs are flipped."}</p>
+															</div>
+													</div>
+											</div>
+
+									</div>
+							</section>
+
+							<section className="section pt-5 pb-5 text-center">
+								<div className="container text-center" style={{padding:100,marginBottom:200}}>
+										<p><a className="btn btn-primary btn-lg btn--alt" href="/stacks">Play Now</a></p>
+								</div>
+							</section>
+
 
           </main>
 			</div>
 		)
 	}
 });
+
+
 /*
 <section className="section bg-primary pt-5 pb-5">
 		<div className="container">

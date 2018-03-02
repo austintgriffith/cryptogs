@@ -11,13 +11,13 @@ export default createClass({
     let cryptogs = []
 
     if(compact){
-      for(let t=1;t<10;t++){
+      for(let t=0;t<10;t++){
         cryptogs.push(
-          <Cryptog key={"cryptog"+tokens[t]} id={tokens[t]} image={images[t]} zIndex={1}/>
+          <Cryptog key={"cryptog"+tokens[t]} id={tokens[t]} image={images[t]} scale={0.55} zIndex={1}/>
         )
       }
     }else{
-      for(let t=1;t<10;t++){
+      for(let t=0;t<10;t++){
         cryptogs.push(
           <Spinner key={"spinner"+tokens[t]} guts={
             (spinning)=>{
@@ -43,7 +43,7 @@ export default createClass({
         <div style={{position:'relative'}}>
         <StackGrid
           style={{marginTop:20,cursor:'pointer',zIndex:5}}
-          columnWidth={30}
+          columnWidth={20}
           onClick={this.props.PackClick.bind(this,this.props.id)}
         >
           {cryptogs}

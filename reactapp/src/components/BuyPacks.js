@@ -12,7 +12,7 @@ let loadInterval
 let initialIntervalLoaded
 
 const MINTEDPACKDISPLAYLIMIT = 10
-const DEBUG = true
+const DEBUG = false
 
 let txhash
 

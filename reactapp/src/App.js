@@ -73,7 +73,7 @@ export default createClass({
 		this.setState({loadingTx:tx})
 	},
 	setGWEI(GWEI){
-		this.setState({GWEI:GWEI})
+		this.setState({GWEI:parseInt(GWEI)})
 		cookie.save('GWEI', GWEI, { path: '/', maxAge:28800 })
 	},
 	metaMaskHintFn(){
@@ -84,7 +84,8 @@ export default createClass({
 		},1000)
 	},
 	getInitialState(){
-		let GWEI =  cookie.load('GWEI')
+		let GWEI =  parseInt(cookie.load('GWEI'))
+		if(!GWEI) GWEI=STARTINGGWEI;
 		return {
 			web3: {},
 			contracts: [],

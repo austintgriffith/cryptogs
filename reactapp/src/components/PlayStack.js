@@ -591,7 +591,7 @@ class PlayStack extends Component {
     let {coinFlipResult,stackMode,stackData,counterStacks,lastBlock,lastActor,TIMEOUTBLOCKS,flipEvents,throwSlammerEvents,player1,player2,spectator} = this.state;
     if(!stackData){
       return (
-        <div style={{opacity:0.3}}><PogAnimation image={'awyinandyang.jpg'} /></div>
+        <div style={{opacity:0.3}}><PogAnimation loader={true} image={'awyinandyang.jpg'} /></div>
       )
     }
 
@@ -960,7 +960,7 @@ class PlayStack extends Component {
 
     }else{
       display = (
-        <div style={{opacity:0.3}}><PogAnimation image={'awyinandyang.jpg'} /></div>
+        <div style={{opacity:0.3}}><PogAnimation loader={true} image={'awyinandyang.jpg'} /></div>
       )
     }
 
@@ -1014,14 +1014,14 @@ class PlayStack extends Component {
 
     let m=1
     return (
-      <div>
+      <div  style={{backgroundColor:"#FFFFFF",width:"100%",height:800}}>
       {timerDisplay}
-      <div style={{zIndex:-1,fontSize:12,position:'fixed',top:200,right:20,backgroundColor:"#eeeeee",padding:20}}>
+      <div style={{zIndex:-1,fontSize:12,position:'fixed',top:200,right:20,padding:20}}>
         {coinFlipResultText}
         {flipDisplay}
       </div>
       {display}
-      <div style={{position:'absolute',left:window.innerWidth/3,top:(window.innerHeight*5/9)}}>
+      <div style={{position:'absolute',left:window.innerWidth/3,top:550}}>
 
         {mixedStack}
         {flightStack}
