@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import Header from './components/Header.js'
 import './index.css'
 import './pogs.css'
+import './styles/App.css';
 import 'regenerator-runtime/runtime';
 import ContractLoader from './modules/contractLoader.js';
 import TokenLoader from './modules/tokenLoader.js';
@@ -77,7 +78,7 @@ export default createClass({
 	},
 	metaMaskHintFn(){
 		window.scrollTo(0,0);
-		this.setState({metamaskHint:100})
+		this.setState({metamaskHint:30})
 		setTimeout(()=>{
 			this.setState({metamaskHint:10})
 		},1000)
@@ -171,7 +172,7 @@ export default createClass({
 			)
 		}
 		return (
-			<div>
+			<div style={{backgroundColor:"#FFFFFF"}}>
 				<Header
 					syncBlockNumber={this.syncBlockNumber}
 					account={this.state.account}
@@ -182,7 +183,8 @@ export default createClass({
 					metamaskHint={this.state.metamaskHint}
 					metaMaskHintFn={this.metaMaskHintFn}
 				/>
-				<div style={{margin: '0 auto',maxWidth: 960,padding: '0px 1.0875rem 1.45rem',paddingTop: 0,}}>
+
+				<div>
           <Router>
             <Switch>
   					     <Route exact path="/" component={IndexPage} />
@@ -207,6 +209,7 @@ export default createClass({
 
 	}
 });
+// style={{margin: '0 auto',maxWidth: 960,padding: '0px 1.0875rem 1.45rem',paddingTop: 0,}}
 /*
 gatsby loop example for later reference
 (function run(self){

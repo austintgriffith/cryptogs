@@ -5,6 +5,7 @@ import Spinner from '../components/Spinner.js'
 import StackGrid from 'react-stack-grid'
 import Blockies from 'react-blockies'
 import MMButton from '../components/MMButton.js'
+import PogAnimation from '../components/PogAnimation.js'
 let loadInterval
 
 class AddressStack extends Component {
@@ -37,12 +38,12 @@ class AddressStack extends Component {
     let {hasLoadedFirst,tokenData,hovers} = this.state
     if(!tokenData){
       return (
-        <div style={{opacity:0.3}}>Loading...</div>
+        <div style={{opacity:0.3}}><PogAnimation loader={true} image={"awyinandyang.jpg"}/></div>
       )
     }
     if(!hasLoadedFirst){
       return (
-        <div style={{opacity:0.3}}>Loading...</div>
+        <div style={{opacity:0.3}}><PogAnimation loader={true} image={"awyinandyang.jpg"}/></div>
       )
     }
 

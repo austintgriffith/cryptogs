@@ -16,40 +16,40 @@ export default createClass({
           <Cryptog angle={65} scale={displayScale} id={0} image={"uincorn.png"}/>
         </div>
         <div style={{position:'absolute',right:displayStackRight,top:15}}>
-          <Cryptog angle={65} scale={displayScale} id={0} image={"fish.png"}/>
+          <Cryptog angle={65} scale={displayScale} id={0} image={"awripsaw.jpg"}/>
         </div>
         <div style={{position:'absolute',right:displayStackRight,top:10}}>
-          <Cryptog angle={65} scale={displayScale} id={0} image={"ethereumlogo.png"}/>
+          <Cryptog angle={65} scale={displayScale} id={0} image={"adsmile.png"}/>
         </div>
         <div style={{position:'absolute',right:displayStackRight,top:5}}>
-          <Cryptog angle={65} scale={displayScale} id={0} image={"fish.png"}/>
+          <Cryptog angle={65} scale={displayScale} id={0} image={"awripsaw.jpg"}/>
         </div>
         <div style={{position:'absolute',right:displayStackRight,top:0}}>
           <Cryptog angle={65} scale={displayScale} id={0} image={"unicorn.png"}/>
         </div>
 
         <div style={{position:'absolute',right:displayStackRight+120,top:35}}>
-          <Cryptog angle={65} scale={displayScale} id={0} image={"fish.png"}/>
+          <Cryptog angle={65} scale={displayScale} id={0} image={"awripsaw.jpg"}/>
         </div>
 
         <div style={{position:'absolute',right:displayStackRight+190,top:25}}>
-          <Cryptog angle={65} scale={displayScale} id={0} image={"ethereumlogo.png"}/>
+          <Cryptog angle={65} scale={displayScale} id={0} image={"awblackwidow.jpg"}/>
         </div>
 
         <div style={{position:'absolute',right:displayStackRight-145,top:45}}>
-          <Cryptog angle={65} scale={displayScale} id={0} image={"unicorn.png"}/>
+          <Cryptog angle={65} scale={displayScale} id={0} image={"awyinandyang.jpg"}/>
         </div>
 
         <div style={{position:'absolute',right:displayStackRight+95,top:-50}}>
-          <Cryptog scale={displayScale} id={0} angle={131} image={"dragon.png"}/>
+          <Cryptog scale={displayScale} id={0} angle={131} image={"ad8ball.png"}/>
         </div>
 
         <div style={{position:'absolute',right:displayStackRight-75,top:-60}}>
-          <Cryptog scale={displayScale} id={0} angle={105} image={"dragon.png"}/>
+          <Cryptog scale={displayScale} id={0} angle={105} image={"ad8ball.png"}/>
         </div>
 
         <div style={{position:'absolute',right:displayStackRight-160,top:-45}}>
-          <Cryptog  scale={displayScale} id={0} angle={55} image={"dragon.png"}/>
+          <Cryptog  scale={displayScale} id={0} angle={55} image={"ad8ball.png"}/>
         </div>
 
 
@@ -64,7 +64,7 @@ export default createClass({
 
 
         <div style={{position:'absolute',right:displayStackRight-60,top:55}}>
-          <Cryptog angle={65} scale={displayScale} id={0} image={"ethereumlogo.png"}/>
+          <Cryptog angle={65} scale={displayScale} id={0} image={"adsmile.png"}/>
         </div>
 
       </div>

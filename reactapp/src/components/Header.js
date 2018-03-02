@@ -8,44 +8,57 @@ export default createClass({
 	render(){
 		let {metamaskHint,account,metaMaskHintFn} = this.props
 		return (
-      <div style={{background: '#ffffff',marginBottom: '1.45rem'}}>
-				<Motion
-				defaultStyle={{
-					marginLeft:10
-				}}
-				style={{
-					marginLeft:spring(metamaskHint,{ stiffness: 100, damping: 6 })
-				}}
-				>
-					{currentStyles => {
-						return <Metamask {...this.props} currentStyles={currentStyles}/>
-					}}
-				</Motion>
-				<h1 style={{ float:"right",padding:10 ,letterSpacing:-1.8}}>
-					<a href="/" style={{color: '#333333',textDecoration: 'none'}}>
-						CryptoPogs
-					</a>
-				</h1>
-        <div style={{margin: '0 auto',maxWidth: 960,height: 70,padding:10,textAlign:'right'}}>
-					<h4 style={{marginTop:20,letterSpacing:-0.8}}>
-						<a onClick={()=>{
-							if(account){
-								window.location = "/address/"+account
-							}else{
-								metaMaskHintFn()
-							}
-						}} style={{color: '#666666',padding:10, cursor:"pointer"}}>
-							My Pogs
-						</a>
-						<a href="/stacks" style={{color: '#666666',padding:10}}>
-							Play Pogs
-						</a>
-						<a href="/buy" style={{color: '#666666',padding:10}}>
-							Buy Pogs
-						</a>
-					</h4>
-        </div>
-      </div>
+			<header className="site-header">
+			<div className="container-fluid">
+					<div className="row align-items-center">
+							<div className="col-md-4">
+									<Motion
+									defaultStyle={{
+										marginLeft:10
+									}}
+									style={{
+										marginLeft:spring(metamaskHint,{ stiffness: 100, damping: 6 })
+									}}
+									>
+										{currentStyles => {
+											return <Metamask {...this.props} currentStyles={currentStyles}/>
+										}}
+									</Motion>
+							</div>
+							<div className="col-md-4">
+									<h1 className="logo text-center"><a href="/">CryptoPogs</a></h1>
+							</div>
+							<div className="col-md-4">
+									<nav className="site-nav">
+											<ul>
+													<li>
+													<a onClick={()=>{
+														if(account){
+															window.location = "/address/"+account
+														}else{
+															metaMaskHintFn()
+														}
+													}} style={{color: '#666666',padding:10, cursor:"pointer"}}>
+														My Pogs
+													</a>
+													</li>
+													<li>
+													<a href="/stacks" style={{color: '#666666',padding:10}}>
+														Play Pogs
+													</a>
+													</li>
+													<li>
+													<a href="/buy" style={{color: '#666666',padding:10}}>
+														Buy Pogs
+													</a>
+													</li>
+											</ul>
+									</nav>
+							</div>
+					</div>
+			</div>
+	</header>
+      
     )
 	}
 });

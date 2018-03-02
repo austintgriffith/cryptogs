@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Cryptog from '../components/Cryptog.js'
 import StackGrid from 'react-stack-grid'
 import MMButton from '../components/MMButton.js'
+import PogAnimation from '../components/PogAnimation.js'
 
 class StackSelect extends Component {
   constructor(props) {
@@ -25,7 +26,7 @@ class StackSelect extends Component {
 	}
   render(){
     const { myTokens } = this.props
-    if(!myTokens) return (<div style={{opacity:0.3}}>loading...</div>)
+    if(!myTokens) return (<div style={{opacity:0.3}}><PogAnimation loader={true} image={"awyinandyang.jpg"}/></div>)
 
     let tokenCount = 0
 
