@@ -6,6 +6,7 @@ import MMButton from '../components/MMButton.js'
 import Pack from '../components/Pack.js'
 import EventParser from '../modules/eventParser.js';
 import LiveParser from '../modules/liveParser.js';
+import PogAnimation from '../components/PogAnimation.js'
 
 let loadInterval
 let initialIntervalLoaded
@@ -98,7 +99,7 @@ export default createClass({
 		const { mintedPacks,shouldHaveLoaded,debounce } = this.state
 		if(!mintedPacks || debounce) return (<div style={{opacity:0.3}}><div className={"centercontainer"}>
 			<div style={{padding:40}}>
-				connecting...
+				<div style={{opacity:0.3}}><PogAnimation loader={true} image={"awyinandyang.jpg"}/></div>
 			</div>
 		</div></div>)
     let mintedPackRender

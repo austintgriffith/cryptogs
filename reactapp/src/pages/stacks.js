@@ -258,7 +258,7 @@ export default createClass({
 		let sectionStyle = {borderTop:'1px solid #dddddd',padding:10,marginTop:40,opacity:0.4}
 
 		return (
-      <div>
+      <div style={{margin: '0 auto',maxWidth: 960,padding: '0px 1.0875rem 1.45rem',paddingTop: 0}}>
 				<div style={{float:'right',padding:30,paddingRight:100}}>
 					<MMButton color={"#6ac360"} onClick={()=>{
 						if(account){

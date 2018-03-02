@@ -3,6 +3,7 @@ import createClass from 'create-react-class';
 import {Motion, spring, presets} from 'react-motion';
 import Block from './Block.js'
 import StackGrid from 'react-stack-grid'
+import PogAnimation from '../components/PogAnimation.js'
 
 const extraDip = 80
 
@@ -43,7 +44,7 @@ export default createClass({
     let {web3,blockNumber,etherscan} = this.props
     if(!web3||!web3.eth||!blockNumber){
       return (
-        <div style={{opacity:0.3}}>loading...</div>
+        <div style={{opacity:0.3}}><PogAnimation loader={true} image={"awyinandyang.jpg"}/></div>
       )
     }
     if(this.props.loadingTx) {
