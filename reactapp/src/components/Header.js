@@ -32,23 +32,23 @@ export default createClass({
 									<nav className="site-nav">
 											<ul>
 													<li>
-													<a onClick={()=>{
+													<a href="#" onClick={()=>{
 														if(account){
 															window.location = "/address/"+account
 														}else{
 															metaMaskHintFn()
 														}
-													}} style={{color: '#666666',padding:10, cursor:"pointer"}}>
+													}} style={{padding:10, cursor:"pointer"}}>
 														My Pogs
 													</a>
 													</li>
 													<li>
-													<a href="/stacks" style={{color: '#666666',padding:10}}>
+													<a href="/stacks" style={{padding:10}}>
 														Play Pogs
 													</a>
 													</li>
 													<li>
-													<a href="/buy" style={{color: '#666666',padding:10}}>
+													<a href="/buy" style={{padding:10}}>
 														Buy Pogs
 													</a>
 													</li>
