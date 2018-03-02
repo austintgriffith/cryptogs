@@ -33,7 +33,7 @@ export default createClass({
     let button = (
       <div>
         <div style={{marginTop:30,opacity:0.5,fontSize:12}}>for sale</div>
-        <div style={{opacity:0.9,fontSize:20}}>Ξ{price}</div>
+        <div style={{opacity:0.9,fontSize:20,backgroundColor:"#FFFFFF"}}>Ξ{price}</div>
         <MMButton color={"#6ac360"}>Purchase</MMButton>
       </div>
     )
@@ -43,7 +43,7 @@ export default createClass({
         <div style={{position:'relative'}}>
         <StackGrid
           style={{marginTop:20,cursor:'pointer',zIndex:5}}
-          columnWidth={20}
+          columnWidth={30}
           onClick={this.props.PackClick.bind(this,this.props.id)}
         >
           {cryptogs}

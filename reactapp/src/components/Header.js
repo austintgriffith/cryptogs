@@ -58,7 +58,7 @@ export default createClass({
 					</div>
 			</div>
 	</header>
-      
+
     )
 	}
 });

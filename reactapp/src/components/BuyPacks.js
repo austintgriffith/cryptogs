@@ -243,8 +243,6 @@ export default createClass({
   							        console.log("RESULT:",receipt)
   											//window.location = "/address/"+account
 												showLoadingScreen(false)
-
-
   							      })
   								}
   							}
