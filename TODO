@@ -1,4 +1,6 @@
 [x] SEO and unfurl image
+[ ] medium post explaining the mechanics and challenges posted to reddit
+[ ] show gas paid in recent transactions in the loader and probably a close button
 [x] follow the process through from buying pogs to a full game and make sure there is a call to action -- first: my pogs needs a play pogs or create game pu
 [ ] Port play stack to event parser!
 [x] deploy with new deploy.network mechanics to test

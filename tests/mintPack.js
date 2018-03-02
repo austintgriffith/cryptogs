@@ -108,7 +108,6 @@ function grabRandomTen(arr){
 
 //cryptogs.mintPack(0,grabRandomTen(animals),0.025)
 
-
 cryptogs.mintPack(0,grabRandomTen(aw90s),0.003)
 
 
