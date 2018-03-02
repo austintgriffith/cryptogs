@@ -265,7 +265,7 @@ export default createClass({
 			}else{
 				mintedPackRender = (
 					<div style={{padding:80}}>
-						<div style={{opacity:0.3}}>Loading...</div>
+						<div style={{opacity:0.3}}><PogAnimation image={'awyinandyang.jpg'} /></div>
 					</div>
 				)
 			}

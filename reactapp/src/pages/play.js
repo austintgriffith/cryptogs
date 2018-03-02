@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import PropsRoute from '../components/PropsRoute.js'
 import Cryptog from '../components/Cryptog.js'
 import PlayStack from '../components/PlayStack.js'
+import PogAnimation from '../components/PogAnimation'
 
 let syncInterval
 export default createClass({
@@ -23,7 +24,7 @@ export default createClass({
 		const { account,contracts } = this.context
 		if(!account || !contracts || !contracts.Cryptogs){
 			return (
-				<div style={{opacity:0.3}}>Loading...</div>
+				<div style={{opacity:0.3}}><PogAnimation image={'awyinandyang.jpg'} /></div>
 			)
 		}
 		return (

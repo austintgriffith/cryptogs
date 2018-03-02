@@ -35,7 +35,7 @@ export default createClass({
                               <div className="col-md-9">
                                   <div className="pt-2 pb-2">
                                       <h1 className="h2 mb-4">What is CryptoPogs?</h1>
-                                      <p className="lead-2 mb-0">CryptoPogs is the cryptographically backed version of the game of Pogs. It's about collecting, trading, and risking pogs to play against people from around the decentralized world. You can win or lose tokens depending on your luck, and it's all on the blockchain!</p>
+                                      <p className="lead-2 mb-0">CryptoPogs is the cryptographically backed version of the game of Pogs. It's about collecting, trading, and risking pogs to play against people from around the decentralized world. You can win or lose tokens depending on your luck and it's all on the blockchain!</p>
                                   </div>
                               </div>
                           </div>

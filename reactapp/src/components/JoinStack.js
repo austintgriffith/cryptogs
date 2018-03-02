@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Stack from '../components/Stack.js'
 import StackSelect from '../components/StackSelect.js'
 import MMButton from '../components/MMButton.js'
+import PogAnimation from '../components/PogAnimation'
 
 let waitInterval
 let txhash
@@ -75,7 +76,7 @@ class JoinStack extends Component {
   render(){
     if(!this.state.stackData){
       return (
-        <div style={{opacity:0.3}}>Loading...</div>
+        <div style={{opacity:0.3}}><PogAnimation image={'awyinandyang.jpg'} /></div>
       )
     }
     return (

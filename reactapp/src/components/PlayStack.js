@@ -6,6 +6,7 @@ import Spinner from '../components/Spinner.js'
 import StackSelect from '../components/StackSelect.js'
 import {Motion, spring, presets} from 'react-motion';
 import MMButton from '../components/MMButton.js'
+import PogAnimation from '../components/PogAnimation'
 
 let loadInterval
 let slammerTimeout
@@ -590,7 +591,7 @@ class PlayStack extends Component {
     let {coinFlipResult,stackMode,stackData,counterStacks,lastBlock,lastActor,TIMEOUTBLOCKS,flipEvents,throwSlammerEvents,player1,player2,spectator} = this.state;
     if(!stackData){
       return (
-        <div style={{opacity:0.3}}>Loading...</div>
+        <div style={{opacity:0.3}}><PogAnimation image={'awyinandyang.jpg'} /></div>
       )
     }
 
@@ -959,7 +960,7 @@ class PlayStack extends Component {
 
     }else{
       display = (
-        <div style={{opacity:0.3}}>Loading...</div>
+        <div style={{opacity:0.3}}><PogAnimation image={'awyinandyang.jpg'} /></div>
       )
     }
 
