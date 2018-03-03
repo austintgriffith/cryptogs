@@ -102,7 +102,7 @@ export default createClass({
                   </StackGrid>
                   <div style={{marginTop:40}}/>
                   <div style={bigTextStyle}>Transactions are currently taking an average of {average} seconds.</div>
-                  <div style={bigTextStyle}>Higher gas prices mean faster trasactions, but they will cost more.</div>
+                  <div style={bigTextStyle}>Higher <img src="/gas.png"/> gas prices mean faster trasactions, but they will cost more.</div>
                 </div>
               )
             }}
