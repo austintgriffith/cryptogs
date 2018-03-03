@@ -13,6 +13,7 @@
 [x] slack channel with invite on page, but #design channel to get pog designers together so we aren't stepping on toes
 [ ] pack details include artist
 [ ] Logo image?
+[ ] on stack select, when you select the 5th pog, it should scroll you up to the submit button
 [x] buypack load debounce- it would be better to show a loader until it settles down rather then a pack and the quickly replaced by another
 [ ] live games on stacks page should say "watch" if you are a thrid party
 [ ] a third party is invited to slam it should check that account is neither player and display different

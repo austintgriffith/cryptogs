@@ -101,7 +101,7 @@ export default createClass({
                     {blockDisplay}
                   </StackGrid>
                   <div style={{marginTop:40}}/>
-                  <div style={bigTextStyle}>Transactions are currently taking an average of {average} seconds plus network propagation.</div>
+                  <div style={bigTextStyle}>Transactions are currently taking an average of {average} seconds.</div>
                   <div style={bigTextStyle}>Higher gas prices mean faster trasactions, but they will cost more.</div>
                 </div>
               )

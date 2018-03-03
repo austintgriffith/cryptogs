@@ -776,7 +776,7 @@ class PlayStack extends Component {
           let count = 0
           for(let i=1;i<=10;i++){
 
-              if(parseInt(throwSlammerEvent['token'+i+'Flipped'])!=0){
+              if(parseInt(throwSlammerEvent['token'+i+'Flipped'])!=0&&throwSlammerEvent['token'+i+'Flipped']){
                 //console.log("throwSlammerEvent['token'+i+'Flipped']",throwSlammerEvent['token'+i+'Flipped'])
                 flipped.push(
                   <div style={{position:'absolute',left:20+((count++)*20),top:-40,zIndex:1}}>
