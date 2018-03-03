@@ -15,6 +15,7 @@ import IndexPage from './pages/index.js'
 import AddressPage from './pages/address.js'
 import StacksPage from './pages/stacks.js'
 import CreatePage from './pages/create.js'
+import ContractsPage from './pages/contracts.js'
 import PlayPage from './pages/play.js'
 import BuyPage from './pages/buy.js'
 import JoinPage from './pages/join.js'
@@ -192,6 +193,8 @@ export default createClass({
                  <Route path={`/address/:address`} component={AddressPage} />
                  <Route path={`/play/:stack`} component={PlayPage} />
                  <Route path={`/join/:stack`} component={JoinPage} />
+								 <Route path={`/contracts`} component={ContractsPage} />
+
 								 <Redirect to='/' />
             </Switch>
           </Router>

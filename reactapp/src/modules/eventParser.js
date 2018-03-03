@@ -20,23 +20,26 @@ let loadDownTheChain = async (contract,eventName,updateFn,filter)=>{
 let doSync = async (contract,eventName,updateFn,from,to,filter)=>{
   if(DEBUG) console.log("EVENT:",eventName,"FROM",from,"to",to,contract)
   let events
-  if(filter){
-    events = await contract.getPastEvents(eventName, {
-      filter: filter,
-      fromBlock: from,
-      toBlock: to
-    });
-  }else{
-    events = await contract.getPastEvents(eventName, {
-      fromBlock: from,
-      toBlock: to
-    });
-  }
+  try{
+    if(filter){
+      events = await contract.getPastEvents(eventName, {
+        filter: filter,
+        fromBlock: from,
+        toBlock: to
+      });
+    }else{
+      events = await contract.getPastEvents(eventName, {
+        fromBlock: from,
+        toBlock: to
+      });
+    }
 
-  for(let e in events){
-    let thisEvent = events[e].returnValues
-    thisEvent.blockNumber = events[e].blockNumber
-    updateFn(thisEvent);
-  }
+    for(let e in events){
+      let thisEvent = events[e].returnValues
+      thisEvent.blockNumber = events[e].blockNumber
+      updateFn(thisEvent);
+    }
+  }catch(e){console.log(e)}
+
   return true;
 }

@@ -79,7 +79,7 @@ export default createClass({
 
 													<div className="row align-items-center">
 															<div className="col-md-5">
-																	<img src={"/screens/screen2stacked.png"} />
+																	<img style={{maxWidth:300}} src={"/screens/spinningslammer.gif"} />
 															</div>
 															<div className="col-md-7">
 																	<h2 className="h4 mb-3">Slammer Flip</h2>
@@ -91,9 +91,7 @@ export default createClass({
 
 													<div className="row align-items-center">
 															<div className="col-md-5">
-																<video  width="100%" height="100%" autoplay="autoplay" loop>
-																	<source src="/screens/slam.mp4" type="video/mp4" />
-																</video>
+																	<img src={"/screens/slam.gif"} />
 															</div>
 															<div className="col-md-7">
 																	<h2 className="h4 mb-3">Game Play</h2>

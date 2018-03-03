@@ -12,7 +12,7 @@ const Banner = (props) => (
             <p className="lead mb-1">Born at ETHDenver, Cryptogs is the game of pogs on Ethereum.</p>
             <p className="lead mb-5">{"Play 'Togs live with your friends on-chain!"}</p>
             <p><a className="btn btn-primary btn-lg btn--alt" href="/stacks">Play Now</a></p>
-            <p><a className="btn btn-blue btn-lg btn--alt" target ="_blank" href="https://ropsten.etherscan.io/address/0x8973212f31bd6a187d593503c855e95b64e7c147#code" style={{marginTop:40}}>Smart Contract</a></p>
+            <p><a className="btn btn-blue btn-lg btn--alt" href="/contracts" style={{marginTop:40}}>Smart Contracts</a></p>
         </div>
         <img
             className="pog pog--large"
