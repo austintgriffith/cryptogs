@@ -1,12 +1,7 @@
 import React from 'react'
 
-
-
-
-
-
 const Banner = (props) => (
-    <section className="banner bg-primary">
+    <section className="banner">
         <div className="container text-center">
             <h2 className="mb-4"><strong>Whip out your slammer and get rad on the blockchain!</strong></h2>
             <p className="lead mb-1">Born at ETHDenver, Cryptogs is the game of pogs on Ethereum.</p>
