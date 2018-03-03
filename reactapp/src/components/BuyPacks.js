@@ -99,7 +99,7 @@ export default createClass({
 		const { mintedPacks,shouldHaveLoaded,debounce } = this.state
 		if(!mintedPacks || debounce) return (<div style={{opacity:0.3}}><div className={"centercontainer"}>
 			<div style={{padding:40}}>
-				<div style={{opacity:0.3}}><PogAnimation loader={true} image={"awyinandyang.jpg"}/></div>
+				<div style={{opacity:0.3}}><PogAnimation loader={true} image={"unicorn.png"}/></div>
 			</div>
 		</div></div>)
     let mintedPackRender
@@ -265,7 +265,7 @@ export default createClass({
 			}else{
 				mintedPackRender = (
 					<div style={{padding:80}}>
-						<div style={{opacity:0.3}}><PogAnimation image={'awyinandyang.jpg'} /></div>
+						<div style={{opacity:0.3}}><PogAnimation loader={true} image={'unicorn.png'} /></div>
 					</div>
 				)
 			}

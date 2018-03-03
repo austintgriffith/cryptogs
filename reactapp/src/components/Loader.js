@@ -44,7 +44,7 @@ export default createClass({
     let {web3,blockNumber,etherscan} = this.props
     if(!web3||!web3.eth||!blockNumber){
       return (
-        <div style={{opacity:0.3}}><PogAnimation loader={true} image={"awyinandyang.jpg"}/></div>
+        <div style={{opacity:0.3}}><PogAnimation loader={true} image={"unicorn.png"}/></div>
       )
     }
     if(this.props.loadingTx) {

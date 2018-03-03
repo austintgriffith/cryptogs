@@ -38,12 +38,12 @@ class AddressStack extends Component {
     let {hasLoadedFirst,tokenData,hovers} = this.state
     if(!tokenData){
       return (
-        <div style={{opacity:0.3}}><PogAnimation loader={true} image={"awyinandyang.jpg"}/></div>
+        <div style={{opacity:0.3}}><PogAnimation loader={true} image={"unicorn.png"}/></div>
       )
     }
     if(!hasLoadedFirst){
       return (
-        <div style={{opacity:0.3}}><PogAnimation loader={true} image={"awyinandyang.jpg"}/></div>
+        <div style={{opacity:0.3}}><PogAnimation loader={true} image={"unicorn.png"}/></div>
       )
     }
 

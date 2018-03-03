@@ -24,7 +24,7 @@ export default createClass({
 		const { account,contracts } = this.context
 		if(!account || !contracts || !contracts.Cryptogs){
 			return (
-				<div style={{opacity:0.3}}><PogAnimation loader={true} image={'awyinandyang.jpg'} /></div>
+				<div style={{opacity:0.3}}><PogAnimation loader={true} image={'unicorn.png'} /></div>
 			)
 		}
 		return (

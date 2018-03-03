@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import EventParser from '../modules/eventParser.js';
+import LiveParser from '../modules/liveParser.js';
 import Stack from '../components/Stack.js'
 import Cryptog from '../components/Cryptog.js'
 import Slammer from '../components/Slammer.js'
@@ -7,11 +9,14 @@ import StackSelect from '../components/StackSelect.js'
 import {Motion, spring, presets} from 'react-motion';
 import MMButton from '../components/MMButton.js'
 import PogAnimation from '../components/PogAnimation'
+import StackGrid from 'react-stack-grid'
+import Blockies from 'react-blockies'
 
 let loadInterval
+let waitInterval
 let slammerTimeout
 const DEBUG = false
-
+const SHOWDEMOSCREEN=false
 let txhash
 
 class PlayStack extends Component {
@@ -28,11 +33,54 @@ class PlayStack extends Component {
       slammerTop:-200,
       slammerLeft:-200
     }
+
+    this.waitForStuff()
+    waitInterval = setInterval(this.waitForStuff.bind(this),171)
     this.loadStackData()
     loadInterval = setInterval(this.loadStackData.bind(this),707)
   }
   componentWillUnmount(){
     clearInterval(loadInterval)
+  }
+  waitForStuff(){
+    console.log("waiting of stuf....")
+    let {account,contracts,web3,showLoadingScreen,blockNumber} = this.props.context
+    if(account&&contracts&&blockNumber&&contracts['Cryptogs']){
+      this.startEventParsers()
+      clearInterval(waitInterval)
+    }
+  }
+  async startEventParsers(){
+    console.log("STARTING PARSERS")
+    let {account,contracts,web3,showLoadingScreen,blockNumber} = this.props.context
+    let thisStack = await contracts['Cryptogs'].methods.getStack(this.state.stack).call()
+    let updateThrowSlammer = async (update)=>{
+      let id = web3.utils.sha3(update.stack+update.blockNumber+update.whoDoneIt);
+      if(!this.state.throwSlammerEvents) this.state.throwSlammerEvents={};
+      if(!this.state.throwSlammerEvents[id]) {
+        this.state.throwSlammerEvents[id]=update;
+        //console.log("UPDATE this.state.throwSlammerEvents",this.state.throwSlammerEvents)
+        for(let t=1;t<=10;t++){
+          let thisTokenId = update["token"+t+"Flipped"]
+          //console.log("thisTokenId",thisTokenId)
+          if(thisTokenId>0){
+            let token = await contracts['Cryptogs'].methods.getToken(thisTokenId).call()//this.state.allStacks[id]
+            //console.log("THIS TOKEN",token)
+            this.state.throwSlammerEvents[id]["token"+t+"Flipped"] = {
+              id:thisTokenId,
+              image:web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
+            }
+          }
+        }
+        //console.log("UPDATEETETE",  this.state.throwSlammerEvents)
+        this.setState({throwSlammerEvents:this.state.throwSlammerEvents});
+      }
+    }
+    let filter = {stack: this.state.stack}
+    EventParser(contracts["Cryptogs"],"ThrowSlammer",thisStack.block,blockNumber,updateThrowSlammer,filter);
+    setInterval(()=>{
+      LiveParser(contracts["Cryptogs"],"ThrowSlammer",blockNumber,updateThrowSlammer,filter)
+    },737)
   }
   async loadStackData(){
     let stack
@@ -65,6 +113,7 @@ class PlayStack extends Component {
       if(DEBUG) console.log("COIN FLIP RESULT",coinFlipSuccessEvents)
       if(coinFlipSuccessEvents&&coinFlipSuccessEvents[0]&&coinFlipSuccessEvents[0].returnValues){
         this.state.coinFlipResult = coinFlipSuccessEvents[0].returnValues
+        console.log("this.state.coinFlipResult",this.state.coinFlipResult)
       }
     }
 
@@ -189,23 +238,26 @@ class PlayStack extends Component {
     }
 
 
-    if(update.stackMode>2){
+    //if(update.stackMode>2){
       //  event ThrowSlammer(bytes32 indexed stack, bool success, address whoDoneIt, uint32 blockNumber, bool token1Flipped, bool token2Flipped, bool token3Flipped, bool token4Flipped, bool token5Flipped, bool token6Flipped, bool token7Flipped, bool token8Flipped, bool token9Flipped, bool token10Flipped);
 
-      console.log("loading ALL slammer events (messy)")
+      /*console.log("loading ALL slammer events (messy)")
       let start = Date.now()
       let throwSlammerEvents = await contracts['Cryptogs'].getPastEvents("ThrowSlammer", {
         filter: {stack: this.state.stack},
         fromBlock: contracts['Cryptogs'].blockNumber,
         toBlock: 'latest'
       });
+      //console.log("throwSlammerEvents",throwSlammerEvents)
       update.throwSlammerEvents = []
       for(let e in throwSlammerEvents){
+        throwSlammerEvents[e].returnValues.blockNumber = throwSlammerEvents[e].blockNumber
         update.throwSlammerEvents.push(throwSlammerEvents[e].returnValues)
       }
       let duration = Date.now()-start
       console.log("done loading ALL slammer events (YOU NEED TO PORT TO EVENT LOADER!)",duration)
-    }
+      */
+    //}
 
     if(update.stackMode==3){
       update.slammerTop = -160
@@ -267,20 +319,20 @@ class PlayStack extends Component {
       showLoadingScreen(hash)
       txhash=hash
     }).on('error',(a,b)=>{
-      console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-      this.props.throwAlert(
-        <div>
-          <span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
-          <a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
-          <div style={{position:"absolute",left:20,bottom:20}}>
-            <MMButton color={"#f7861c"} onClick={()=>{
-              this.props.throwAlert(false);
-            }}>close and try again</MMButton>
+      if(txhash){
+        console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+        this.props.throwAlert(
+          <div>
+            <span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
+            <a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
+            <div style={{position:"absolute",left:20,bottom:20}}>
+              <MMButton color={"#f7861c"} onClick={()=>{
+                this.props.throwAlert(false);
+              }}>close and try again</MMButton>
+            </div>
           </div>
-        </div>
-      )
-
-
+        )
+      }
     }).then((receipt)=>{
       console.log("RESULT:",receipt)
       showLoadingScreen(false)
@@ -302,25 +354,28 @@ class PlayStack extends Component {
     }).on('error',(a,b)=>{
 
 
-      showLoadingScreen(false)
-      console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-      this.context.throwAlert(
-        <div>
-          <span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
-          <a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
-          <div style={{position:"absolute",right:20,bottom:20}}>
-            <MMButton color={"#6081c3"} onClick={()=>{
-              this.context.throwAlert(false);
-              window.location = "/stacks"
-            }}>continue and wait</MMButton>
+
+      if(txhash){
+        showLoadingScreen(false)
+        console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+        this.context.throwAlert(
+          <div>
+            <span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
+            <a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
+            <div style={{position:"absolute",right:20,bottom:20}}>
+              <MMButton color={"#6081c3"} onClick={()=>{
+                this.context.throwAlert(false);
+                window.location = "/stacks"
+              }}>continue and wait</MMButton>
+            </div>
+            <div style={{position:"absolute",left:20,bottom:20}}>
+              <MMButton color={"#f7861c"} onClick={()=>{
+                this.context.throwAlert(false);
+              }}>close and try again</MMButton>
+            </div>
           </div>
-          <div style={{position:"absolute",left:20,bottom:20}}>
-            <MMButton color={"#f7861c"} onClick={()=>{
-              this.context.throwAlert(false);
-            }}>close and try again</MMButton>
-          </div>
-        </div>
-      )
+        )
+      }
 
     }).then((receipt)=>{
       console.log("RESULT:",receipt)
@@ -342,20 +397,21 @@ class PlayStack extends Component {
       showLoadingScreen(hash)
       txhash=hash
     }).on('error',(a,b)=>{
-
-      showLoadingScreen(false)
-      console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-      this.props.throwAlert(
-        <div>
-          <span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
-          <a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
-          <div style={{position:"absolute",left:20,bottom:20}}>
-            <MMButton color={"#f7861c"} onClick={()=>{
-              this.props.throwAlert(false);
-            }}>close and try again</MMButton>
-          </div>
-        </div>
-      )
+        if(txhash){
+          showLoadingScreen(false)
+          console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+          this.props.throwAlert(
+            <div>
+              <span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
+              <a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
+              <div style={{position:"absolute",left:20,bottom:20}}>
+                <MMButton color={"#f7861c"} onClick={()=>{
+                  this.props.throwAlert(false);
+                }}>close and try again</MMButton>
+              </div>
+            </div>
+          )
+        }
 
     }).then((receipt)=>{
       console.log("RESULT:",receipt)
@@ -389,20 +445,21 @@ class PlayStack extends Component {
         txhash=hash
       }).on('error',(a,b)=>{
 
-
-        showLoadingScreen(false)
-        console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-				this.props.throwAlert(
-					<div>
-						<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
-						<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
-						<div style={{position:"absolute",left:20,bottom:20}}>
-							<MMButton color={"#f7861c"} onClick={()=>{
-								this.props.throwAlert(false);
-							}}>close and try again</MMButton>
-						</div>
-					</div>
-				)
+          if(txhash){
+            showLoadingScreen(false)
+            console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+    				this.props.throwAlert(
+    					<div>
+    						<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
+    						<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
+    						<div style={{position:"absolute",left:20,bottom:20}}>
+    							<MMButton color={"#f7861c"} onClick={()=>{
+    								this.props.throwAlert(false);
+    							}}>close and try again</MMButton>
+    						</div>
+    					</div>
+    				)
+          }
       }).then((receipt)=>{
         console.log("RESULT:",receipt)
         showLoadingScreen(false)
@@ -428,20 +485,21 @@ class PlayStack extends Component {
         showLoadingScreen(hash)
         txhash=hash
       }).on('error',(a,b)=>{
-
-        showLoadingScreen(false)
-        console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-				this.props.throwAlert(
-					<div>
-						<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
-						<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
-						<div style={{position:"absolute",left:20,bottom:20}}>
-							<MMButton color={"#f7861c"} onClick={()=>{
-								this.props.throwAlert(false);
-							}}>close and try again</MMButton>
-						</div>
-					</div>
-				)
+          if(txhash){
+            showLoadingScreen(false)
+            console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+    				this.props.throwAlert(
+    					<div>
+    						<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
+    						<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
+    						<div style={{position:"absolute",left:20,bottom:20}}>
+    							<MMButton color={"#f7861c"} onClick={()=>{
+    								this.props.throwAlert(false);
+    							}}>close and try again</MMButton>
+    						</div>
+    					</div>
+    				)
+          }
       }).then((receipt)=>{
         console.log("RESULT:",receipt)
         showLoadingScreen(false)
@@ -469,20 +527,21 @@ class PlayStack extends Component {
         txhash=hash
       }).on('error',(a,b)=>{
 
-        showLoadingScreen(false)
-        console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-				this.props.throwAlert(
-					<div>
-						<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
-						<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
-						<div style={{position:"absolute",left:20,bottom:20}}>
-							<MMButton color={"#f7861c"} onClick={()=>{
-								this.props.throwAlert(false);
-							}}>close and try again</MMButton>
-						</div>
-					</div>
-				)
-
+          if(txhash){
+            showLoadingScreen(false)
+            console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+    				this.props.throwAlert(
+    					<div>
+    						<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
+    						<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
+    						<div style={{position:"absolute",left:20,bottom:20}}>
+    							<MMButton color={"#f7861c"} onClick={()=>{
+    								this.props.throwAlert(false);
+    							}}>close and try again</MMButton>
+    						</div>
+    					</div>
+    				)
+          }
       }).then((receipt)=>{
         console.log("RESULT:",receipt)
         showLoadingScreen(false)
@@ -507,20 +566,21 @@ class PlayStack extends Component {
         txhash=hash
       }).on('error',(a,b)=>{
 
-        showLoadingScreen(false)
-        console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-				this.props.throwAlert(
-					<div>
-						<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
-						<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
-						<div style={{position:"absolute",left:20,bottom:20}}>
-							<MMButton color={"#f7861c"} onClick={()=>{
-								this.props.throwAlert(false);
-							}}>close and try again</MMButton>
-						</div>
-					</div>
-				)
-
+          if(txhash){
+            showLoadingScreen(false)
+            console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+    				this.props.throwAlert(
+    					<div>
+    						<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
+    						<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
+    						<div style={{position:"absolute",left:20,bottom:20}}>
+    							<MMButton color={"#f7861c"} onClick={()=>{
+    								this.props.throwAlert(false);
+    							}}>close and try again</MMButton>
+    						</div>
+    					</div>
+    				)
+          }
       }).then((receipt)=>{
         console.log("RESULT:",receipt)
         showLoadingScreen(false)
@@ -539,19 +599,21 @@ class PlayStack extends Component {
       txhash=hash
     }).on('error',(a,b)=>{
 
-      showLoadingScreen(false)
-      console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-      this.props.throwAlert(
-        <div>
-          <span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
-          <a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
-          <div style={{position:"absolute",left:20,bottom:20}}>
-            <MMButton color={"#f7861c"} onClick={()=>{
-              this.props.throwAlert(false);
-            }}>close and try again</MMButton>
-          </div>
-        </div>
-      )
+        if(txhash){
+          showLoadingScreen(false)
+          console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+          this.props.throwAlert(
+            <div>
+              <span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
+              <a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
+              <div style={{position:"absolute",left:20,bottom:20}}>
+                <MMButton color={"#f7861c"} onClick={()=>{
+                  this.props.throwAlert(false);
+                }}>close and try again</MMButton>
+              </div>
+            </div>
+          )
+        }
 
     }).then((receipt)=>{
       console.log("RESULT:",receipt)
@@ -591,22 +653,21 @@ class PlayStack extends Component {
     let {coinFlipResult,stackMode,stackData,counterStacks,lastBlock,lastActor,TIMEOUTBLOCKS,flipEvents,throwSlammerEvents,player1,player2,spectator} = this.state;
     if(!stackData){
       return (
-        <div style={{opacity:0.3}}><PogAnimation loader={true} image={'awyinandyang.jpg'} /></div>
+        <div style={{opacity:0.3}}><PogAnimation loader={true} image={'unicorn.png'} /></div>
       )
     }
 
-    const SHOWDEMOSCREEN=false
     if(SHOWDEMOSCREEN){
       let stackx = 0
       let stackspread = 9
       return (
-        <div style={{position:'relative',width:"100%",height:"100%"}}>
+        <div style={{position:'relative',width:1000,height:900,background:'url("/static/media/halftone.d3864fe4.png")'}}>
           <div style={{position:'absolute',left:400,top:400}}>
           <div style={{position:'absolute',left:-300,top:-200,zIndex:1}}>
-           <Cryptog angle={-45} scale={0.9} id={1} image={"buffalo.png"}/>
+           <Cryptog angle={-45} scale={0.9} id={1} image={"awpurepoison.jpg"}/>
           </div>
           <div style={{position:'absolute',left:320,top:-120,zIndex:1}}>
-           <Cryptog angle={-65} scale={0.9} id={1} image={"fish.png"}/>
+           <Cryptog angle={-65} scale={0.9} id={1} image={"awrainbowyinyang.jpg"}/>
           </div>
           <div style={{position:'absolute',left:0,top:stackx+stackspread*3,zIndex:1}}>
            <Cryptog angle={65} scale={0.9} id={1} image={"elephant.png"}/>
@@ -615,146 +676,134 @@ class PlayStack extends Component {
              <Cryptog angle={65} scale={0.9} id={1} image={"hippo.png"}/>
             </div>
             <div style={{position:'absolute',left:0,top:stackx+stackspread*1,zIndex:1}}>
-             <Cryptog angle={65} scale={0.9} id={1} image={"fish.png"}/>
+             <Cryptog angle={65} scale={0.9} id={1} image={"awrainbowyinyang.jpg"}/>
             </div>
             <div style={{position:'absolute',left:0,top:stackx,zIndex:1}}>
-             <Cryptog angle={65} scale={0.9} id={1} image={"unicorn.png"}/>
+             <Cryptog angle={65} scale={0.9} id={1} image={"awripsaw.jpg"}/>
             </div>
             <div style={{position:'absolute',left:189,top:130,zIndex:1}}>
-             <Cryptog angle={65} scale={0.9} id={1} image={"hippo.png"}/>
+             <Cryptog angle={65} scale={0.9} id={1} image={"ethdenver.png"}/>
             </div>
             <div style={{position:'absolute',left:129,top:-250,zIndex:1}}>
-             <Cryptog angle={120} scale={0.9} id={1} image={"hippo.png"}/>
+             <Cryptog angle={120} scale={0.9} id={1} image={"ethdenver.png"}/>
             </div>
             <div style={{position:'absolute',left:-180,top:110,zIndex:1}}>
-             <Cryptog angle={-119} scale={0.9} id={1} image={"hippo.png"}/>
+             <Cryptog angle={-119} scale={0.9} id={1} image={"ethdenver.png"}/>
             </div>
             <div style={{position:'absolute',left:-240,top:-20,zIndex:1}}>
-             <Cryptog angle={95} scale={0.9} id={1} image={"ethereumlogo.png"}/>
+             <Cryptog angle={95} scale={0.9} id={1} image={"awstussy.jpg"}/>
             </div>
             <div style={{position:'absolute',left:-340,top:20,zIndex:1}}>
-             <Cryptog angle={80} scale={0.9} id={1} image={"ethereumlogo.png"}/>
+             <Cryptog angle={80} scale={0.9} id={1} image={"adyinyang.png"}/>
             </div>
-            <div style={{position:'absolute',left:-360,top:20,zIndex:1,
+            <div style={{position:'absolute',left:-360,top:-70,zIndex:1,
                         fontWeight:'bold',fontSize:140,letterSpacing:-2}}>
               CryptoPogs.io
             </div>
             <div style={{position:'absolute',left:360,top:20,zIndex:1}}>
-             <Cryptog angle={100} scale={0.9} id={1} image={"ethereumlogo.png"}/>
+             <Cryptog angle={100} scale={0.9} id={1} image={"awblackwidow.jpg"}/>
             </div>
             <div style={{position:'absolute',left:-90,top:-300,zIndex:1}}>
-             <Cryptog angle={130} scale={0.9} id={1} image={"ethereumlogo.png"}/>
+             <Cryptog angle={130} scale={0.9} id={1} image={"awblackwidow.jpg"}/>
             </div>
             <div style={{position:'absolute',left:40,top:180,zIndex:1}}>
-             <Cryptog angle={65} scale={0.9} id={1} image={"ethereumlogo.png"}/>
+             <Cryptog angle={65} scale={0.9} id={1} image={"awblackwidow.jpg"}/>
             </div>
 
             <div style={{position:'absolute',left:0,top:-150,zIndex:10}}>
             <Slammer spinning={false} angle={35} image={"ethslammer.png"}/>
             </div>
-            <div style={{position:'absolute',left:-250,top:130,zIndex:0,width:900,height:100,
-                fontWeight:'bold',fontSize:30,letterSpacing:-0.5}}>
-              Collect and Play pogs on the Ethereum Blockchain
+            <div style={{position:'absolute',left:-150,top:122,zIndex:0,width:900,height:100,
+                fontWeight:'bold',fontSize:28,letterSpacing:-0.5}}>
+              Collect and play pogs on the Blockchain
             </div>
           </div>
         </div>
       )
     }
 
-    let coinFlipResultText = ""
+
+    let coinFlipResultDisplay = ""
 
     if(coinFlipResult){
-      if(spectator){
+
         if(coinFlipResult.whosTurn.toLowerCase()==player1.toLowerCase()){
-          coinFlipResultText= "Player 1 won the slammer toss, they go first. "
+          coinFlipResultDisplay=(
+            <div key={"logdivcoinflip"} style={{position:"relative",width:"100%",height:70}}>
+              <div style={{position:'absolute',left:0,top:0,zIndex:1}}>
+                 <Blockies
+                   seed={player1.toLowerCase()}
+                   scale={6}
+                 />
+              </div>
+              <div style={{position:'absolute',left:20,top:-55,zIndex:1,transform: "scale(0.4)"}}>
+               <Slammer spinning={false} angle={25} image={"ethslammer.png"}/>
+              </div>
+            </div>
+          )
         }else{
-          coinFlipResultText= "Player 2 won slammer toss, they go first. "
+          coinFlipResultDisplay=(
+             <div key={"logdivcoinflip"} style={{position:"relative",width:"100%",height:70}}>
+               <div style={{position:'absolute',left:0,top:0,zIndex:1}}>
+                  <Blockies
+                    seed={player2.toLowerCase()}
+                    scale={6}
+                  />
+               </div>
+               <div style={{position:'absolute',left:20,top:-55,zIndex:1,transform: "scale(0.4)"}}>
+                <Slammer spinning={false} angle={25} image={"ethslammer.png"}/>
+               </div>
+             </div>
+          )
         }
-      }else{
-        if(coinFlipResult.whosTurn.toLowerCase()==account.toLowerCase()){
-          coinFlipResultText= "You won the slammer toss, you go first. "
-        }else{
-          coinFlipResultText= "They won the slammer toss, they go first. "
-        }
-      }
 
     }
 
+
+
+
+
     let flipDisplay = ""
+    let throwSlammerEventArray = []
+    for(let id in throwSlammerEvents){
+      throwSlammerEventArray.push(throwSlammerEvents[id])
+    }
 
-    if(throwSlammerEvents && throwSlammerEvents.length>0){
-      flipDisplay = throwSlammerEvents.map((throwSlammerEvent)=>{
-        let flipped = []
-        for(let i=1;i<=10;i++){
-          if(throwSlammerEvent['token'+i+'Flipped']){
-            flipped.push(
-              <span key={"log"+i}>
-                #{i}
-              </span>
-            )
+    if(throwSlammerEventArray && throwSlammerEventArray.length>0){
+      flipDisplay = throwSlammerEventArray.map((throwSlammerEvent)=>{
+        if(throwSlammerEvent.otherPlayer!="0x0000000000000000000000000000000000000000"){
+          let flipped = []
+          let count = 0
+          for(let i=1;i<=10;i++){
+
+              if(parseInt(throwSlammerEvent['token'+i+'Flipped'])!=0){
+                //console.log("throwSlammerEvent['token'+i+'Flipped']",throwSlammerEvent['token'+i+'Flipped'])
+                flipped.push(
+                  <div style={{position:'absolute',left:20+((count++)*20),top:-40,zIndex:1}}>
+                    <Cryptog angle={25} scale={0.4} id={throwSlammerEvent['token'+i+'Flipped'].id} image={throwSlammerEvent['token'+i+'Flipped'].image}/>
+                  </div>
+                )
+              }
+
           }
-        }
-        let who = ""
-
-        if(spectator){
-          if(throwSlammerEvent.whoDoneIt.toLowerCase()==player1.toLowerCase()){
-            if(flipped.length>0){
-              who = "Player 1 Flipped:"
-            }else{
-              if(throwSlammerEvent.success){
-                who = "Player 1 Wiffed"
-              }else{
-                who = "Player 1's throw failed, trying again."
-              }
-
-            }
-
-          }else{
-            if(flipped.length>0){
-              who = "Player 2 Flipped"
-            }else{
-              if(throwSlammerEvent.success){
-                who = "Player 2 Wiffed"
-              }else{
-                who = "Player 2's throw failed, trying again."
-              }
-            }
-          }
-        }else{
-          if(throwSlammerEvent.whoDoneIt.toLowerCase()==account.toLowerCase()){
-            if(flipped.length>0){
-              who = "You Flipped:"
-            }else{
-              if(throwSlammerEvent.success){
-                who = "You Wiffed"
-              }else{
-                who = "Your throw failed, try again."
-              }
-
-            }
-
-          }else{
-            if(flipped.length>0){
-              who = "They Flipped"
-            }else{
-              if(throwSlammerEvent.success){
-                who = "They Wiffed"
-              }else{
-                who = "Their throw failed, trying again."
-              }
-            }
-          }
-        }
 
 
-       return (
-         <div key={"logdiv"+throwSlammerEvent.blockNumber}>
-         <span>#{throwSlammerEvent.blockNumber}</span>
-         <span style={{margin:5}}>{who}</span>
-         {flipped}
+          let who = ""
 
-         </div>
-       )
+          //console.log("throwSlammerEvent",throwSlammerEvent);
+
+         return (
+           <div key={"logdiv"+throwSlammerEvent.blockNumber} style={{position:"relative",width:"100%",height:70}}>
+              <div style={{position:"absolute",left:0,top:16}}>
+                <Blockies
+                  seed={throwSlammerEvent.whoDoneIt.toLowerCase()}
+                  scale={6}
+                />
+              </div>
+              {flipped}
+           </div>
+         )
+       }
      })
    }
 
@@ -943,7 +992,7 @@ class PlayStack extends Component {
         }
       }
     }else if(stackMode==9){
-      coinFlipResultText=""
+      coinFlipResultDisplay=""
       flipDisplay=""
         display = (
           <div>
@@ -960,7 +1009,7 @@ class PlayStack extends Component {
 
     }else{
       display = (
-        <div style={{opacity:0.3}}><PogAnimation loader={true} image={'awyinandyang.jpg'} /></div>
+        <div style={{opacity:0.3}}><PogAnimation loader={true} image={'unicorn.png'} /></div>
       )
     }
 
@@ -1013,11 +1062,12 @@ class PlayStack extends Component {
     }
 
     let m=1
+
     return (
       <div  style={{backgroundColor:"#FFFFFF",width:"100%",height:800}}>
       {timerDisplay}
-      <div style={{zIndex:-1,fontSize:12,position:'fixed',top:200,right:20,padding:20}}>
-        {coinFlipResultText}
+      <div className={"messageGray"} style={{clear:'both',marginTop:50,width:250,float:'right',padding:20}}>
+        {coinFlipResultDisplay}
         {flipDisplay}
       </div>
       {display}

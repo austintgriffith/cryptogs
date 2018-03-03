@@ -145,6 +145,8 @@ contract Cryptogs is NFT, Ownable {
       //this will be an array of ids but for now just doing one for simplicity
       uint256[5] ids;
       address owner;
+      uint32 block;
+
     }
 
     mapping (bytes32 => Stack) public stacks;
@@ -154,8 +156,8 @@ contract Cryptogs is NFT, Ownable {
       return stacks[_stack].owner;
     }
 
-    function getStack(bytes32 _stack) public constant returns (address owner,uint256 token1,uint256 token2,uint256 token3,uint256 token4,uint256 token5) {
-      return (stacks[_stack].owner,stacks[_stack].ids[0],stacks[_stack].ids[1],stacks[_stack].ids[2],stacks[_stack].ids[3],stacks[_stack].ids[4]);
+    function getStack(bytes32 _stack) public constant returns (address owner,uint32 block,uint256 token1,uint256 token2,uint256 token3,uint256 token4,uint256 token5) {
+      return (stacks[_stack].owner,stacks[_stack].block,stacks[_stack].ids[0],stacks[_stack].ids[1],stacks[_stack].ids[2],stacks[_stack].ids[3],stacks[_stack].ids[4]);
     }
 
     //tx 1: of a game, player one approves the SlammerTime contract to take their tokens
@@ -176,7 +178,7 @@ contract Cryptogs is NFT, Ownable {
 
       bytes32 stack = keccak256(nonce++,msg.sender);
       uint256[5] memory ids = [_id,_id2,_id3,_id4,_id5];
-      stacks[stack] = Stack(_slammerTime,ids,msg.sender);
+      stacks[stack] = Stack(_slammerTime,ids,msg.sender,uint32(block.number));
 
       //the event is triggered to the frontend to display the stack
       //the frontend will check if they want it public or not
@@ -208,7 +210,7 @@ contract Cryptogs is NFT, Ownable {
 
       bytes32 counterstack = keccak256(nonce++,msg.sender,_id);
       uint256[5] memory ids = [_id,_id2,_id3,_id4,_id5];
-      stacks[counterstack] = Stack(_slammerTime,ids,msg.sender);
+      stacks[counterstack] = Stack(_slammerTime,ids,msg.sender,uint32(block.number));
       stackCounter[counterstack] = _stack;
 
       //the event is triggered to the frontend to display the stack
@@ -410,18 +412,19 @@ contract Cryptogs is NFT, Ownable {
       //make sure that we are in mode 4
       require(mode[_stack]==4);
 
-      bool[10] memory flipped;
+      uint256[10] memory flipped;
       if(keccak256(_reveal)!=commit[_stack]){
         //commit/reveal failed.. this can happen if they
         //reload, so don't punish, just go back to the
         //start of the slammer raise
         mode[_stack]=3;
-
-        throwSlammerEvent(_stack,false,msg.sender,uint32(block.number),flipped);
+        throwSlammerEvent(_stack,msg.sender,address(0),flipped);
         return false;
       }else{
         //successful slam!!!!!!!!!!!! At this point I have officially been awake for 24 hours !!!!!!!!!!
         mode[_stack]=3;
+
+        address previousLastActor = lastActor[_stack];
 
         bytes32 pseudoRandomHash = keccak256(_reveal,block.blockhash(commitBlock[_stack]));
         //Debug(_reveal,block.blockhash(block.number-1),pseudoRandomHash);
@@ -446,8 +449,8 @@ contract Cryptogs is NFT, Ownable {
             //DebugFlip(pseudoRandomHash,i,randIndex,thisFlipper,FLIPPINESS);
             if(thisFlipper<(FLIPPINESS+round[_stack]*FLIPPINESSROUNDBONUS)){
               //ITS A FLIP!
-               flipped[i]=true;
                uint256 tempId = mixedStack[_stack][i];
+               flipped[i]=tempId;
                mixedStack[_stack][i]=0;
                SlammerTime slammerTimeContract = SlammerTime(stacks[_stack].slammerTime);
                //require( slammerTimeContract.transferBack(msg.sender,tempId) );
@@ -458,12 +461,11 @@ contract Cryptogs is NFT, Ownable {
           }
         }
 
-        throwSlammerEvent(_stack,true,msg.sender,uint32(block.number),flipped);
+        throwSlammerEvent(_stack,msg.sender,previousLastActor,flipped);
 
         if(done){
           FinishGame(_stack);
           mode[_stack]=9;
-
           delete mixedStack[_stack];
           delete stacks[_stack];
           delete stackCounter[_counterStack];
@@ -474,7 +476,6 @@ contract Cryptogs is NFT, Ownable {
           delete round[_stack];
           delete commitBlock[_stack];
           delete commit[_stack];
-
         }else{
           round[_stack]++;
         }
@@ -482,11 +483,11 @@ contract Cryptogs is NFT, Ownable {
         return true;
       }
     }
-    event ThrowSlammer(bytes32 indexed stack, bool success, address whoDoneIt, uint32 blockNumber, bool token1Flipped, bool token2Flipped, bool token3Flipped, bool token4Flipped, bool token5Flipped, bool token6Flipped, bool token7Flipped, bool token8Flipped, bool token9Flipped, bool token10Flipped);
+    event ThrowSlammer(bytes32 indexed stack, address indexed whoDoneIt, address indexed otherPlayer, uint256 token1Flipped, uint256 token2Flipped, uint256 token3Flipped, uint256 token4Flipped, uint256 token5Flipped, uint256 token6Flipped, uint256 token7Flipped, uint256 token8Flipped, uint256 token9Flipped, uint256 token10Flipped);
     event FinishGame(bytes32 stack);
 
-    function throwSlammerEvent(bytes32 stack,bool success,address whoDoneIt,uint32 blockNumber,bool[10] flipArray) internal {
-      ThrowSlammer(stack,success,whoDoneIt,blockNumber,flipArray[0],flipArray[1],flipArray[2],flipArray[3],flipArray[4],flipArray[5],flipArray[6],flipArray[7],flipArray[8],flipArray[9]);
+    function throwSlammerEvent(bytes32 stack,address whoDoneIt,address otherAccount, uint256[10] flipArray) internal {
+      ThrowSlammer(stack,whoDoneIt,otherAccount,flipArray[0],flipArray[1],flipArray[2],flipArray[3],flipArray[4],flipArray[5],flipArray[6],flipArray[7],flipArray[8],flipArray[9]);
     }
 
 

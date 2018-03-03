@@ -76,6 +76,7 @@ module.exports = {
       it('should mint a cryptog', async function() {
         this.timeout(120000)
         const accounts = await clevis("accounts")
+        assert(image,"No Image!?")
         const result = await clevis("contract","mint","Cryptogs",accountindex,web3.utils.fromAscii(image),accounts[toIndex])
         printTxResult(result)
         const tokensOfOwner = await clevis("contract","tokensOfOwner","Cryptogs",accounts[toIndex])
@@ -92,6 +93,7 @@ module.exports = {
     describe('#testMint() ', function() {
       it('should mint a cryptog', async function() {
         this.timeout(120000)
+        assert(image,"No Image!?")
         const result = await clevis("contract","mint","Cryptogs",accountindex,web3.utils.fromAscii(image),toAddress)
         printTxResult(result)
       });
@@ -107,6 +109,7 @@ module.exports = {
         console.log(images)
 
         for(let i in images){
+          assert(images[i],"No Image at index "+i+" of:",images)
           imageBytes[i] = web3.utils.fromAscii(images[i])
         }
 

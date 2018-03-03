@@ -26,7 +26,7 @@ class StackSelect extends Component {
 	}
   render(){
     const { myTokens } = this.props
-    if(!myTokens) return (<div style={{opacity:0.3}}><PogAnimation loader={true} image={"awyinandyang.jpg"}/></div>)
+    if(!myTokens) return (<div style={{opacity:0.3}}><PogAnimation loader={true} image={"unicorn.png"}/></div>)
 
     let tokenCount = 0
 

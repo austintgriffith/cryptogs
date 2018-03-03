@@ -29,10 +29,8 @@ export default createClass({
       className = "is-creeproll"
     }
     return (
-      <div className={className}>
-        <div className="coin__container" style={{
-            transform: "scale("+scale+")"
-        }}>
+      <div className={className} style={{transform: "scale("+scale+")"}}>
+        <div className="coin__container">
 
             <div className="coin is-slam" style={{
                 zIndex: this.props.zIndex,
