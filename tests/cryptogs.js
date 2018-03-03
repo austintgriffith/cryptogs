@@ -71,6 +71,18 @@ module.exports = {
       });
     });
   },
+  setSlammerTime:(accountindex)=>{
+    describe('#submitStack() ', function() {
+      it('should submit stack', async function() {
+        this.timeout(120000)
+        const SlammerTimeAddress = localContractAddress("SlammerTime")
+        const result = await clevis("contract","setSlammerTime","Cryptogs",accountindex,SlammerTimeAddress)
+        printTxResult(result)
+        const getSlammerTime = await clevis("contract","slammerTime","Cryptogs")
+        assert(getSlammerTime == SlammerTimeAddress,"SlammerTime address did not get set?!")
+      });
+    });
+  },
   mint:(accountindex,image,toIndex)=>{
     describe('#testMint() ', function() {
       it('should mint a cryptog', async function() {
@@ -378,17 +390,6 @@ module.exports = {
     });
   },
 
-  thisIsRad:(accountindex)=>{
-    describe('#thisIsRad() ', function() {
-      it('should call thisIsRad', async function() {
-        this.timeout(120000)
-        const result = await clevis("contract","thisIsRad","Cryptogs",accountindex,"http://cryptogs.io")
-        printTxResult(result)
-
-      });
-    });
-  },
-
 
   publish:()=>{
     describe('#publish() ', function() {
@@ -418,13 +419,6 @@ module.exports = {
         this.timeout(6000000)
         const result = await clevis("test","deploy")
         assert(result==0,"deploy ERRORS")
-      });
-    });
-    describe(bigHeader('TEST THIS IS RAD'), function() {
-      it('should this is rad!', async function() {
-        this.timeout(6000000)
-        const result = await clevis("test","thisisrad")
-        assert(result==0,"thisisrad ERRORS")
       });
     });
     describe(bigHeader('TEST MINTING'), function() {

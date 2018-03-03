@@ -24,17 +24,6 @@ contract Cryptogs is NFT, Ownable {
     uint8 public constant FLIPPINESSROUNDBONUS = 16;
     uint8 public constant TIMEOUTBLOCKS = 60;
 
-
-    /*
-      if you think this is rad, tell us:
-     */
-    mapping (address => string) public optionalEmail;
-    function thisIsRad(string optional) public returns (bool){
-      optionalEmail[msg.sender]=optional;
-      ThisIsRad(msg.sender,optional);
-    }
-    event ThisIsRad(address sender,string optional);
-
     string public ipfs;
     function setIpfs(string _ipfs) public onlyOwner returns (bool){
       ipfs=_ipfs;
@@ -43,13 +32,24 @@ contract Cryptogs is NFT, Ownable {
     }
     event IPFS(string ipfs);
 
-
     function Cryptogs() public {
       //0 index should be a blank item owned by no one
       Item memory _item = Item({
         image: ""
       });
       items.push(_item);
+    }
+
+    /*
+    as an afterthought I'm going to hardcode this address into the contract...
+    it was prevsiouly built so two stacks could agree on their slammertime contract
+    I think we want to be more rigid and define the exact slammertime and check
+    that everyone agrees on it
+     */
+    address public slammerTime;
+    function setSlammerTime(address _slammerTime) public onlyOwner returns (bool){
+      slammerTime=_slammerTime;
+      return true;
     }
 
     struct Item{
@@ -109,6 +109,8 @@ contract Cryptogs is NFT, Ownable {
       require( packs[packId].price > 0 );
       //make sure they sent in enough value
       require( msg.value >= packs[packId].price );
+      //right away set price to 0 to avoid some sort of reentrance
+      packs[packId].price=0;
       //give tokens to owner
       for(uint8 i=0;i<10;i++){
         tokenIndexToOwner[packs[packId].tokens[i]]=msg.sender;
@@ -163,6 +165,9 @@ contract Cryptogs is NFT, Ownable {
     //tx 1: of a game, player one approves the SlammerTime contract to take their tokens
     //this triggers an event to broadcast to other players that there is an open challenge
     function submitStack(address _slammerTime, uint256 _id,uint256 _id2,uint256 _id3,uint256 _id4,uint256 _id5, bool _public) public returns (bool) {
+      //make sure they have the right slammertime address
+      //(this is an afterthought, originally this could be dynamic)
+      require( _slammerTime == slammerTime);
       //the sender must own the token
       require(tokenIndexToOwner[_id]==msg.sender);
       require(tokenIndexToOwner[_id2]==msg.sender);
@@ -186,11 +191,12 @@ contract Cryptogs is NFT, Ownable {
     }
     event SubmitStack(address indexed _sender,uint256 indexed timestamp,bytes32 indexed _stack,uint256 _token1,uint256 _token2,uint256 _token3,uint256 _token4,uint256 _token5,bool _public);
 
-    //TODO: cancel stack (unapprove and send a new event so it is removed from frontend display)
-
     //tx 2: of a game, player two approves the SlammerTime contract to take their tokens
     //this triggers an event to broadcast to player one that this player wants to rumble
     function submitCounterStack(address _slammerTime, bytes32 _stack, uint256 _id, uint256 _id2, uint256 _id3, uint256 _id4, uint256 _id5) public returns (bool) {
+      //make sure they have the right slammertime address
+      //(this is an afterthought, originally this could be dynamic)
+      require( _slammerTime == slammerTime);
       //the sender must own the token
       require(tokenIndexToOwner[_id]==msg.sender);
       require(tokenIndexToOwner[_id2]==msg.sender);
@@ -219,6 +225,9 @@ contract Cryptogs is NFT, Ownable {
     }
     event CounterStack(address indexed _sender,uint256 indexed timestamp,bytes32 indexed _stack, bytes32 _counterStack, uint256 _token1, uint256 _token2, uint256 _token3, uint256 _token4, uint256 _token5);
 
+    // if someone creates a stack they should be able to clean it up
+    // it's not really that big of a deal because we will have a timeout
+    // in the frontent, but still...
     function cancelStack(bytes32 _stack) public returns (bool) {
       //it must be your stack
       require(msg.sender==stacks[_stack].owner);
@@ -233,6 +242,10 @@ contract Cryptogs is NFT, Ownable {
     }
     event CancelStack(address indexed _sender,uint256 indexed timestamp,bytes32 indexed _stack);
 
+
+    //this cancel is more important. if a counter stack is submitted but not accepted until
+    //after the counterstack owner leaves, the original stack own will have an easy window
+    // to drain the stack because he can catch the counterstack owner afk
     function cancelCounterStack(bytes32 _stack,bytes32 _counterstack) public returns (bool) {
       //it must be your stack
       require(msg.sender==stacks[_counterstack].owner);
@@ -258,6 +271,9 @@ contract Cryptogs is NFT, Ownable {
 
     //tx 3: of a game, player one approves counter stack and transfers everything in
     function acceptCounterStack(address _slammerTime, bytes32 _stack, bytes32 _counterStack) public returns (bool) {
+      //make sure they have the right slammertime address
+      //(this is an afterthought, originally this could be dynamic)
+      require( _slammerTime == slammerTime);
       //sender must be owner of stack 1
       require(msg.sender==stacks[_stack].owner);
       //the counter must be a counter of stack 1

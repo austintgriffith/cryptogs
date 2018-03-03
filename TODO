@@ -1,5 +1,7 @@
 [x] SEO and unfurl image
-[ ] game log blockies should like to profile so you can copy and paste public 
+[ ] must have rarity in frontend before deploy so you know the contract is solid
+[ ] minting ethdenver coins would be cool
+[ ] game log blockies should like to profile so you can copy and paste public
 [ ] cookie the reveal for like 60s in case of a reload
 [ ] "wait for it to finish" alert has etherscan as undefined.. go to test net with low gas prices and catch the alerts
 [ ] mouse over when not the main player should not be the cursor pointer

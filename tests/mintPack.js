@@ -68,32 +68,28 @@ function grabRandomTen(arr){
   return newArr;
 }
 
-//cryptogs.mintPack(0,grabRandomTen(retro),0.005)
 
-//cryptogs.mintPack(0,grabRandomTen(space),0.005)
-
-//cryptogs.mintPack(0,grabRandomTen(animals),0.025)
-
-cryptogs.mintPack(0,grabRandomTen(ad90s),0.001)
-cryptogs.mintPack(0,grabRandomTen(ad90s),0.001)
-cryptogs.mintPack(0,grabRandomTen(ad90s),0.001)
+// cryptogs.mintPack(0,grabRandomTen(ad90s),0.001)
+// cryptogs.mintPack(0,grabRandomTen(ad90s),0.001)
+// cryptogs.mintPack(0,grabRandomTen(ad90s),0.001)
 
 cryptogs.mintPack(0,grabRandomTen(aw90s),0.002)
-cryptogs.mintPack(0,grabRandomTen(aw90s),0.002)
-cryptogs.mintPack(0,grabRandomTen(aw90s),0.002)
 
-cryptogs.mintPack(0,grabRandomTen(animals),0.1)
-cryptogs.mintPack(0,grabRandomTen(animals),0.1)
-
-cryptogs.mintPack(0,[
-  "ethereumlogo.png",
-  "ethereumlogo.png",
-  "ethereumlogo.png",
-  "ethereumlogo.png",
-  "ethereumlogo.png",
-  "ethereumlogo.png",
-  "ethereumlogo.png",
-  "ethereumlogo.png",
-  "unicorn.png",
-  "dragon.png",
-],0.05)
+// cryptogs.mintPack(0,grabRandomTen(aw90s),0.002)
+// cryptogs.mintPack(0,grabRandomTen(aw90s),0.002)
+//
+// cryptogs.mintPack(0,grabRandomTen(animals),0.1)
+// cryptogs.mintPack(0,grabRandomTen(animals),0.1)
+//
+// cryptogs.mintPack(0,[
+//   "ethereumlogo.png",
+//   "ethereumlogo.png",
+//   "ethereumlogo.png",
+//   "ethereumlogo.png",
+//   "ethereumlogo.png",
+//   "ethereumlogo.png",
+//   "ethereumlogo.png",
+//   "ethereumlogo.png",
+//   "unicorn.png",
+//   "dragon.png",
+// ],0.05)

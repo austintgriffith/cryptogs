@@ -39,7 +39,7 @@ contract SlammerTime is Ownable{
 
 
     for(uint8 j=0;j<5;j++){
-      //make sure player1 owns _id1
+      //make sure player2 owns _id1
       require(cryptogsContract.tokenIndexToOwner(_id2[j])==_player2);
       //transfer id1 in
       cryptogsContract.transferFrom(_player2,address(this),_id2[j]);
