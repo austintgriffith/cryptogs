@@ -43,15 +43,6 @@
   height: 50%;
 }
 
-a {
-    text-decoration: none;
-    color:#666666;
-}
-a:hover {
-    text-decoration: underline;
-    text-decoration-color:#cccccc;
-}
-
 .messageLittle {
     border-radius: 10px;
     background: #e6e6e6;
