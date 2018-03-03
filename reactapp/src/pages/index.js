@@ -67,7 +67,7 @@ export default createClass({
 
 													<div className="row align-items-center">
 															<div className="col-md-5">
-																	<img src={"/screens/screen1creategame.png"} />
+																	<img style={{maxWidth:300}}  src={"/screens/screen1creategame.png"} />
 															</div>
 															<div className="col-md-7">
 																	<h2 className="h4 mb-3">Create A Game</h2>
@@ -91,7 +91,7 @@ export default createClass({
 
 													<div className="row align-items-center">
 															<div className="col-md-5">
-																	<img src={"/screens/slam.gif"} />
+																	<img style={{maxWidth:300}}  src={"/screens/slam.gif"} />
 															</div>
 															<div className="col-md-7">
 																	<h2 className="h4 mb-3">Game Play</h2>
@@ -117,7 +117,7 @@ export default createClass({
 
 													<div className="row align-items-center">
 															<div className="col-md-5">
-																	<img src={"/screens/opensource.png"} />
+																	<img style={{maxWidth:300}}  src={"/screens/opensource.png"} />
 															</div>
 															<div className="col-md-7">
 																	<h2 className="h4 mb-3">Open Source</h2>
