@@ -4,7 +4,7 @@ import {Motion, spring, presets} from 'react-motion';
 import Block from './Block.js'
 import StackGrid from 'react-stack-grid'
 import PogAnimation from '../components/PogAnimation.js'
-
+import LoaderAnimation from '../components/LoaderAnimation.js'
 const extraDip = 80
 
 let interval
@@ -91,7 +91,10 @@ export default createClass({
               return (
                 <div onClick={this.toggle} className={"messageGray"}  style={{zIndex:999,opacity:0.9,position:'fixed',bottom:currentStyles.bottom,left:offset,margin:'0 auto',width:width,height:currentStyles.height,backgroundColor:"#eeeeee",padding:20,border:"20px solid #dddddd"}}>
                   <div style={bigTextStyle}>
-                      <div style={{opacity:0.3,float:'left',marginTop:-65}}><PogAnimation loader={true} image={"unicorn.png"}/></div> <div style={{opacity:0.3,float:'right',marginTop:-65}}><PogAnimation loader={true} image={"unicorn.png"}/></div>Waiting for transaction <a href={etherscan+"tx/"+this.props.loadingTx} target="_Blank">{this.props.loadingTx.substr(0,10)}</a> to be mined into the blockchain.
+                      <div style={{opacity:0.3,float:'left',marginTop:-95}}><LoaderAnimation/></div>
+                      <div style={{opacity:0.3,float:'right',marginTop:-95}}><LoaderAnimation/></div>
+
+                      Waiting for transaction <a href={etherscan+"tx/"+this.props.loadingTx} target="_Blank">{this.props.loadingTx.substr(0,10)}</a> to be mined...
                   </div>
 
                   <StackGrid
@@ -101,8 +104,8 @@ export default createClass({
                     {blockDisplay}
                   </StackGrid>
                   <div style={{marginTop:40}}/>
-                  <div style={bigTextStyle}>Transactions are currently taking an average of {average} seconds.</div>
-                  <div style={bigTextStyle}>Higher <img src="/gas.png"/> gas prices mean faster trasactions, but they will cost more.</div>
+                  <div style={bigTextStyle}>Transactions are taking an average of {average} seconds plus network time.</div>
+                  <div style={bigTextStyle}>Higher <img style={{opacity:0.5}} src="/gas.png"/> gas prices mean faster trasactions, but they will cost more.</div>
                 </div>
               )
             }}

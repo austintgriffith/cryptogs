@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import createClass from 'create-react-class';
 import Draggable from 'react-draggable';
 
-const MAXGWEI = 21
+const MAXGWEI = 25
 const MINGWEI = 0.1
 
 let gasOffset = 120;
