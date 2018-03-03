@@ -16,7 +16,7 @@ var params = {
   localDir: "build",
 
   s3Params: {
-    Bucket: "cryptopogs.io",
+    Bucket: "cryptogs.io",
     Prefix: "",
     ACL: "public-read"
     // other options supported by putObject, except Body and ContentLength.
