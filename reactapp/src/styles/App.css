@@ -97,15 +97,15 @@ hr {
     background: #fff
 }
 
-.bg-primary {
+.background-primary {
     background: url("./img/halftone.png")
 }
 
-.bg-secondary {
+.background-secondary {
     background: url("./img/stacked_circles.png")
 }
 
-.bg-grey {
+.background-grey {
     background: #f1f1f1
 }
 
