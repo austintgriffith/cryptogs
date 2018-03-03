@@ -56,41 +56,6 @@ let ad90s = [
   "adyinyanggroovy.png",
 ]
 
-let space = [
-  "space1.png",
-  "space2.png",
-  "space3.png",
-  "space4.png",
-  "space5.png",
-  "space6.png",
-  "space7.png",
-  "space8.png",
-  "space1.png",
-  "space2.png",
-  "space3.png",
-  "space4.png",
-  "space5.png",
-  "space6.png",
-  "space7.png",
-  "space8.png",
-]
-
-let retro = [
-  "retro1.png",
-  "retro2.png",
-  "retro3.png",
-  "retro4.png",
-  "retro5.png",
-  "retro6.png",
-  "retro7.png",
-  "retro1.png",
-  "retro2.png",
-  "retro3.png",
-  "retro4.png",
-  "retro5.png",
-  "retro6.png",
-  "retro7.png",
-]
 
 
 function grabRandomTen(arr){
@@ -108,12 +73,17 @@ function grabRandomTen(arr){
 
 //cryptogs.mintPack(0,grabRandomTen(animals),0.025)
 
+cryptogs.mintPack(0,grabRandomTen(ad90s),0.001)
+cryptogs.mintPack(0,grabRandomTen(ad90s),0.001)
+cryptogs.mintPack(0,grabRandomTen(ad90s),0.001)
 
-cryptogs.mintPack(0,grabRandomTen(aw90s),0.003)
-cryptogs.mintPack(0,grabRandomTen(aw90s),0.004)
-cryptogs.mintPack(0,grabRandomTen(aw90s),0.004)
+cryptogs.mintPack(0,grabRandomTen(aw90s),0.002)
+cryptogs.mintPack(0,grabRandomTen(aw90s),0.002)
+cryptogs.mintPack(0,grabRandomTen(aw90s),0.002)
 
-/*
+cryptogs.mintPack(0,grabRandomTen(animals),0.1)
+cryptogs.mintPack(0,grabRandomTen(animals),0.1)
+
 cryptogs.mintPack(0,[
   "ethereumlogo.png",
   "ethereumlogo.png",
@@ -125,5 +95,4 @@ cryptogs.mintPack(0,[
   "ethereumlogo.png",
   "unicorn.png",
   "dragon.png",
-],0.025)
-*/
+],0.05)
