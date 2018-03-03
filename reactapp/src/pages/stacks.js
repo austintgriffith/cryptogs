@@ -202,7 +202,7 @@ export default createClass({
 						</div>
 					}/>
 				)
-			}else if(allStacksFlipped[s].otherPlayer && !allStacksFlipped[s].canceled &&
+			}else if(account && allStacksFlipped[s].otherPlayer && !allStacksFlipped[s].canceled &&
 					(
 						!allStacksFlipped[s].canceledSenders ||
 						allStacksFlipped[s].canceledSenders.indexOf(account.toLowerCase()) < 0
