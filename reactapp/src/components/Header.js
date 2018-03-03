@@ -25,8 +25,8 @@ export default createClass({
 										}}
 									</Motion>
 							</div>
-							<div className="col-md-4">
-									<a href="/"><img style={{maxHeight:60}}src="/logo.png"/></a>
+							<div className="col-md-4 text-center">
+								<a href="/"><img style={{maxHeight:60}}src="/logo.png"/></a>
 							</div>
 							<div className="col-md-4">
 									<nav className="site-nav">

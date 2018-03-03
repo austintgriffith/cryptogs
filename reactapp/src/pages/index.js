@@ -67,7 +67,7 @@ export default createClass({
 
 													<div className="row align-items-center">
 															<div className="col-md-5">
-																	<img style={{maxWidth:300}}  src={"/screens/screen1creategame.png"} />
+																<p className="text-center"><img className="img-fluid" src={"/screens/screen1creategame.png"} /></p>
 															</div>
 															<div className="col-md-7">
 																	<h2 className="h4 mb-3">Create A Game</h2>
@@ -79,7 +79,7 @@ export default createClass({
 
 													<div className="row align-items-center">
 															<div className="col-md-5">
-																	<img style={{maxWidth:300}} src={"/screens/spinningslammer.gif"} />
+																<p className="text-center"><img style={{maxWidth:300}} src={"/screens/spinningslammer.gif"} /></p>
 															</div>
 															<div className="col-md-7">
 																	<h2 className="h4 mb-3">Slammer Flip</h2>
@@ -91,7 +91,7 @@ export default createClass({
 
 													<div className="row align-items-center">
 															<div className="col-md-5">
-																	<img style={{maxWidth:300}}  src={"/screens/slam.gif"} />
+																<p className="text-center"><img style={{maxWidth:300}}  src={"/screens/slam.gif"} /></p>
 															</div>
 															<div className="col-md-7">
 																	<h2 className="h4 mb-3">Game Play</h2>
@@ -103,9 +103,9 @@ export default createClass({
 									</div>
 							</section>
 
-							<section className="section pt-5 pb-5 text-center">
-								<div className="container text-center" style={{padding:100}}>
-										<p><a className="btn btn-primary btn-lg btn--alt" href="/stacks">Play Now</a></p>
+							<section className="section text-center" style={{paddingTop:140, paddingBottom: 130}}>
+								<div className="container text-center">
+									<p><a className="btn btn-primary btn-lg btn--alt" href="/stacks">Play Now</a></p>
 								</div>
 							</section>
 
@@ -117,11 +117,11 @@ export default createClass({
 
 													<div className="row align-items-center">
 															<div className="col-md-5">
-																	<img style={{maxWidth:300}}  src={"/screens/opensource.png"} />
+																<p><img className="img-fluid" src={"/screens/opensource.png"} /></p>
 															</div>
 															<div className="col-md-7">
-																	<h2 className="h4 mb-3">Open Source</h2>
-																	<p>{"All of our work is 100% open-source and free for anyone to take and extend! Check out our github repo "}<a href="https://github.com/austintgriffith/cryptogs">here</a>.</p>
+																<h2 className="h4 mb-3">Open Source</h2>
+																<p>{"All of our work is 100% open-source and free for anyone to take and extend! Check out our github repo "}<a href="https://github.com/austintgriffith/cryptogs">here</a>.</p>
 															</div>
 													</div>
 
@@ -129,31 +129,33 @@ export default createClass({
 
 													<div className="row align-items-center">
 															<div className="col-md-5">
-															 <div style={{position:'absolute',left:50,top:-85}}>
-																	<Spinner key={"spinner1"} guts={
-																		(spinning)=>{
-																			return (
-																				<Cryptog key={"cryptog"} id={0} scale={1} slowrolling={spinning} image={"buffalo.png"}/>
-																			)
-																		}
-																	}/>
-																</div>
-																<div style={{position:'absolute',left:170,top:-85}}>
-																	 <Spinner key={"spinner2"} guts={
-																		 (spinning)=>{
-																			 return (
-																				 <Cryptog key={"cryptog2"} id={1} scale={1} slowrolling={spinning} image={"awblackwidow.jpg"}/>
-																			 )
-																		 }
-																	 }/>
+
+																<div className="d-flex justify-content-center mb-3">
+																	<div style={{position: 'relative'}}>
+																		<Spinner key={"spinner1"} guts={
+																			(spinning)=>{
+																				return (
+																					<Cryptog key={"cryptog"} id={0} scale={1} slowrolling={spinning} image={"buffalo.png"}/>
+																				)
+																			}
+																		}/>
+																	</div>
+																	<div style={{position: 'relative'}}>
+																		<Spinner key={"spinner2"} guts={
+																			(spinning)=>{
+																				return (
+																					<Cryptog key={"cryptog2"} id={1} scale={1} slowrolling={spinning} image={"awblackwidow.jpg"}/>
+																				)
+																			}
+																		}/>
+																	 </div>
 																 </div>
+
 															</div>
 
-
-
 															<div className="col-md-7">
-																	<h2 className="h4 mb-3">Original Artwork</h2>
-																	<p>{"Calling all artists! We are looking for original artwork. Players, traders, and gamers can see the artist of each pog. Jump in the #design channel of our "}<a href="https://join.slack.com/t/cryptopogs/shared_invite/enQtMzIyNTI4Njc5MDMwLTkyZTczMTgwYzU2YTZhNmFiMDg5YTFkOGQzYmNlMGZhYmRmNmQ4ZTM2MGRkMjEyYmRmYWZiNzIzMDVhNDA3NDk">Slack</a>.</p>
+																<h2 className="h4 mb-3">Original Artwork</h2>
+																<p>{"Calling all artists! We are looking for original artwork. Players, traders, and gamers can see the artist of each pog. Jump in the #design channel of our "}<a href="https://join.slack.com/t/cryptopogs/shared_invite/enQtMzIyNTI4Njc5MDMwLTkyZTczMTgwYzU2YTZhNmFiMDg5YTFkOGQzYmNlMGZhYmRmNmQ4ZTM2MGRkMjEyYmRmYWZiNzIzMDVhNDA3NDk">Slack</a>.</p>
 															</div>
 													</div>
 
@@ -163,9 +165,9 @@ export default createClass({
 									</div>
 							</section>
 
-							<section className="section pt-5 pb-5 text-center">
-								<div className="container text-center" style={{padding:100}}>
-										<a href="">Privacy Policy</a> -  <a href="">Terms of Use</a> -  <a href="">Smart Contracts</a>  - <a href="">Git Repo</a> -  <a href="">Slack</a>
+							<section className="section text-center" style={{paddingTop:140, paddingBottom: 130}}>
+								<div className="container text-center">
+									<a href="">Privacy Policy</a> - <a href="">Terms of Use</a> - <a href="">Smart Contracts</a> - <a href="">Git Repo</a> - <a href="">Slack</a>
 								</div>
 							</section>
 
