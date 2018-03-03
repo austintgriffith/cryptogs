@@ -26,12 +26,9 @@ import GasSlider from './components/GasSlider.js'
 import MMButton from './components/MMButton.js'
 import cookie from 'react-cookies'
 
-
-
 const DEBUG = false
 const MAINNETGWEI = 2.5
 const STARTINGGWEI = 25
-
 
 var Web3 = require('web3');
 let contractLoadingInterval;

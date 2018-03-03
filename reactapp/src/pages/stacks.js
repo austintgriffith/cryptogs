@@ -8,6 +8,7 @@ import LiveParser from '../modules/liveParser.js';
 import MMButton from '../components/MMButton.js'
 
 const DEBUG = false;
+const BLOCKLOOKBACK = 240;
 
 let loadInterval
 export default createClass({
@@ -49,7 +50,7 @@ export default createClass({
 					}
 				}
 			}
-			EventParser(contracts["Cryptogs"],"SubmitStack",contracts["Cryptogs"].blockNumber,blockNumber,updateAllStacks);
+			EventParser(contracts["Cryptogs"],"SubmitStack",blockNumber-BLOCKLOOKBACK,blockNumber,updateAllStacks);
 			setInterval(()=>{
 				LiveParser(contracts["Cryptogs"],"SubmitStack",blockNumber,updateAllStacks)
 			},731)
@@ -66,7 +67,7 @@ export default createClass({
 					this.setState({allStacks:this.state.allStacks});
 				}
 			}
-			EventParser(contracts["Cryptogs"],"CounterStack",contracts["Cryptogs"].blockNumber,blockNumber,updateCounterStack);
+			EventParser(contracts["Cryptogs"],"CounterStack",blockNumber-BLOCKLOOKBACK,blockNumber,updateCounterStack);
 			setInterval(()=>{
 				LiveParser(contracts["Cryptogs"],"CounterStack",blockNumber,updateCounterStack)
 			},737)
@@ -83,7 +84,7 @@ export default createClass({
 					this.setState({allStacks:this.state.allStacks});
 				}
 			}
-			EventParser(contracts["Cryptogs"],"AcceptCounterStack",contracts["Cryptogs"].blockNumber,blockNumber,updateAcceptCounterStack);
+			EventParser(contracts["Cryptogs"],"AcceptCounterStack",blockNumber-BLOCKLOOKBACK,blockNumber,updateAcceptCounterStack);
 			setInterval(()=>{
 				LiveParser(contracts["Cryptogs"],"AcceptCounterStack",blockNumber,updateAcceptCounterStack)
 			},751)
@@ -98,7 +99,7 @@ export default createClass({
 					this.setState({allStacks:this.state.allStacks});
 				}
 			}
-			EventParser(contracts["Cryptogs"],"FinishGame",contracts["Cryptogs"].blockNumber,blockNumber,updateFinishGame);
+			EventParser(contracts["Cryptogs"],"FinishGame",blockNumber-BLOCKLOOKBACK,blockNumber,updateFinishGame);
 			setInterval(()=>{
 				LiveParser(contracts["Cryptogs"],"FinishGame",blockNumber,updateAllStacks)
 			},791)
@@ -114,7 +115,7 @@ export default createClass({
 					this.setState({allStacks:this.state.allStacks});
 				}
 			}
-			EventParser(contracts["Cryptogs"],"CancelStack",contracts["Cryptogs"].blockNumber,blockNumber,updateCancelStack);
+			EventParser(contracts["Cryptogs"],"CancelStack",blockNumber-BLOCKLOOKBACK,blockNumber,updateCancelStack);
 			setInterval(()=>{
 				LiveParser(contracts["Cryptogs"],"CancelStack",blockNumber,updateCancelStack)
 			},991)
@@ -129,7 +130,7 @@ export default createClass({
 					this.setState({allStacks:this.state.allStacks});
 				}
 			}
-			EventParser(contracts["Cryptogs"],"CancelCounterStack",contracts["Cryptogs"].blockNumber,blockNumber,updateCancelCounterStack);
+			EventParser(contracts["Cryptogs"],"CancelCounterStack",blockNumber-BLOCKLOOKBACK,blockNumber,updateCancelCounterStack);
 			setInterval(()=>{
 				LiveParser(contracts["Cryptogs"],"CancelCounterStack",blockNumber,updateCancelCounterStack)
 			},997)
@@ -259,6 +260,7 @@ export default createClass({
 
 		return (
       <div style={{margin: '0 auto',maxWidth: 960,padding: '0px 1.0875rem 1.45rem',paddingTop: 0}}>
+
 				<div style={{float:'right',padding:30,paddingRight:100}}>
 					<MMButton color={"#6ac360"} onClick={()=>{
 						if(account){
@@ -267,6 +269,9 @@ export default createClass({
 							metaMaskHintFn()
 						}
 					}}>Create Game</MMButton>
+				</div>
+				<div style={{float:'left',padding:30,paddingRLeft:100}}>
+				Games within the last {BLOCKLOOKBACK} blocks:
 				</div>
 				<div style={{ clear:"both"}}></div>
 				<div style={sectionStyle}>Your Games:</div>
