@@ -26,7 +26,7 @@ import cookie from 'react-cookies'
 
 const DEBUG = false
 const MAINNETGWEI = 2.5
-const STARTINGGWEI = 25
+const STARTINGGWEI = 11
 
 var Web3 = require('web3');
 let contractLoadingInterval;
@@ -68,7 +68,7 @@ export default createClass({
 		this.setState({loadingTx:tx})
 	},
 	setGWEI(GWEI){
-		this.setState({GWEI:parseInt(GWEI)})
+		this.setState({GWEI:parseInt(GWEI*100)/100})
 		cookie.save('GWEI', GWEI, { path: '/', maxAge:28800 })
 	},
 	metaMaskHintFn(){

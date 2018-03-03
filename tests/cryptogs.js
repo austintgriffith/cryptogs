@@ -126,7 +126,7 @@ module.exports = {
         const accounts = await clevis("accounts")
         const tokensOfOwner = await clevis("contract","tokensOfOwner","Cryptogs",accounts[accountindex])
         console.log("tokensOfOwner",tokensOfOwner)
-      /*  const token5 = tokensOfOwner[tokensOfOwner.length-1]
+        const token5 = tokensOfOwner[tokensOfOwner.length-1]
         const token4 = tokensOfOwner[tokensOfOwner.length-2]
         const token3 = tokensOfOwner[tokensOfOwner.length-3]
         const token2 = tokensOfOwner[tokensOfOwner.length-4]
@@ -135,7 +135,7 @@ module.exports = {
         const result = await clevis("contract","submitStack","Cryptogs",accountindex,SlammerTimeAddress,token1,token2,token3,token4,token5)
         printTxResult(result)
         const approveContract = await clevis("contract","tokenIndexToApproved","Cryptogs",token5)
-        assert(approveContract == SlammerTimeAddress,"SlammerTime is NOT approved to move the token "+token5)*/
+        assert(approveContract == SlammerTimeAddress,"SlammerTime is NOT approved to move the token "+token5)
       });
     });
   },

@@ -235,7 +235,7 @@ export default createClass({
 
 											}).then((receipt)=>{
   							        console.log("RESULT:",receipt)
-  											//window.location = "/address/"+account
+  											window.location = "/address/"+account
 												showLoadingScreen(false)
   							      })
   								}

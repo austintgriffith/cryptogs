@@ -694,11 +694,11 @@ class PlayStack extends Component {
              <Cryptog angle={95} scale={0.9} id={1} image={"awstussy.jpg"}/>
             </div>
             <div style={{position:'absolute',left:-340,top:20,zIndex:1}}>
-             <Cryptog angle={80} scale={0.9} id={1} image={"adyinyang.png"}/>
+             <Cryptog angle={80} scale={0.9} id={1} image={"hippo.png"}/>
             </div>
-            <div style={{position:'absolute',left:-360,top:-70,zIndex:1,
+            <div style={{position:'absolute',left:-320,top:-90,zIndex:1,
                         fontWeight:'bold',fontSize:140,letterSpacing:-2}}>
-              CryptoPogs.io
+              <img src="/logo.png" />
             </div>
             <div style={{position:'absolute',left:360,top:20,zIndex:1}}>
              <Cryptog angle={100} scale={0.9} id={1} image={"awblackwidow.jpg"}/>
