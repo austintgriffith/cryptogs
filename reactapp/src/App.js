@@ -4,9 +4,6 @@ import { BrowserRouter as Router, Route, Link, Redirect, Switch } from "react-ro
 import createClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import Header from './components/Header.js'
-import './index.css'
-import './pogs.css'
-import './styles/App.css';
 import 'regenerator-runtime/runtime';
 import ContractLoader from './modules/contractLoader.js';
 import TokenLoader from './modules/tokenLoader.js';

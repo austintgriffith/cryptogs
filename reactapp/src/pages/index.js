@@ -46,7 +46,7 @@ export default createClass({
                       </div>
                   </div>
               </section>
-              <section className="section bg-primary pt-5 pb-5 text-center">
+              <section className="section background-primary pt-5 pb-5 text-center">
                   <div className="container">
                       <h1 className="h2 mb-4">How does random number generation work on Cryptogs?</h1>
                       <p className="lead-2">In order to be fully decentralized, we should not rely on an off-chain oracle for randomness. The trick to pseudo randomness on the blockchain involves a commit/reveal mechanic. When you flip the slammer, you generate a random hash called the <i>reveal</i>. Then you generate a hash from the <i>reveal</i> called the <i>commit</i>. This commit is sent to the blockchain at block <i>N</i>. Finally, when you submit your <i>reveal</i> it is hashed with the <i>blockhash</i> of block <i>N+1</i> to produce a random number. This random number determines who goes first and what Cryptogs are flipped each round.</p>
@@ -59,7 +59,7 @@ export default createClass({
                   </div>
               </section>
 
-							<section className="section bg-primary pt-5 pb-5">
+							<section className="section background-primary pt-5 pb-5">
 									<div className="container">
 											<h1 className="h2 mb-5 text-center">Playing Cryptogs</h1>
 
@@ -109,7 +109,7 @@ export default createClass({
 								</div>
 							</section>
 
-							<section className="section bg-primary pt-5 pb-5">
+							<section className="section background-primary pt-5 pb-5">
 									<div className="container">
 											<h1 className="h2 mb-5 text-center"></h1>
 
@@ -177,7 +177,7 @@ export default createClass({
 
 
 /*
-<section className="section bg-primary pt-5 pb-5">
+<section className="section background-primary pt-5 pb-5">
 		<div className="container">
 				<h1 className="h2 mb-5 text-center">Playing CryptoPogs</h1>
 
