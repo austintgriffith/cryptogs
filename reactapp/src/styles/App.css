@@ -359,13 +359,6 @@ hr {
 }
 
 @keyframes spin {
-  // 0% { transform: rotateX(75deg) }
-  // 50% { transform: rotateX(360deg) }
-  // 75% { transform: rotateX(360deg) }
-  // 25% { transform: rotateX(0deg) }
-  // 50% { transform: rotateX(-180deg) }
-  // 100% { transform: rotateX(-720deg) }
-
   from {
     transform: rotateX(75deg);
   }
