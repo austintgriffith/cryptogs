@@ -26,7 +26,7 @@ import cookie from 'react-cookies'
 
 const DEBUG = false
 const MAINNETGWEI = 2.5
-const STARTINGGWEI = 11
+const STARTINGGWEI = 21
 
 var Web3 = require('web3');
 let contractLoadingInterval;
@@ -68,7 +68,7 @@ export default createClass({
 		this.setState({loadingTx:tx})
 	},
 	setGWEI(GWEI){
-		this.setState({GWEI:parseInt(GWEI*100)/100})
+		this.setState({GWEI:parseInt(GWEI)})
 		cookie.save('GWEI', GWEI, { path: '/', maxAge:28800 })
 	},
 	metaMaskHintFn(){
@@ -85,7 +85,7 @@ export default createClass({
 			web3: {},
 			contracts: [],
 			metamaskHint: 10,
-			loadingTx:false,
+			loadingTx:"",
 			GWEI:GWEI,
 			alert: "",
 		};
@@ -207,11 +207,3 @@ export default createClass({
 
 	}
 });
-// style={{margin: '0 auto',maxWidth: 960,padding: '0px 1.0875rem 1.45rem',paddingTop: 0,}}
-/*
-gatsby loop example for later reference
-(function run(self){
-	self.setState({ count: self.state.count += 1 });
-	self._timer = setTimeout(run, 1000, self);
-}(this));
- */

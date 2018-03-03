@@ -9,7 +9,7 @@ const AWS = require('aws-sdk')
 var cloudfront = new AWS.CloudFront(new AWS.Config(awsCreds));
 
 var params = {
-  DistributionId: 'E2S2KJLHLC746D', /* required */
+  DistributionId: 'E2OZXT6WFWKT85', /* required */
   InvalidationBatch: { /* required */
     CallerReference: ''+(new Date()), /* required */
     Paths: { /* required */

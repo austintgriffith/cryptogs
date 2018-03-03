@@ -10,6 +10,8 @@
 [ ] show "my games" at the bottom of "my pogs"
 [x] the buy packs only show 9 instead of 10
 [ ] medium post explaining the mechanics and challenges posted to reddit
+[ ] medium post for contract deep dive
+[ ] medium post for commit/reveal vs oracle or just blockhash
 [ ] show gas paid in recent transactions in the loader and probably a close button
 [x] follow the process through from buying pogs to a full game and make sure there is a call to action -- first: my pogs needs a play pogs or create game pu
 [ ] Port play stack to event parser!
@@ -17,11 +19,11 @@
 [x] watch "Loading token data" messages on address page and make sure token loads dont take forever on ropsten - maybe a loader screen?
 [x] slack channel with invite on page, but #design channel to get pog designers together so we aren't stepping on toes
 [ ] pack details include artist
-[ ] Logo image?
+[x] Logo image?
 [ ] on stack select, when you select the 5th pog, it should scroll you up to the submit button
 [x] buypack load debounce- it would be better to show a loader until it settles down rather then a pack and the quickly replaced by another
-[ ] live games on stacks page should say "watch" if you are a thrid party
-[ ] a third party is invited to slam it should check that account is neither player and display different
+[-] live games on stacks page should say "watch" if you are a thrid party
+[x] a third party is invited to slam it should check that account is neither player and display different
 [x] when a game is finished the log should roll down front and center to show how that game went and who took what
 [-] loader comes up right after transaction, is dismissable, and has a link to the tx on etherscan
     (the button you pushed to get the window should go gray)
@@ -29,27 +31,27 @@
       -because sometimes it takes so long you forget you are waiting and try to fire off another one
       (it also needs to handle and ERROR by probably still forwarding to the page it means to go to?
         could you continue to query the status of the tx for a minutes?)
-[ ] the contracts folder should hold different stuff for different networks
-[ ] remove / revoke stack option so timeout drain attack can't happen while you are away
+[x] the contracts folder should hold different stuff for different networks
+[x] remove / revoke stack option so timeout drain attack can't happen while you are away
 [ ] mobile responsive, viewport, test in cipher browser
   [ ] make the front page 2x2 grid go to a 1x4 when it gets small
-[ ] game log should be more toward the top right and should include events like coin flip result and final count
+[x] game log should be more toward the top right and should include events like coin flip result and final count
 [ ] rarity display for single pog and entire stack
-[ ] 40 might be too short for a TIMEOUTBLOCKS
+[-] 40 might be too short for a TIMEOUTBLOCKS
 [ ] adjust gas limits so they are as accurate as possible without running out
 [ ] make sure metamask looks good in every state
 [x] contracts may be able to clean up a lot of their storage when a game finishes
 [ ] cryptog page
-[ ] some kind of GWEI gas slider instead of hardcoded
+[x] some kind of GWEI gas slider instead of hardcoded
 [x] cryptog hover action
 [x] cryptog images should be in their own folder
 [-] loader component
 [x] button style
-[ ] clean up animations
+[-] clean up animations
 [ ] audit contracts
 [ ] is this legal? what about copyrights of 'pogs'?
 [ ] privacy policy and terms of usage
-[ ] team/about page
+[x] team/about page
 [ ] register social accounts
 [ ] ipfs link for fully decentralized
 [ ] contracts published and verified
@@ -60,13 +62,7 @@
 [ ] deploy to mainnet with a big ass warning sign... the app will have to detect which contract goes with which network
 
 [ ] randomize stack order on the way in or something so the mixed stack isn't always based on mint order
-[ ] IPFS in contract
+[x] IPFS in contract
 [x] rarity as part of the getToken call
-[ ] the "They flipped you flippped" should be replaced with blockies (because it says they for both people with a third account)
-[ ] the flipped pogs number should be replaced with the actual pog
------
-gameplay
------
-[x] make sure you can drain and no one else can after the 40 block time out window
-[ ] make sure the onlyOwner actions are for sure only able to be run by the owner
-[ ] look through each tx with a fresh mind and double check the functionality too many late nights
+[x] the "They flipped you flippped" should be replaced with blockies (because it says they for both people with a third account)
+[x] the flipped pogs number should be replaced with the actual pog
