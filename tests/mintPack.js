@@ -95,8 +95,9 @@ let retro = [
 
 function grabRandomTen(arr){
   let newArr = []
-  for(var i = 0;i<10;i++){
-    let piece = arr.splice(Math.floor(Math.random()*arr.length), 1)
+  var tempArray = arr.slice();
+  while(newArr.length<10){
+    let piece = tempArray.splice(Math.floor(Math.random()*tempArray.length), 1)
     newArr.push(piece[0]);
   }
   return newArr;

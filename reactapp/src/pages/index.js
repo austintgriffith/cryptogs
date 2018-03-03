@@ -34,8 +34,7 @@ export default createClass({
                               </div>
                               <div className="col-md-9">
                                   <div className="pt-2 pb-2">
-                                      <h1 className="h2 mb-4">What is CryptoPogs?</h1>
-                                      <p className="lead-2 mb-0">CryptoPogs is the cryptographically backed version of the game of Pogs. It's about collecting, trading, and risking pogs to play against people from around the decentralized world. You can win or lose tokens depending on your luck and it's all on the blockchain!</p>
+                                      <p className="lead-2 mb-0">{"Cryptogs is a cryptographically backed version of the game of pogs (milk caps). It extends the ERC-721 token standard from just collecting to trading and risking pogs to play against people from around the decentralized world. You can win or lose tokens depending on your luck and it's all on the blockchain!"}</p>
                                   </div>
                               </div>
                           </div>
@@ -45,20 +44,20 @@ export default createClass({
               </section>
               <section className="section bg-primary pt-5 pb-5 text-center">
                   <div className="container">
-                      <h1 className="h2 mb-4">How does CryptoPogs work?</h1>
-                      <p className="lead-2">The trick to pseudo randomness on the blockchain involves a commit/reveal mechanic. When you flip the slammer, you generate a random hash called the <i>reveal</i>. Then you generate a hash from the <i>reveal</i> called the <i>commit</i>. This commit is sent to the blockchain on block <i>N</i>. Finally, when you submit your <i>reveal</i> it is hashed with the <i>blockhash</i> of block <i>N+1</i> to produce a random number. This random number determines who goes first and what CryptoPogs are flipped each round.</p>
+                      <h1 className="h2 mb-4">How does random number generation work on Cryptogs?</h1>
+                      <p className="lead-2">In order to be fully decentralized, we should not rely on an off-chain oracle for randomness. The trick to pseudo randomness on the blockchain involves a commit/reveal mechanic. When you flip the slammer, you generate a random hash called the <i>reveal</i>. Then you generate a hash from the <i>reveal</i> called the <i>commit</i>. This commit is sent to the blockchain at block <i>N</i>. Finally, when you submit your <i>reveal</i> it is hashed with the <i>blockhash</i> of block <i>N+1</i> to produce a random number. This random number determines who goes first and what Cryptogs are flipped each round.</p>
                   </div>
               </section>
               <section className="section pt-5 pb-5 text-center">
                   <div className="container">
-                      <h1 className="h2 mb-5">Buy CryptoPogs</h1>
+                      <h1 className="h2 mb-5">Buy Cryptogs</h1>
                       <BuyPacks compact={true} />
                   </div>
               </section>
 
 							<section className="section bg-primary pt-5 pb-5">
 									<div className="container">
-											<h1 className="h2 mb-5 text-center">Playing CryptoPogs</h1>
+											<h1 className="h2 mb-5 text-center">Playing Cryptogs</h1>
 
 											<div className="jumbotron jumbotron--white p-5">
 
@@ -94,7 +93,7 @@ export default createClass({
 															</div>
 															<div className="col-md-7">
 																	<h2 className="h4 mb-3">Game Play</h2>
-																	<p>{"Players take turns raising and throwing their slammer. Any CryptoPogs the player flips over on their turn are transferred automatically to them. Play continues until all pogs are flipped."}</p>
+																	<p>{"Players take turns raising and throwing their slammer. Any Cryptogs the player flips over on their turn are transferred automatically to them. Play continues until all pogs are flipped."}</p>
 															</div>
 													</div>
 											</div>
@@ -103,11 +102,56 @@ export default createClass({
 							</section>
 
 							<section className="section pt-5 pb-5 text-center">
-								<div className="container text-center" style={{padding:100,marginBottom:200}}>
+								<div className="container text-center" style={{padding:100}}>
 										<p><a className="btn btn-primary btn-lg btn--alt" href="/stacks">Play Now</a></p>
 								</div>
 							</section>
 
+							<section className="section bg-primary pt-5 pb-5">
+									<div className="container">
+											<h1 className="h2 mb-5 text-center"></h1>
+
+											<div className="jumbotron jumbotron--white p-5">
+
+													<div className="row align-items-center">
+															<div className="col-md-5">
+																	<img src={"/screens/screen1creategame.png"} />
+															</div>
+															<div className="col-md-7">
+																	<h2 className="h4 mb-3">Create A Game</h2>
+																	<p>{"After you purchase some pogs, you can start playing by creating a new game or joining an existing game. You'll select 5 pogs you are willing to risk against your opponent's 5 pogs."}</p>
+															</div>
+													</div>
+
+													<hr className="my-5" />
+
+													<div className="row align-items-center">
+															<div className="col-md-5">
+																	<img src={"/screens/screen2stacked.png"} />
+															</div>
+															<div className="col-md-7">
+																	<h2 className="h4 mb-3">Slammer Flip</h2>
+																	<p>{"To determine who goes first, the slammer is flipped by the game creator. It takes two transaction, one for the commit, and another for the reveal."}</p>
+															</div>
+													</div>
+
+													<hr className="my-5" />
+
+													<div className="row align-items-center">
+															<div className="col-md-5">
+																<video  width="100%" height="100%" autoplay="autoplay" loop>
+																	<source src="/screens/slam.mp4" type="video/mp4" />
+																</video>
+															</div>
+															<div className="col-md-7">
+																	<h2 className="h4 mb-3">Game Play</h2>
+																	<p>{"Players take turns raising and throwing their slammer. Any Cryptogs the player flips over on their turn are transferred automatically to them. Play continues until all pogs are flipped."}</p>
+															</div>
+													</div>
+											</div>
+
+									</div>
+							</section>
 
           </main>
 			</div>

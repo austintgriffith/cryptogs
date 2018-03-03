@@ -26,7 +26,7 @@ export default createClass({
 									</Motion>
 							</div>
 							<div className="col-md-4">
-									<h1 className="logo text-center"><a href="/">CryptoPogs</a></h1>
+									<a href="/"><img style={{maxHeight:60}}src="/logo.png"/></a>
 							</div>
 							<div className="col-md-4">
 									<nav className="site-nav">
@@ -39,17 +39,17 @@ export default createClass({
 															metaMaskHintFn()
 														}
 													}} style={{padding:10, cursor:"pointer"}}>
-														My Pogs
+														{"My 'Togs"}
 													</a>
 													</li>
 													<li>
 													<a href="/stacks" style={{padding:10}}>
-														Play Pogs
+														{"Play 'Togs"}
 													</a>
 													</li>
 													<li>
 													<a href="/buy" style={{padding:10}}>
-														Buy Pogs
+														{"Buy 'Togs"}
 													</a>
 													</li>
 											</ul>
