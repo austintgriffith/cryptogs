@@ -184,12 +184,6 @@ export default createClass({
 	          <div className={"twobytwobox"}>
 							{buypacks[1]}
 	          </div>
-	          <div className={"twobytwobox"}>
-							{buypacks[2]}
-	          </div>
-	          <div className={"twobytwobox"}>
-							{buypacks[3]}
-	          </div>
 	        </div>
 					<div style={{padding:40}}>
 						<MMButton color={"#6081c3"} onClick={()=>{window.location="/buy"}}>View All Packs</MMButton>

@@ -5,7 +5,9 @@ import PropTypes from 'prop-types';
 import Intro from '../components/Intro.js'
 import BuyPacks from '../components/BuyPacks.js'
 import Banner from '../components/Banner'
-import PogAnimation from '../components/PogAnimation'
+import Cryptog from '../components/Cryptog.js'
+import Spinner from '../components/Spinner.js'
+import CryptogDocScroll from '../components/CryptogDocScroll.js'
 
 let loadInterval
 let initialIntervalLoaded
@@ -21,6 +23,7 @@ export default createClass({
 
 	render(){
 		let {web3,network} = this.context
+
 		return (
 			<div>
 					<main className="site-main">
@@ -30,11 +33,12 @@ export default createClass({
                       <div className="jumbotron p-5">
                           <div className="row align-items-center">
                               <div className="col-md-3">
-                                  <PogAnimation image={'awyinandyang.jpg'} />
+                                  <CryptogDocScroll />
                               </div>
                               <div className="col-md-9">
                                   <div className="pt-2 pb-2">
-                                      <p className="lead-2 mb-0">{"Cryptogs is a cryptographically backed version of the game of pogs (milk caps). It extends the ERC-721 token standard from just collecting to trading and risking pogs to play against people from around the decentralized world. You can win or lose tokens depending on your luck and it's all on the blockchain!"}</p>
+                                      <p className="lead-2 mb-0">{"Cryptogs is a cryptographically backed version of the game of pogs (milk caps). It extends the ERC-721 token standard from just collecting and trading to risking tokens using on-chain random game mechanics. Play pogs against people from around the decentralized world."}</p>
+																			<p className="lead-2 mb-0" style={{marginTop:20}}>{"TL;DR: You can win or lose tokens depending on your luck and it's all on the blockchain!"}</p>
                                   </div>
                               </div>
                           </div>
@@ -115,11 +119,11 @@ export default createClass({
 
 													<div className="row align-items-center">
 															<div className="col-md-5">
-																	<img src={"/screens/screen1creategame.png"} />
+																	<img src={"/screens/opensource.png"} />
 															</div>
 															<div className="col-md-7">
-																	<h2 className="h4 mb-3">Create A Game</h2>
-																	<p>{"After you purchase some pogs, you can start playing by creating a new game or joining an existing game. You'll select 5 pogs you are willing to risk against your opponent's 5 pogs."}</p>
+																	<h2 className="h4 mb-3">Open Source</h2>
+																	<p>{"All of our work is 100% open-source and free for anyone to take and extend! Check out our github repo "}<a href="https://github.com/austintgriffith/cryptogs">here</a>.</p>
 															</div>
 													</div>
 
@@ -127,30 +131,44 @@ export default createClass({
 
 													<div className="row align-items-center">
 															<div className="col-md-5">
-																	<img src={"/screens/screen2stacked.png"} />
+															 <div style={{position:'absolute',left:50,top:-85}}>
+																	<Spinner key={"spinner1"} guts={
+																		(spinning)=>{
+																			return (
+																				<Cryptog key={"cryptog"} id={0} scale={1} slowrolling={spinning} image={"buffalo.png"}/>
+																			)
+																		}
+																	}/>
+																</div>
+																<div style={{position:'absolute',left:170,top:-85}}>
+																	 <Spinner key={"spinner2"} guts={
+																		 (spinning)=>{
+																			 return (
+																				 <Cryptog key={"cryptog2"} id={1} scale={1} slowrolling={spinning} image={"awblackwidow.jpg"}/>
+																			 )
+																		 }
+																	 }/>
+																 </div>
 															</div>
+
+
+
 															<div className="col-md-7">
-																	<h2 className="h4 mb-3">Slammer Flip</h2>
-																	<p>{"To determine who goes first, the slammer is flipped by the game creator. It takes two transaction, one for the commit, and another for the reveal."}</p>
+																	<h2 className="h4 mb-3">Original Artwork</h2>
+																	<p>{"Calling all artists! We are looking for original artwork. Players, traders, and gamers can see the artist of each pog. Jump in the #design channel of our "}<a href="https://join.slack.com/t/cryptopogs/shared_invite/enQtMzIyNTI4Njc5MDMwLTkyZTczMTgwYzU2YTZhNmFiMDg5YTFkOGQzYmNlMGZhYmRmNmQ4ZTM2MGRkMjEyYmRmYWZiNzIzMDVhNDA3NDk">Slack</a>.</p>
 															</div>
 													</div>
 
-													<hr className="my-5" />
 
-													<div className="row align-items-center">
-															<div className="col-md-5">
-																<video  width="100%" height="100%" autoplay="autoplay" loop>
-																	<source src="/screens/slam.mp4" type="video/mp4" />
-																</video>
-															</div>
-															<div className="col-md-7">
-																	<h2 className="h4 mb-3">Game Play</h2>
-																	<p>{"Players take turns raising and throwing their slammer. Any Cryptogs the player flips over on their turn are transferred automatically to them. Play continues until all pogs are flipped."}</p>
-															</div>
-													</div>
 											</div>
 
 									</div>
+							</section>
+
+							<section className="section pt-5 pb-5 text-center">
+								<div className="container text-center" style={{padding:100}}>
+										<a href="">Privacy Policy</a> -  <a href="">Terms of Use</a> -  <a href="">Smart Contracts</a>  - <a href="">Git Repo</a> -  <a href="">Slack</a>
+								</div>
 							</section>
 
           </main>

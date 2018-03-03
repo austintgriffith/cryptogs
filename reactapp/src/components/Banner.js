@@ -1,5 +1,10 @@
 import React from 'react'
 
+
+
+
+
+
 const Banner = (props) => (
     <section className="banner bg-primary">
         <div className="container text-center">
@@ -7,10 +12,11 @@ const Banner = (props) => (
             <p className="lead mb-1">Born at ETHDenver, Cryptogs is the game of pogs on Ethereum.</p>
             <p className="lead mb-5">{"Play 'Togs live with your friends on-chain!"}</p>
             <p><a className="btn btn-primary btn-lg btn--alt" href="/stacks">Play Now</a></p>
+            <p><a className="btn btn-blue btn-lg btn--alt" target ="_blank" href="https://ropsten.etherscan.io/address/0x8973212f31bd6a187d593503c855e95b64e7c147#code" style={{marginTop:40}}>Smart Contract</a></p>
         </div>
         <img
             className="pog pog--large"
-            src="https://raw.githubusercontent.com/austintgriffith/cryptogs/master/reactapp/public/cryptogs/awpoison.jpg"
+            src="https://raw.githubusercontent.com/austintgriffith/cryptogs/master/reactapp/public/cryptogs/adsmile.png"
             alt=""
             style={{
                 transform: 'rotate(-20deg)',
@@ -21,7 +27,7 @@ const Banner = (props) => (
         />
         <img
             className="pog pog--large"
-            src="https://raw.githubusercontent.com/austintgriffith/cryptogs/master/reactapp/public/cryptogs/awblackwidow.jpg"
+            src="https://raw.githubusercontent.com/austintgriffith/cryptogs/master/reactapp/public/cryptogs/awpoison.jpg"
             alt=""
             style={{
                 transform: 'rotate(30deg)',

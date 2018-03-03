@@ -13,8 +13,7 @@ export default createClass({
   getInitialState(){
     return {
       isMinimized:false,
-      blocks: [],
-      periods: 3
+      blocks: []
     }
   },
   componentDidMount(){
@@ -33,9 +32,6 @@ export default createClass({
         }
       }
     }
-    let periods = this.state.periods+1;
-    if(periods>=4) periods=1
-    this.setState({periods:periods})
   },
   componentWillUnmount(){
     clearInterval(interval)
@@ -58,6 +54,8 @@ export default createClass({
       for(let b=10;b>=0;b--){
         if(this.state.blocks&&this.state.blocks[blockNumber-b]&&this.state.blocks[blockNumber-b].timestamp){
           timestamps.push(this.state.blocks[blockNumber-b].timestamp)
+          //var randTx = this.state.blocks[blockNumber-b].transactions[Math.floor(Math.random() * this.state.blocks[blockNumber-b].transactions.length)];
+        //  let txObf = web3.eth.getTransaction(randTx)
         }
         if(b<=3) blockDisplay.push(<Block key={"block"+b} etherscan={etherscan} {...this.state.blocks[blockNumber-b]} blockNumber={blockNumber-b}/>)
       }
@@ -75,11 +73,9 @@ export default createClass({
       if((this.state.isMinimized)){
         bottom = (height*-1)+100
       }
-      let periodText = ""
-      for(let i=0;i<this.state.periods;i++){
-        periodText+="."
-      }
-      let bigTextStyle = {width:"100%",textAlign:"center",fontWidth:'bold',fontSize:16,padding:10,marginBottom:10}
+
+
+      let bigTextStyle = {width:"100%",textAlign:"center",fontWidth:'bold',fontSize:16,padding:10}
       return (
         <Motion
           defaultStyle={{
@@ -95,7 +91,7 @@ export default createClass({
               return (
                 <div onClick={this.toggle} className={"messageGray"}  style={{zIndex:999,opacity:0.9,position:'fixed',bottom:currentStyles.bottom,left:offset,margin:'0 auto',width:width,height:currentStyles.height,backgroundColor:"#eeeeee",padding:20,border:"20px solid #dddddd"}}>
                   <div style={bigTextStyle}>
-                    Waiting for transaction <a href={etherscan+"tx/"+this.props.loadingTx} target="_Blank">{this.props.loadingTx.substr(0,10)}</a> to be mined into the blockchain{periodText}
+                      <div style={{opacity:0.3,float:'left',marginTop:-65}}><PogAnimation loader={true} image={"unicorn.png"}/></div> <div style={{opacity:0.3,float:'right',marginTop:-65}}><PogAnimation loader={true} image={"unicorn.png"}/></div>Waiting for transaction <a href={etherscan+"tx/"+this.props.loadingTx} target="_Blank">{this.props.loadingTx.substr(0,10)}</a> to be mined into the blockchain.
                   </div>
 
                   <StackGrid
@@ -106,7 +102,7 @@ export default createClass({
                   </StackGrid>
                   <div style={{marginTop:40}}/>
                   <div style={bigTextStyle}>Transactions are currently taking an average of {average} seconds.</div>
-                  <div style={bigTextStyle}>Higher gas prices mean faster trasactions, but they will cost more.</div>
+                  <div style={bigTextStyle}>Higher <img src="/gas.png"/> gas prices mean faster trasactions, but they will cost more.</div>
                 </div>
               )
             }}

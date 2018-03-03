@@ -1,4 +1,7 @@
 [x] SEO and unfurl image
+[ ] game log blockies should like to profile so you can copy and paste public 
+[ ] cookie the reveal for like 60s in case of a reload
+[ ] "wait for it to finish" alert has etherscan as undefined.. go to test net with low gas prices and catch the alerts
 [ ] mouse over when not the main player should not be the cursor pointer
 [ ] when you have already committed (allowed) tokens, they should show in a special opacity so you don't throw them in another game
 [ ] it would be nice to see the other person's blockie in game so you know who you are playing when you are looking to make multiple games happen at once
@@ -13,6 +16,7 @@
 [x] slack channel with invite on page, but #design channel to get pog designers together so we aren't stepping on toes
 [ ] pack details include artist
 [ ] Logo image?
+[ ] on stack select, when you select the 5th pog, it should scroll you up to the submit button
 [x] buypack load debounce- it would be better to show a loader until it settles down rather then a pack and the quickly replaced by another
 [ ] live games on stacks page should say "watch" if you are a thrid party
 [ ] a third party is invited to slam it should check that account is neither player and display different
