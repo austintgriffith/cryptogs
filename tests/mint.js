@@ -1,6 +1,6 @@
 const cryptogs = require("./cryptogs.js")
 
- // cryptogs.mint(0,"aggenesiscryptog.png",1)
+ cryptogs.mint(0,"aggenesiscryptog.png",1)
  // cryptogs.mint(0,"agethereumlogo.png",1)
  // cryptogs.mint(0,"agethereumlogo.png",1)
  // cryptogs.mint(0,"agethereumlogo.png",1)
@@ -27,7 +27,7 @@ const cryptogs = require("./cryptogs.js")
 
 //
 //me
-cryptogs.airdrop(0,"dragon.png","0x34aA3F359A9D614239015126635CE7732c18fDF3")
+//cryptogs.airdrop(0,"dragon.png","0x34aA3F359A9D614239015126635CE7732c18fDF3")
 //gerk
 //cryptogs.airdrop(0,"dragon.png","0x707912a400af1cb2d00ffad766d8a675b8dce504")
 //grehg
