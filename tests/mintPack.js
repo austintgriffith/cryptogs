@@ -1,20 +1,20 @@
 const cryptogs = require("./cryptogs.js")
 
 let animals = [
-  "antelope.jpg",
-  "buffalo.jpg",
-  "bull.jpg",
-  "elephant.jpg",
-  "fish.jpg",
-  "hippo.jpg",
-  "killerwhale.jpg",
-  "lobster.jpg",
-  "mountaingoat.jpg",
-  "octopus.jpg",
-  "penguin.jpg",
-  "rhino.jpg",
-  "walrus.jpg",
-  "zebra.jpg"
+  "agantelope.jpg",
+  "agbuffalo.jpg",
+  "agbull.jpg",
+  "agelephant.jpg",
+  "agfish.jpg",
+  "aghippo.jpg",
+  "agkillerwhale.jpg",
+  "aglobster.jpg",
+  "agmountaingoat.jpg",
+  "agoctopus.jpg",
+  "agpenguin.jpg",
+  "agrhino.jpg",
+  "agwalrus.jpg",
+  "agzebra.jpg"
 ]
 
 let aw90s = [
