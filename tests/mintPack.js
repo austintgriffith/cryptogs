@@ -73,7 +73,8 @@ function grabRandomTen(arr){
 // cryptogs.mintPack(0,grabRandomTen(ad90s),0.001)
 // cryptogs.mintPack(0,grabRandomTen(ad90s),0.001)
 
-cryptogs.mintPack(0,grabRandomTen(aw90s),0.005)
+cryptogs.mintPack(0,grabRandomTen(ad90s),0.005)
+cryptogs.mintPack(0,grabRandomTen(aw90s),0.01)
 
 // cryptogs.mintPack(0,grabRandomTen(aw90s),0.002)
 // cryptogs.mintPack(0,grabRandomTen(aw90s),0.002)
