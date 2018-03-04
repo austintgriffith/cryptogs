@@ -132,7 +132,7 @@ class MetaMask extends Component {
         </div>
       )
     }else if(this.state.metamask==2){
-      if(this.state.network=="Mainnet" || this.state.network=="Morden" || this.state.network=="Rinkeby" || this.state.network=="Kovan"){
+      if(this.state.network=="Morden" || this.state.network=="Rinkeby" || this.state.network=="Kovan"){
         //console.log("goodblock",this.state.accounts[0])
         metamask = (
           <div style={{padding:4}}>
@@ -146,7 +146,7 @@ class MetaMask extends Component {
                 fontSize:21,
                 color:"#222",
               }}>
-                Please switch your network to Ropsten
+                Please switch your network to Ropsten or Mainnet
               </span>
 
 
