@@ -1,7 +1,7 @@
 pragma solidity ^0.4.15;
 
 /*
-  https://cryptopogs.io
+  https://cryptogs.io
   --Austin Thomas Griffith for ETHDenver
   ( this is unaudited )
 */
@@ -11,7 +11,7 @@ import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 contract SlammerTime is Ownable{
 
   string public constant purpose = "ETHDenver";
-  string public constant contact = "https://cryptopogs.io";
+  string public constant contact = "https://cryptogs.io";
   string public constant author = "Austin Thomas Griffith | austin@concurrence.io";
 
   address public cryptogs;
