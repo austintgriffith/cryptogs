@@ -2,7 +2,6 @@ import React from 'react'
 import createClass from 'create-react-class';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import PropTypes from 'prop-types';
-import Intro from '../components/Intro.js'
 import BuyPacks from '../components/BuyPacks.js'
 import Banner from '../components/Banner'
 import Cryptog from '../components/Cryptog.js'
@@ -306,41 +305,3 @@ export default createClass({
 		)
 	}
 });
-
-
-/*
-<section className="section background-primary pt-5 pb-5">
-		<div className="container">
-				<h1 className="h2 mb-5 text-center">Playing CryptoPogs</h1>
-
-				<div className="jumbotron jumbotron--white p-5">
-
-						<div className="row align-items-center">
-								<div className="col-md-5">
-										<p>screenshot</p>
-								</div>
-								<div className="col-md-7">
-										<h2 className="h4 mb-3">Starting a game</h2>
-										<p>{"After you purchase some pogs, you can start playing by creating a new game or joining an existing game. After entering a game, you'll need to select 5 pogs you want to play with. Your opponent will also select 5 pogs, which will be combined with your pogs to create a stack of 10 pogs."}</p>
-								</div>
-						</div>
-
-						<hr className="my-5" />
-
-						<div className="row align-items-center">
-								<div className="col-md-5">
-										<p>screenshot</p>
-								</div>
-								<div className="col-md-7">
-										<h2 className="h4 mb-3">Next steps</h2>
-										<p>Asdf</p>
-								</div>
-						</div>
-
-				</div>
-
-		</div>
-</section>
-<Intro web3={web3} network={network}/>
-<BuyPacks compact={true} />
- */
