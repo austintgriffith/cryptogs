@@ -1,7 +1,7 @@
 pragma solidity ^0.4.15;
 
 /*
-  https://cryptopogs.io
+  https://cryptogs.io
   --Austin Thomas Griffith for ETHDenver
   ( this is unaudited )
 */
@@ -127,5 +127,3 @@ contract Cryptogs {
   function transfer(address _to,uint256 _tokenId) external { }
   function transferFrom(address _from,address _to,uint256 _tokenId) external { }
 }
-
-

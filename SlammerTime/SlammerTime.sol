@@ -1,7 +1,7 @@
 pragma solidity ^0.4.15;
 
 /*
-  https://cryptopogs.io
+  https://cryptogs.io
   --Austin Thomas Griffith for ETHDenver
   ( this is unaudited )
 */
