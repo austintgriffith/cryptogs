@@ -76,7 +76,7 @@ class AddressStack extends Component {
       callToBuy = (
         <div className={"centercontainer"}>
           <div style={{padding:40,marginBottom:60}}>
-            <MMButton color={"#6ac360"} onClick={()=>{window.location="/buy"}}>Buy Pogs!</MMButton>
+            <MMButton color={"#6ac360"} onClick={()=>{window.location="/buy"}}>{"Buy 'Togs!"}</MMButton>
           </div>
         </div>
       )
