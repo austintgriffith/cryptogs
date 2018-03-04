@@ -18,11 +18,10 @@ contract Cryptogs is NFT, Ownable {
     string public constant contact = "https://cryptogs.io";
     string public constant author = "Austin Thomas Griffith";
 
-    uint256 public constant RARITYMULTIPLIER = 1000000000000000;
-
     uint8 public constant FLIPPINESS = 64;
     uint8 public constant FLIPPINESSROUNDBONUS = 16;
     uint8 public constant TIMEOUTBLOCKS = 60;
+    uint8 public constant BLOCKSUNTILCLEANUPSTACK=1;
 
     string public ipfs;
     function setIpfs(string _ipfs) public onlyOwner returns (bool){
@@ -40,14 +39,12 @@ contract Cryptogs is NFT, Ownable {
       items.push(_item);
     }
 
-    /*
-    as an afterthought I'm going to hardcode this address into the contract...
-    it was prevsiouly built so two stacks could agree on their slammertime contract
-    I think we want to be more rigid and define the exact slammertime and check
-    that everyone agrees on it
-     */
     address public slammerTime;
     function setSlammerTime(address _slammerTime) public onlyOwner returns (bool){
+      //in order to trust that this contract isn't sending a players tokens
+      // to a different contract, the slammertime contract is set once and
+      // only once -- at deploy
+      require(slammerTime==address(0));
       slammerTime=_slammerTime;
       return true;
     }
@@ -64,10 +61,10 @@ contract Cryptogs is NFT, Ownable {
     function mint(bytes32 _image,address _owner) public onlyOwner returns (uint){
       uint256 newId = _mint(_image);
       _transfer(0, _owner, newId);
-      Mint(items[newId].image,tokenIndexToOwner[newId]);
+      Mint(items[newId].image,tokenIndexToOwner[newId],newId);
       return newId;
     }
-    event Mint(bytes32 _image,address _owner);
+    event Mint(bytes32 _image,address _owner,uint256 _id);
 
     function _mint(bytes32 _image) internal returns (uint){
       Item memory _item = Item({
@@ -126,24 +123,19 @@ contract Cryptogs is NFT, Ownable {
     //that will allow us to calculate rarity on-chain if we want
     mapping (bytes32 => uint256) public tokensOfImage;
 
-    function getToken(uint256 _id) public view returns (address owner,bytes32 image,uint256 rarity) {
+    function getToken(uint256 _id) public view returns (address owner,bytes32 image,uint256 copies) {
+      image = items[_id].image;
+      copies = tokensOfImage[image];
       return (
         tokenIndexToOwner[_id],
-        items[_id].image,
-        getRarity(_id)
+        image,
+        copies
       );
-    }
-
-    //we can get the rarity percentage bar off chain by multiplying the div width by
-    // rarity(<tokenid>) / RARITYMULTIPLIER
-    function getRarity(uint256 _id) public constant returns (uint256) {
-      return uint256(RARITYMULTIPLIER-(RARITYMULTIPLIER * tokensOfImage[items[_id].image])/(items.length - 1));
     }
 
     uint256 nonce = 0;
 
     struct Stack{
-      address slammerTime;
       //this will be an array of ids but for now just doing one for simplicity
       uint256[5] ids;
       address owner;
@@ -164,10 +156,9 @@ contract Cryptogs is NFT, Ownable {
 
     //tx 1: of a game, player one approves the SlammerTime contract to take their tokens
     //this triggers an event to broadcast to other players that there is an open challenge
-    function submitStack(address _slammerTime, uint256 _id,uint256 _id2,uint256 _id3,uint256 _id4,uint256 _id5, bool _public) public returns (bool) {
-      //make sure they have the right slammertime address
-      //(this is an afterthought, originally this could be dynamic)
-      require( _slammerTime == slammerTime);
+    function submitStack(uint256 _id,uint256 _id2,uint256 _id3,uint256 _id4,uint256 _id5, bool _public) public returns (bool) {
+      //make sure slammerTime was set at deploy
+      require(slammerTime!=address(0));
       //the sender must own the token
       require(tokenIndexToOwner[_id]==msg.sender);
       require(tokenIndexToOwner[_id2]==msg.sender);
@@ -175,15 +166,15 @@ contract Cryptogs is NFT, Ownable {
       require(tokenIndexToOwner[_id4]==msg.sender);
       require(tokenIndexToOwner[_id5]==msg.sender);
       //they approve the slammertime contract to take the token away from them
-      require(approve(_slammerTime,_id));
-      require(approve(_slammerTime,_id2));
-      require(approve(_slammerTime,_id3));
-      require(approve(_slammerTime,_id4));
-      require(approve(_slammerTime,_id5));
+      require(approve(slammerTime,_id));
+      require(approve(slammerTime,_id2));
+      require(approve(slammerTime,_id3));
+      require(approve(slammerTime,_id4));
+      require(approve(slammerTime,_id5));
 
       bytes32 stack = keccak256(nonce++,msg.sender);
       uint256[5] memory ids = [_id,_id2,_id3,_id4,_id5];
-      stacks[stack] = Stack(_slammerTime,ids,msg.sender,uint32(block.number));
+      stacks[stack] = Stack(ids,msg.sender,uint32(block.number));
 
       //the event is triggered to the frontend to display the stack
       //the frontend will check if they want it public or not
@@ -193,10 +184,9 @@ contract Cryptogs is NFT, Ownable {
 
     //tx 2: of a game, player two approves the SlammerTime contract to take their tokens
     //this triggers an event to broadcast to player one that this player wants to rumble
-    function submitCounterStack(address _slammerTime, bytes32 _stack, uint256 _id, uint256 _id2, uint256 _id3, uint256 _id4, uint256 _id5) public returns (bool) {
-      //make sure they have the right slammertime address
-      //(this is an afterthought, originally this could be dynamic)
-      require( _slammerTime == slammerTime);
+    function submitCounterStack(bytes32 _stack, uint256 _id, uint256 _id2, uint256 _id3, uint256 _id4, uint256 _id5) public returns (bool) {
+      //make sure slammerTime was set at deploy
+      require(slammerTime!=address(0));
       //the sender must own the token
       require(tokenIndexToOwner[_id]==msg.sender);
       require(tokenIndexToOwner[_id2]==msg.sender);
@@ -204,19 +194,17 @@ contract Cryptogs is NFT, Ownable {
       require(tokenIndexToOwner[_id4]==msg.sender);
       require(tokenIndexToOwner[_id5]==msg.sender);
       //they approve the slammertime contract to take the token away from them
-      require(approve(_slammerTime,_id));
-      require(approve(_slammerTime,_id2));
-      require(approve(_slammerTime,_id3));
-      require(approve(_slammerTime,_id4));
-      require(approve(_slammerTime,_id5));
-      //the SlammerTimeAddresses need to line up
-      require(_slammerTime==stacks[_stack].slammerTime);
+      require(approve(slammerTime,_id));
+      require(approve(slammerTime,_id2));
+      require(approve(slammerTime,_id3));
+      require(approve(slammerTime,_id4));
+      require(approve(slammerTime,_id5));
       //stop playing with yourself
       require(msg.sender!=stacks[_stack].owner);
 
       bytes32 counterstack = keccak256(nonce++,msg.sender,_id);
       uint256[5] memory ids = [_id,_id2,_id3,_id4,_id5];
-      stacks[counterstack] = Stack(_slammerTime,ids,msg.sender,uint32(block.number));
+      stacks[counterstack] = Stack(ids,msg.sender,uint32(block.number));
       stackCounter[counterstack] = _stack;
 
       //the event is triggered to the frontend to display the stack
@@ -226,7 +214,7 @@ contract Cryptogs is NFT, Ownable {
     event CounterStack(address indexed _sender,uint256 indexed timestamp,bytes32 indexed _stack, bytes32 _counterStack, uint256 _token1, uint256 _token2, uint256 _token3, uint256 _token4, uint256 _token5);
 
     // if someone creates a stack they should be able to clean it up
-    // it's not really that big of a deal because we will have a timeout
+    // its not really that big of a deal because we will have a timeout
     // in the frontent, but still...
     function cancelStack(bytes32 _stack) public returns (bool) {
       //it must be your stack
@@ -242,10 +230,6 @@ contract Cryptogs is NFT, Ownable {
     }
     event CancelStack(address indexed _sender,uint256 indexed timestamp,bytes32 indexed _stack);
 
-
-    //this cancel is more important. if a counter stack is submitted but not accepted until
-    //after the counterstack owner leaves, the original stack own will have an easy window
-    // to drain the stack because he can catch the counterstack owner afk
     function cancelCounterStack(bytes32 _stack,bytes32 _counterstack) public returns (bool) {
       //it must be your stack
       require(msg.sender==stacks[_counterstack].owner);
@@ -270,26 +254,17 @@ contract Cryptogs is NFT, Ownable {
     mapping (bytes32 => uint256[10]) public mixedStack;
 
     //tx 3: of a game, player one approves counter stack and transfers everything in
-    function acceptCounterStack(address _slammerTime, bytes32 _stack, bytes32 _counterStack) public returns (bool) {
-      //make sure they have the right slammertime address
-      //(this is an afterthought, originally this could be dynamic)
-      require( _slammerTime == slammerTime);
+    function acceptCounterStack(bytes32 _stack, bytes32 _counterStack) public returns (bool) {
       //sender must be owner of stack 1
       require(msg.sender==stacks[_stack].owner);
       //the counter must be a counter of stack 1
       require(stackCounter[_counterStack]==_stack);
-      //the SlammerTimeAddresses need to line up
-      require(_slammerTime==stacks[_stack].slammerTime);
       //make sure there is no mode set yet
       require(mode[_stack]==0);
 
       //do the transfer
-      SlammerTime slammerTimeContract = SlammerTime(_slammerTime);
+      SlammerTime slammerTimeContract = SlammerTime(slammerTime);
       require( slammerTimeContract.startSlammerTime(msg.sender,stacks[_stack].ids,stacks[_counterStack].owner,stacks[_counterStack].ids) );
-
-      //add in a little extra safe stuff just because it's late and my head is fuzzy
-      //require(tokenIndexToOwner[stacks[_stack].id]==_slammerTime);
-      //require(tokenIndexToOwner[stacks[_counterStack].id]==_slammerTime);
 
       //save the block for a timeout
       lastBlock[_stack]=uint32(block.number);
@@ -468,7 +443,7 @@ contract Cryptogs is NFT, Ownable {
                uint256 tempId = mixedStack[_stack][i];
                flipped[i]=tempId;
                mixedStack[_stack][i]=0;
-               SlammerTime slammerTimeContract = SlammerTime(stacks[_stack].slammerTime);
+               SlammerTime slammerTimeContract = SlammerTime(slammerTime);
                //require( slammerTimeContract.transferBack(msg.sender,tempId) );
                slammerTimeContract.transferBack(msg.sender,tempId);
             }else{
@@ -527,7 +502,7 @@ contract Cryptogs is NFT, Ownable {
         if(mixedStack[_stack][i]>0){
           uint256 tempId = mixedStack[_stack][i];
           mixedStack[_stack][i]=0;
-          SlammerTime slammerTimeContract = SlammerTime(stacks[_stack].slammerTime);
+          SlammerTime slammerTimeContract = SlammerTime(slammerTime);
           slammerTimeContract.transferBack(msg.sender,tempId);
         }
       }

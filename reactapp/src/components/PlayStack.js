@@ -43,7 +43,7 @@ class PlayStack extends Component {
     clearInterval(loadInterval)
   }
   waitForStuff(){
-    console.log("waiting of stuf....")
+    if(DEBUG) console.log("waiting of stuf....")
     let {account,contracts,web3,showLoadingScreen,blockNumber} = this.props.context
     if(account&&contracts&&blockNumber&&contracts['Cryptogs']){
       this.startEventParsers()
@@ -51,7 +51,7 @@ class PlayStack extends Component {
     }
   }
   async startEventParsers(){
-    console.log("STARTING PARSERS")
+    if(DEBUG) console.log("STARTING PARSERS")
     let {account,contracts,web3,showLoadingScreen,blockNumber} = this.props.context
     let thisStack = await contracts['Cryptogs'].methods.getStack(this.state.stack).call()
     let updateThrowSlammer = async (update)=>{
@@ -113,7 +113,7 @@ class PlayStack extends Component {
       if(DEBUG) console.log("COIN FLIP RESULT",coinFlipSuccessEvents)
       if(coinFlipSuccessEvents&&coinFlipSuccessEvents[0]&&coinFlipSuccessEvents[0].returnValues){
         this.state.coinFlipResult = coinFlipSuccessEvents[0].returnValues
-        console.log("this.state.coinFlipResult",this.state.coinFlipResult)
+        if(DEBUG) console.log("this.state.coinFlipResult",this.state.coinFlipResult)
       }
     }
 
@@ -310,7 +310,7 @@ class PlayStack extends Component {
     console.log("ACCEPT",this.state.stack,counterStack)
     let {contracts,account,showLoadingScreen} = this.props.context
     //acceptCounterStack(address _slammerTime, bytes32 _stack, bytes32 _counterStack)
-    contracts["Cryptogs"].methods.acceptCounterStack(contracts["SlammerTime"]._address,this.state.stack,counterStack).send({
+    contracts["Cryptogs"].methods.acceptCounterStack(this.state.stack,counterStack).send({
       from: account,
       gas:1000000,
       gasPrice:this.props.GWEI * 1000000000
@@ -779,7 +779,7 @@ class PlayStack extends Component {
               if(parseInt(throwSlammerEvent['token'+i+'Flipped'])!=0&&throwSlammerEvent['token'+i+'Flipped']){
                 //console.log("throwSlammerEvent['token'+i+'Flipped']",throwSlammerEvent['token'+i+'Flipped'])
                 flipped.push(
-                  <div style={{position:'absolute',left:20+((count++)*20),top:-40,zIndex:1}}>
+                  <div key={"flipped"+i} style={{position:'absolute',left:20+((count++)*20),top:-40,zIndex:1}}>
                     <Cryptog angle={25} scale={0.4} id={throwSlammerEvent['token'+i+'Flipped'].id} image={throwSlammerEvent['token'+i+'Flipped'].image}/>
                   </div>
                 )
@@ -1001,7 +1001,7 @@ class PlayStack extends Component {
             </div>
             <div className={"centercontainer"}>
               <div style={{padding:40,marginTop:80}}>
-                <MMButton color={"#6ac360"} onClick={()=>{window.location="/stacks"}}>Play Pogs!</MMButton>
+                <MMButton color={"#6ac360"} onClick={()=>{window.location="/stacks"}}>{"Play 'Togs!"}</MMButton>
               </div>
             </div>
           </div>

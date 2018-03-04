@@ -38,7 +38,7 @@ export default createClass({
 
 		console.log("GO",finalArray)
 		//submitStack(address _slammerTime, uint256 _id,uint256 _id2,uint256 _id3,uint256 _id4,uint256 _id5, bool _public)
-		contracts["Cryptogs"].methods.submitStack(contracts["SlammerTime"]._address,finalArray[0],finalArray[1],finalArray[2],finalArray[3],finalArray[4],true).send({
+		contracts["Cryptogs"].methods.submitStack(finalArray[0],finalArray[1],finalArray[2],finalArray[3],finalArray[4],true).send({
         from: account,
         gas:350000,
         gasPrice:this.context.GWEI * 1000000000

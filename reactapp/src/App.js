@@ -16,6 +16,7 @@ import ContractsPage from './pages/contracts.js'
 import PlayPage from './pages/play.js'
 import BuyPage from './pages/buy.js'
 import JoinPage from './pages/join.js'
+import CryptogPage from './pages/cryptog.js'
 import FourOhFourPage from './pages/404.js'
 import Loader from './components/Loader.js'
 import Slack from './components/Slack.js'
@@ -97,7 +98,6 @@ export default createClass({
 				if(network>9999) network=9999;
 				let contracts = ContractLoader(["Cryptogs","SlammerTime"],web3,network);
 				let update = {web3:web3,contracts:contracts,contractsLoaded:true,network:network}
-				console.log("detecting network for starting gas")
 				if(!this.state || !this.state.GWEI || this.state.GWEI == STARTINGGWEI){
 					if(network>1){
 						this.setGWEI(STARTINGGWEI)
@@ -190,8 +190,8 @@ export default createClass({
                  <Route path={`/address/:address`} component={AddressPage} />
                  <Route path={`/play/:stack`} component={PlayPage} />
                  <Route path={`/join/:stack`} component={JoinPage} />
+								 <Route path={`/cryptog/:cryptog`} component={CryptogPage} />
 								 <Route path={`/contracts`} component={ContractsPage} />
-
 								 <Redirect to='/' />
             </Switch>
           </Router>

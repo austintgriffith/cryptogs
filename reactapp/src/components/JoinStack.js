@@ -38,7 +38,7 @@ class JoinStack extends Component {
 
 		console.log("submitCounterStack as "+account,finalArray)
 		//submitCounterStack(address _slammerTime, bytes32 _stack, uint256 _id, uint256 _id2, uint256 _id3, uint256 _id4, uint256 _id5)
-		contracts["Cryptogs"].methods.submitCounterStack(contracts["SlammerTime"]._address,stack,finalArray[0],finalArray[1],finalArray[2],finalArray[3],finalArray[4]).send({
+		contracts["Cryptogs"].methods.submitCounterStack(stack,finalArray[0],finalArray[1],finalArray[2],finalArray[3],finalArray[4]).send({
         from: account,
         gas:350000,
         gasPrice:this.props.GWEI * 1000000000

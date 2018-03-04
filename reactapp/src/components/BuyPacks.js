@@ -14,6 +14,8 @@ let initialIntervalLoaded
 const MINTEDPACKDISPLAYLIMIT = 10
 const DEBUG = false
 
+const GASTOBUYPACKS = 550000
+
 let txhash
 
 export default createClass({
@@ -108,7 +110,7 @@ export default createClass({
 			return (
 				<div className={"centercontainer"}>
 					<div style={{padding:40}}>
-						<MMButton color={"#6ac360"} onClick={()=>{metaMaskHintFn()}}>Play Pogs!</MMButton>
+						<MMButton color={"#6ac360"} onClick={()=>{metaMaskHintFn()}}>{"Play 'Togs!"}</MMButton>
 					</div>
 				</div>
 			)
@@ -134,7 +136,7 @@ export default createClass({
 	  									contracts["Cryptogs"].methods.buyPack(p).send({
 	  							        from: account,
 	  											value: web3.utils.toWei(mintedPacks[p].price,"ether"),
-	  							        gas:600000,
+	  							        gas:GASTOBUYPACKS,
 	  							        gasPrice:this.context.GWEI * 1000000000
 	  							      },(error,hash)=>{
 	  							        console.log("CALLBACK!",error,hash)
@@ -206,7 +208,7 @@ export default createClass({
   									contracts["Cryptogs"].methods.buyPack(p).send({
   							        from: account,
   											value: web3.utils.toWei(mintedPacks[p].price,"ether"),
-  							        gas:600000,
+  							        gas:GASTOBUYPACKS,
   							        gasPrice:this.context.GWEI * 1000000000
   							      },(error,hash)=>{
   							        console.log("CALLBACK!",error,hash)

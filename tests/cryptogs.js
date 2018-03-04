@@ -72,8 +72,8 @@ module.exports = {
     });
   },
   setSlammerTime:(accountindex)=>{
-    describe('#submitStack() ', function() {
-      it('should submit stack', async function() {
+    describe('#setSlammerTime() ', function() {
+      it('should set SlammerTime (once and only once)', async function() {
         this.timeout(120000)
         const SlammerTimeAddress = localContractAddress("SlammerTime")
         const result = await clevis("contract","setSlammerTime","Cryptogs",accountindex,SlammerTimeAddress)
@@ -144,7 +144,7 @@ module.exports = {
         const token2 = tokensOfOwner[tokensOfOwner.length-4]
         const token1 = tokensOfOwner[tokensOfOwner.length-5]
         const SlammerTimeAddress = localContractAddress("SlammerTime")
-        const result = await clevis("contract","submitStack","Cryptogs",accountindex,SlammerTimeAddress,token1,token2,token3,token4,token5)
+        const result = await clevis("contract","submitStack","Cryptogs",accountindex,token1,token2,token3,token4,token5)
         printTxResult(result)
         const approveContract = await clevis("contract","tokenIndexToApproved","Cryptogs",token5)
         assert(approveContract == SlammerTimeAddress,"SlammerTime is NOT approved to move the token "+token5)
@@ -173,7 +173,7 @@ module.exports = {
         const lastStackId = lastSubmitStackEvent.returnValues._stack
         console.log(tab,"Last stack id:",lastStackId.cyan)
 
-        const result = await clevis("contract","submitCounterStack","Cryptogs",accountindex,SlammerTimeAddress,lastStackId,token1,token2,token3,token4,token5)
+        const result = await clevis("contract","submitCounterStack","Cryptogs",accountindex,lastStackId,token1,token2,token3,token4,token5)
         printTxResult(result)
         const approveContract = await clevis("contract","tokenIndexToApproved","Cryptogs",token5)
         assert(approveContract == SlammerTimeAddress,"SlammerTime is NOT approved to move the token "+token5)
@@ -196,7 +196,7 @@ module.exports = {
         const lastCounterStackId = lastCounterStackEvent.returnValues._counterStack
         console.log(tab,"Last counter stack id:",lastCounterStackId.cyan)
 
-        const result = await clevis("contract","acceptCounterStack","Cryptogs",accountindex,SlammerTimeAddress,lastStackId,lastCounterStackId)
+        const result = await clevis("contract","acceptCounterStack","Cryptogs",accountindex,lastStackId,lastCounterStackId)
         printTxResult(result)
       });
     });

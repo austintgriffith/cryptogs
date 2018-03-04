@@ -55,7 +55,11 @@ class AddressStack extends Component {
               <Cryptog key={"cryptog"+token.id} id={token.id} scale={0.90} slowrolling={spinning} image={token.image} zIndex={1}/>
             )
           }
-        }/>
+        } click={()=>{
+          if(token.id>0){
+            window.open("/cryptog/"+token.id);
+          }
+        }}/>
       )
 		})
 
@@ -65,7 +69,7 @@ class AddressStack extends Component {
       callToAction= (
         <div className={"centercontainer"}>
           <div style={{padding:40,marginBottom:60,opacity:0.3}}>
-            <MMButton color={"#6081c3"} onClick={()=>{window.location="/stacks"}}>Play Pogs!</MMButton>
+            <MMButton color={"#6081c3"} onClick={()=>{window.location="/stacks"}}>{"Play 'Togs!"}</MMButton>
           </div>
         </div>
       )
@@ -80,7 +84,7 @@ class AddressStack extends Component {
       callToAction = (
         <div className={"centercontainer"}>
           <div style={{padding:40,marginBottom:60}}>
-            <MMButton color={"#6ac360"} onClick={()=>{window.location="/stacks"}}>Play Pogs</MMButton>
+            <MMButton color={"#6ac360"} onClick={()=>{window.location="/stacks"}}>{"Play 'Togs!"}</MMButton>
           </div>
         </div>
       )

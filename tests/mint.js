@@ -1,28 +1,29 @@
 const cryptogs = require("./cryptogs.js")
 
- cryptogs.mint(0,"genesiscryptog.png",1)
- cryptogs.mint(0,"ethereumlogo.png",1)
- cryptogs.mint(0,"ethereumlogo.png",1)
- cryptogs.mint(0,"ethereumlogo.png",1)
- cryptogs.mint(0,"ethereumlogo.png",1)
+ cryptogs.mint(0,"aggenesiscryptog.png",1)
+ cryptogs.mint(0,"agethereumlogo.png",1)
+ cryptogs.mint(0,"agethereumlogo.png",1)
+ cryptogs.mint(0,"agethereumlogo.png",1)
+ cryptogs.mint(0,"agethereumlogo.png",1)
 
- cryptogs.mint(0,"ethereumlogo.png",2)
- cryptogs.mint(0,"ethereumlogo.png",2)
- cryptogs.mint(0,"ethereumlogo.png",2)
- cryptogs.mint(0,"ethereumlogo.png",2)
- cryptogs.mint(0,"ethereumlogo.png",2)
+ cryptogs.mint(0,"agethereumlogo.png",2)
+ cryptogs.mint(0,"agethereumlogo.png",2)
+ cryptogs.mint(0,"agethereumlogo.png",2)
+ cryptogs.mint(0,"agethereumlogo.png",2)
+ cryptogs.mint(0,"agethereumlogo.png",2)
 
- cryptogs.airdrop(0,"genesiscryptog.png","0x5f19cefc9c9d1bc63f9e4d4780493ff5577d238b")
- cryptogs.airdrop(0,"dragon.png","0x5f19cefc9c9d1bc63f9e4d4780493ff5577d238b")
- cryptogs.airdrop(0,"unicorn.png","0x5f19cefc9c9d1bc63f9e4d4780493ff5577d238b")
- cryptogs.airdrop(0,"fish.png","0x5f19cefc9c9d1bc63f9e4d4780493ff5577d238b")
- cryptogs.airdrop(0,"ethereumlogo.png","0x5f19cefc9c9d1bc63f9e4d4780493ff5577d238b")
- cryptogs.airdrop(0,"genesiscryptog.png","0x2a906694D15Df38F59e76ED3a5735f8AAbccE9cb")
- cryptogs.airdrop(0,"unicorn.png","0x2a906694D15Df38F59e76ED3a5735f8AAbccE9cb")
- cryptogs.airdrop(0,"ethereumlogo.png","0x2a906694D15Df38F59e76ED3a5735f8AAbccE9cb")
- cryptogs.airdrop(0,"fish.png","0x2a906694D15Df38F59e76ED3a5735f8AAbccE9cb")
- cryptogs.airdrop(0,"dragon.png","0x2a906694D15Df38F59e76ED3a5735f8AAbccE9cb")
-
+/*
+ cryptogs.airdrop(0,"aggenesiscryptog.png","0x5f19cefc9c9d1bc63f9e4d4780493ff5577d238b")
+ cryptogs.airdrop(0,"agdragon.png","0x5f19cefc9c9d1bc63f9e4d4780493ff5577d238b")
+ cryptogs.airdrop(0,"agunicorn.png","0x5f19cefc9c9d1bc63f9e4d4780493ff5577d238b")
+ cryptogs.airdrop(0,"agfish.png","0x5f19cefc9c9d1bc63f9e4d4780493ff5577d238b")
+ cryptogs.airdrop(0,"agethereumlogo.png","0x5f19cefc9c9d1bc63f9e4d4780493ff5577d238b")
+ cryptogs.airdrop(0,"aggenesiscryptog.png","0x2a906694D15Df38F59e76ED3a5735f8AAbccE9cb")
+ cryptogs.airdrop(0,"agunicorn.png","0x2a906694D15Df38F59e76ED3a5735f8AAbccE9cb")
+ cryptogs.airdrop(0,"agethereumlogo.png","0x2a906694D15Df38F59e76ED3a5735f8AAbccE9cb")
+ cryptogs.airdrop(0,"agfish.png","0x2a906694D15Df38F59e76ED3a5735f8AAbccE9cb")
+ cryptogs.airdrop(0,"agdragon.png","0x2a906694D15Df38F59e76ED3a5735f8AAbccE9cb")
+*/
 
 //
 //

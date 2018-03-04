@@ -14,8 +14,12 @@ export default createClass({
     this.setState({hover:false})
   },
   render(){
+    let extraStyle = {}
+    if(typeof this.props.click == "function" ){
+      extraStyle.cursor="pointer"
+    }
     return (
-      <div>
+      <div onClick={this.props.click} style={extraStyle}>
         <div style={{marginLeft:-25}}>
           {this.props.guts(this.state.hover)}
         </div>
