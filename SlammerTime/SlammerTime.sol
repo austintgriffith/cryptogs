@@ -11,7 +11,7 @@ import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 contract SlammerTime is Ownable{
 
   string public constant purpose = "ETHDenver";
-  string public constant contact = "https://cryptopogs.io";
+  string public constant contact = "https://cryptogs.io";
   string public constant author = "Austin Thomas Griffith | austin@concurrence.io";
 
   address public cryptogs;
