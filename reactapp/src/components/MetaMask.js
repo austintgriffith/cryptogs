@@ -177,7 +177,7 @@ class MetaMask extends Component {
 
         let networkDisplay = this.state.network
         if(this.state.network=="Mainnet"){
-          networkDisplay = <span>Mainnet<span style={{float:'right',fontSize:10,marginTop:10,marginLeft:3}}>{"it's cheaper on ropsten :)"}</span></span>
+          networkDisplay = <span>Mainnet</span>
         }
 
         metamask = (
