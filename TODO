@@ -1,4 +1,7 @@
 [x] SEO and unfurl image
+[ ] warning for 50 tx problem has a crappy link in it
+[ ] I think I'd like a pull up that brings up the block Loader thing any time and have a link there that takes you to the "pending transactions" on the main contract
+[ ] because txs take so long, maybe a "Watch Pending Transactions" button in places where you are waiting for people a lot (that takes you to the conract on etherscan)
 [ ] must have rarity in frontend before deploy so you know the contract is solid
 [ ] minting ethdenver coins would be cool
 [ ] game log blockies should like to profile so you can copy and paste public

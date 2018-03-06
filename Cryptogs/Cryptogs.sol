@@ -20,7 +20,7 @@ contract Cryptogs is NFT, Ownable {
 
     uint8 public constant FLIPPINESS = 64;
     uint8 public constant FLIPPINESSROUNDBONUS = 16;
-    uint8 public constant TIMEOUTBLOCKS = 60;
+    uint8 public constant TIMEOUTBLOCKS = 180;
     uint8 public constant BLOCKSUNTILCLEANUPSTACK=1;
 
     string public ipfs;
@@ -65,6 +65,25 @@ contract Cryptogs is NFT, Ownable {
       return newId;
     }
     event Mint(bytes32 _image,address _owner,uint256 _id);
+
+    function mintBatch(bytes32 _image1,bytes32 _image2,bytes32 _image3,bytes32 _image4,bytes32 _image5,address _owner) public onlyOwner returns (bool){
+      uint256 newId = _mint(_image1);
+      _transfer(0, _owner, newId);
+      Mint(_image1,tokenIndexToOwner[newId],newId);
+      newId=_mint(_image2);
+      _transfer(0, _owner, newId);
+      Mint(_image2,tokenIndexToOwner[newId],newId);
+      newId=_mint(_image3);
+      _transfer(0, _owner, newId);
+      Mint(_image3,tokenIndexToOwner[newId],newId);
+      newId=_mint(_image4);
+      _transfer(0, _owner, newId);
+      Mint(_image4,tokenIndexToOwner[newId],newId);
+      newId=_mint(_image5);
+      _transfer(0, _owner, newId);
+      Mint(_image5,tokenIndexToOwner[newId],newId);
+      return true;
+    }
 
     function _mint(bytes32 _image) internal returns (uint){
       Item memory _item = Item({
@@ -332,6 +351,10 @@ contract Cryptogs is NFT, Ownable {
       //make sure that we are in mode 2
       require(mode[_stack]==2);
 
+      //make sure that we are on a later block than the commit block
+      // (added 3/5/2018)
+      require(uint32(block.number)>commitBlock[_stack]);
+
       //make sure hash of reveal == commit
       if(keccak256(_reveal)!=commit[_stack]){
         //commit/reveal failed.. this can happen if they
@@ -402,6 +425,10 @@ contract Cryptogs is NFT, Ownable {
       require(counterOfStack[_stack]==_counterStack);
       //make sure that we are in mode 4
       require(mode[_stack]==4);
+
+      //make sure that we are on a later block than the commit block
+      // (added 3/5/2018)
+      require(uint32(block.number)>commitBlock[_stack]);
 
       uint256[10] memory flipped;
       if(keccak256(_reveal)!=commit[_stack]){

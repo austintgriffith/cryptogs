@@ -40,6 +40,11 @@ function loadBlockNumber(contract,deployNetwork){
   assert(blockNumber,"No blockNumber for "+contract+"!?")
   fs.writeFileSync(contractsDir+contract+"."+deployNetwork+".blockNumber.js","module.exports = \""+blockNumber+"\"");
 }
+function migrationBlackList(){
+  //list any account here that you don't want to spend the gas to get
+  //tokens migrated from one deployment to the next 
+}
+
 
 let COMMIT
 
@@ -385,6 +390,73 @@ module.exports = {
         await clevis("sendTo","0.1","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb")
         await clevis("sendTo","0.1","0","0x55fFbCD5F80a7e22660A3B564447a0c1D5396A5C")
 
+
+      });
+    });
+  },
+  tokenReport:()=>{
+    describe('#tokenReport() ', function() {
+      it('should give metamask account some ether', async function() {
+        this.timeout(600000)
+        const total = await clevis("contract","totalSupply","Cryptogs")
+        console.log(tab,"Total Supply:",total)
+
+        let reportOutput = ""
+        for(let t=0;t<total;t++){
+          const token = await clevis("contract","getToken","Cryptogs",t)
+          console.log(tab,t,token.owner,token.image)
+          reportOutput+=t+","+token.owner+","+token.image+"\n"
+        }
+        fs.writeFileSync("token.report",reportOutput);
+
+      });
+    });
+  },
+  tokenReportMint:(accountindex)=>{
+    describe('#tokenReportMint() ', function() {
+      it('should work through token report minting (migration)', async function() {
+        this.timeout(600000)
+        let tokenReport = fs.readFileSync("token.report").toString().split("\n");
+        //console.log(tokenReport)
+        let tokensToMint = {}
+        for(let t=0;t<tokenReport.length;t++){
+          let parts = tokenReport[t].split(",")
+          if(parts && parts[1] && parts[1]!="0x0000000000000000000000000000000000000000"){
+            if(!tokensToMint[parts[1]]) tokensToMint[parts[1]]=[]
+            tokensToMint[parts[1]].push(parts[2])
+          }
+        }
+        //console.log("tokensToMint",tokensToMint)
+        for(let user in tokensToMint)
+        {
+            const tokensOfOwner1 = await clevis("contract","tokensOfOwner","Cryptogs",user)
+            if(tokensToMint[user].length>=5){
+              const result = await clevis("contract","mintBatch","Cryptogs",accountindex,tokensToMint[user][0],tokensToMint[user][1],tokensToMint[user][2],tokensToMint[user][3],tokensToMint[user][4],user)
+              const tokensOfOwner2 = await clevis("contract","tokensOfOwner","Cryptogs",user)
+              assert(tokensOfOwner1.length<=tokensOfOwner2.length-5,"MAYBE THE TOKEN DIDNT MINT?!?")
+              tokensToMint[user][0]=false
+              tokensToMint[user][1]=false
+              tokensToMint[user][2]=false
+              tokensToMint[user][3]=false
+              tokensToMint[user][4]=false
+            }else{
+              const result = await clevis("contract","mint","Cryptogs",accountindex,tokensToMint[user][0],user)
+              const tokensOfOwner2 = await clevis("contract","tokensOfOwner","Cryptogs",user)
+              assert(tokensOfOwner1.length<tokensOfOwner2.length,"MAYBE THE TOKEN DIDNT MINT?!?")
+              tokensToMint[user][0]=false;
+            }
+            break
+        }
+        //WRITE tokensToMint BACK out
+        let reportOutput = ""
+        for(let user in tokensToMint)
+        {
+          for(let t in tokensToMint[user]){
+            if(tokensToMint[user][t]) reportOutput += "0,"+user+","+tokensToMint[user][t]+"\n";
+          }
+        }
+        console.log(tab,reportOutput)
+        fs.writeFileSync("token.report",reportOutput);
 
       });
     });

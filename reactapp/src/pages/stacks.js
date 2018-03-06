@@ -8,7 +8,7 @@ import LiveParser from '../modules/liveParser.js';
 import MMButton from '../components/MMButton.js'
 
 const DEBUG = false;
-const BLOCKLOOKBACK = 240;
+const BLOCKLOOKBACK = 240*8; //show the last 8 hours
 
 let loadInterval
 export default createClass({
@@ -99,7 +99,7 @@ export default createClass({
 					this.setState({allStacks:this.state.allStacks});
 				}
 			}
-			EventParser(contracts["Cryptogs"],"FinishGame",blockNumber-BLOCKLOOKBACK,blockNumber,updateFinishGame);
+			EventParser(contracts["Cryptogs"],"FinishGame",contracts["Cryptogs"].blockNumber,blockNumber,updateFinishGame);
 			setInterval(()=>{
 				LiveParser(contracts["Cryptogs"],"FinishGame",blockNumber,updateAllStacks)
 			},791)

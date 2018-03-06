@@ -11,6 +11,7 @@ import MMButton from '../components/MMButton.js'
 import PogAnimation from '../components/PogAnimation'
 import StackGrid from 'react-stack-grid'
 import Blockies from 'react-blockies'
+import cookie from 'react-cookies'
 
 let loadInterval
 let waitInterval
@@ -432,6 +433,7 @@ class PlayStack extends Component {
     let commitHash = web3.utils.sha3(commit)
     console.log("commitHash:",commitHash)
 
+    cookie.save('commit', commit, { path: '/', maxAge:600 })
     this.setState({commit:commit})
 
     //startCoinFlip(bytes32 _stack, bytes32 _counterStack, bytes32 _commit)
@@ -473,6 +475,7 @@ class PlayStack extends Component {
 
     let reveal = this.state.commit
     //if reveal isn't saved in the state, send 0's to start over with the coin flip
+    if(!reveal) reveal = cookie.load('commit')
     if(!reveal) reveal = "0x0000000000000000000000000000000000000000000000000000000000000000"
 
     //endCoinFlip(bytes32 _stack, bytes32 _counterStack, bytes32 _reveal)
@@ -513,7 +516,7 @@ class PlayStack extends Component {
     console.log("commit:",commit)
     let commitHash = web3.utils.sha3(commit)
     console.log("commitHash:",commitHash)
-
+    cookie.save('commit', commit, { path: '/', maxAge:600 })
     this.setState({commit:commit})
 
     //raiseSlammer(bytes32 _stack, bytes32 _counterStack, bytes32 _commit)
@@ -553,6 +556,7 @@ class PlayStack extends Component {
 
     let reveal = this.state.commit
     //if reveal isn't saved in the state, send 0's to start over with the coin flip
+    if(!reveal) reveal = cookie.load('commit')
     if(!reveal) reveal = "0x0000000000000000000000000000000000000000000000000000000000000000"
 
     //raiseSlammer(bytes32 _stack, bytes32 _counterStack, bytes32 _commit)
@@ -725,16 +729,18 @@ class PlayStack extends Component {
 
     let coinFlipResultDisplay = ""
 
-    if(coinFlipResult){
+    if(coinFlipResult&&player1!="0x0000000000000000000000000000000000000000"){
 
         if(coinFlipResult.whosTurn.toLowerCase()==player1.toLowerCase()){
           coinFlipResultDisplay=(
-            <div key={"logdivcoinflip"} style={{position:"relative",width:"100%",height:70}}>
+            <div key={"logdivcoinflip"} style={{position:"relative",width:"100%",height:70,zIndex:99}}>
               <div style={{position:'absolute',left:0,top:0,zIndex:1}}>
-                 <Blockies
-                   seed={player1.toLowerCase()}
-                   scale={6}
-                 />
+                  <a target="_blank" href={"/address/"+player1}>
+                   <Blockies
+                     seed={player1.toLowerCase()}
+                     scale={6}
+                   />
+                  </a>
               </div>
               <div style={{position:'absolute',left:20,top:-55,zIndex:1,transform: "scale(0.4)"}}>
                <Slammer spinning={false} angle={25} image={"ethslammer.png"}/>
@@ -743,12 +749,14 @@ class PlayStack extends Component {
           )
         }else{
           coinFlipResultDisplay=(
-             <div key={"logdivcoinflip"} style={{position:"relative",width:"100%",height:70}}>
+             <div key={"logdivcoinflip"} style={{position:"relative",width:"100%",height:70,zIndex:99}}>
                <div style={{position:'absolute',left:0,top:0,zIndex:1}}>
+                  <a target="_blank" href={"/address/"+player2}>
                   <Blockies
                     seed={player2.toLowerCase()}
                     scale={6}
                   />
+                  </a>
                </div>
                <div style={{position:'absolute',left:20,top:-55,zIndex:1,transform: "scale(0.4)"}}>
                 <Slammer spinning={false} angle={25} image={"ethslammer.png"}/>
@@ -779,7 +787,7 @@ class PlayStack extends Component {
               if(parseInt(throwSlammerEvent['token'+i+'Flipped'])!=0&&throwSlammerEvent['token'+i+'Flipped']){
                 //console.log("throwSlammerEvent['token'+i+'Flipped']",throwSlammerEvent['token'+i+'Flipped'])
                 flipped.push(
-                  <div key={"flipped"+i} style={{position:'absolute',left:20+((count++)*20),top:-40,zIndex:1}}>
+                  <div key={"flipped"+i} style={{position:'absolute',left:40+((count++)*20),top:-40,zIndex:1}}>
                     <Cryptog angle={25} scale={0.4} id={throwSlammerEvent['token'+i+'Flipped'].id} image={throwSlammerEvent['token'+i+'Flipped'].image}/>
                   </div>
                 )
@@ -793,12 +801,14 @@ class PlayStack extends Component {
           //console.log("throwSlammerEvent",throwSlammerEvent);
 
          return (
-           <div key={"logdiv"+throwSlammerEvent.blockNumber} style={{position:"relative",width:"100%",height:70}}>
+           <div key={"logdiv"+throwSlammerEvent.blockNumber} style={{position:"relative",width:"100%",height:70,zIndex:99}}>
               <div style={{position:"absolute",left:0,top:16}}>
+              <a target="_blank" href={"/address/"+throwSlammerEvent.whoDoneIt}>
                 <Blockies
                   seed={throwSlammerEvent.whoDoneIt.toLowerCase()}
                   scale={6}
                 />
+                </a>
               </div>
               {flipped}
            </div>
@@ -993,7 +1003,7 @@ class PlayStack extends Component {
       }
     }else if(stackMode==9){
       coinFlipResultDisplay=""
-      flipDisplay=""
+      //flipDisplay=""
         display = (
           <div>
             <div style={{opacity:0.3,marginTop:100,fontWeight:'bold',padding:50,fontSize:99,letterSpacing:-2}}>
@@ -1063,13 +1073,26 @@ class PlayStack extends Component {
 
     let m=1
 
+    let flipDisplyContent = ""
+    if(coinFlipResultDisplay || flipDisplay){
+      flipDisplyContent = (
+        <div className={"messageGray"} style={{clear:'both',marginTop:50,width:250,float:'right',padding:20}}>
+          {coinFlipResultDisplay}
+          {flipDisplay}
+        </div>
+      )
+    }
+
+    let slammerCursor = 'not-allowed'
+    if(account&&lastActor&&account.toLowerCase()!=lastActor.toLowerCase()){
+      slammerCursor = 'pointer'
+    }
+
+
     return (
       <div  style={{backgroundColor:"#FFFFFF",width:"100%",height:800}}>
       {timerDisplay}
-      <div className={"messageGray"} style={{clear:'both',marginTop:50,width:250,float:'right',padding:20}}>
-        {coinFlipResultDisplay}
-        {flipDisplay}
-      </div>
+      {flipDisplyContent}
       {display}
       <div style={{position:'absolute',left:window.innerWidth/3,top:550}}>
 
@@ -1090,7 +1113,7 @@ class PlayStack extends Component {
         >
           {currentStyles => {
             return (
-              <div onClick={this.slammerClick.bind(this)} style={{opacity:slammerOpacity,cursor:'pointer',position:"absolute",left:currentStyles.left,top:currentStyles.top,zIndex:90}}>
+              <div onClick={this.slammerClick.bind(this)} style={{opacity:slammerOpacity,cursor:slammerCursor,position:"absolute",left:currentStyles.left,top:currentStyles.top,zIndex:90}}>
                 <Slammer spinning={this.state.slammerSpinning} angle={this.state.slammerAngle} image={"ethslammer.png"}/>
               </div>
             )

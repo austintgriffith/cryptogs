@@ -26,7 +26,7 @@ import MMButton from './components/MMButton.js'
 import cookie from 'react-cookies'
 
 const DEBUG = false
-const MAINNETGWEI = 2.5
+const MAINNETGWEI = 4.1
 const STARTINGGWEI = 21
 
 var Web3 = require('web3');
