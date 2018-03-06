@@ -559,6 +559,19 @@ class PlayStack extends Component {
     if(!reveal) reveal = cookie.load('commit')
     if(!reveal) reveal = "0x0000000000000000000000000000000000000000000000000000000000000000"
 
+/*
+.on('error', function(error){ ... })
+.on('transactionHash', function(transactionHash){ ... })
+.on('receipt', function(receipt){
+   console.log(receipt.contractAddress) // contains the new contract address
+})
+.on('confirmation', function(confirmationNumber, receipt){ ... })
+.then(function(newContractInstance){
+    console.log(newContractInstance.options.address) // instance with the new contract address
+});
+
+ */
+
     //raiseSlammer(bytes32 _stack, bytes32 _counterStack, bytes32 _commit)
     contracts["Cryptogs"].methods.throwSlammer(this.state.stack,this.state.counterStack,reveal).send({
         from: account,
@@ -568,23 +581,16 @@ class PlayStack extends Component {
         console.log("CALLBACK!",error,hash)
         showLoadingScreen(hash)
         txhash=hash
-      }).on('error',(a,b)=>{
-
-          if(txhash){
-            showLoadingScreen(false)
-            console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-    				this.props.throwAlert(
-    					<div>
-    						<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
-    						<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
-    						<div style={{position:"absolute",left:20,bottom:20}}>
-    							<MMButton color={"#f7861c"} onClick={()=>{
-    								this.props.throwAlert(false);
-    							}}>close and try again</MMButton>
-    						</div>
-    					</div>
-    				)
-          }
+      }).on('error', function(error){
+        console.log("TXEVENT ERROR",error)
+      })
+      .on('transactionHash', function(transactionHash){
+         console.log("XEVENT transactionHash",transactionHash)
+      })
+      .on('receipt', function(receipt){
+         console.log("TXEVENT receipt",receipt) // contains the new contract address
+      }).on('confirmation', function(confirmationNumber, receipt){
+        console.log("TXEVENT confirmation",confirmationNumber)
       }).then((receipt)=>{
         console.log("RESULT:",receipt)
         showLoadingScreen(false)
@@ -595,7 +601,7 @@ class PlayStack extends Component {
     console.log("drainStack",this.state.stack,this.state.counterStack)
     contracts["Cryptogs"].methods.drainStack(this.state.stack,this.state.counterStack).send({
       from: account,
-      gas:500000,
+      gas:1000000,
       gasPrice:this.props.GWEI * 1000000000
     },(error,hash)=>{
       console.log("CALLBACK!",error,hash)
@@ -653,7 +659,7 @@ class PlayStack extends Component {
     }
   }
   render(){
-    let {account,blockNumber} = this.props.context
+    let {account,blockNumber,contracts,etherscan} = this.props.context
     let {coinFlipResult,stackMode,stackData,counterStacks,lastBlock,lastActor,TIMEOUTBLOCKS,flipEvents,throwSlammerEvents,player1,player2,spectator} = this.state;
     if(!stackData){
       return (
@@ -919,6 +925,16 @@ class PlayStack extends Component {
             <div>
               <div style={{padding:10,paddingTop:20}}>Waiting for other players to join, share game url to challenge your friends:</div>
               <pre id="url" style={{fontSize:14}} onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
+
+              <div className={"centercontainer"}>
+                <div style={{padding:40,marginTop:60}}>
+                  <MMButton color={"#6081c3"} onClick={()=>{
+                    window.open(etherscan+"address/"+contracts['Cryptogs']._address);
+                  }}>Watch Contract Transactions</MMButton>
+                </div>
+              </div>
+
+
             </div>
           )
         }

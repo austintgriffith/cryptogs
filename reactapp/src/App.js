@@ -26,7 +26,7 @@ import MMButton from './components/MMButton.js'
 import cookie from 'react-cookies'
 
 const DEBUG = false
-const MAINNETGWEI = 4.1
+const MAINNETGWEI = 5
 const STARTINGGWEI = 21
 
 var Web3 = require('web3');
@@ -70,7 +70,7 @@ export default createClass({
 	},
 	setGWEI(GWEI){
 		this.setState({GWEI:parseInt(GWEI)})
-		cookie.save('GWEI', GWEI, { path: '/', maxAge:28800 })
+		cookie.save('GWEI', GWEI, { path: '/', maxAge:1800 })
 	},
 	metaMaskHintFn(){
 		window.scrollTo(0,0);
@@ -164,7 +164,7 @@ export default createClass({
 		let loader = ""
 		if(loadingTx){
 			loader = (
-				<Loader etherscan={this.state.etherscan} web3={this.state.web3} blockNumber={this.state.blockNumber} loadingTx={loadingTx} />
+				<Loader contracts={this.state.contracts} etherscan={this.state.etherscan} web3={this.state.web3} blockNumber={this.state.blockNumber} loadingTx={loadingTx} />
 			)
 		}
 		return (

@@ -5,6 +5,7 @@ import Block from './Block.js'
 import StackGrid from 'react-stack-grid'
 import PogAnimation from '../components/PogAnimation.js'
 import LoaderAnimation from '../components/LoaderAnimation.js'
+import MMButton from '../components/MMButton.js'
 const extraDip = 80
 
 let interval
@@ -37,8 +38,8 @@ export default createClass({
     clearInterval(interval)
   },
   render(){
-    let {web3,blockNumber,etherscan} = this.props
-    if(!web3||!web3.eth||!blockNumber){
+    let {web3,blockNumber,etherscan,contracts} = this.props
+    if(!web3||!web3.eth||!blockNumber||!contracts){
       return (
         <div style={{opacity:0.3}}><PogAnimation loader={true} image={"unicorn.png"}/></div>
       )
@@ -103,9 +104,15 @@ export default createClass({
                   >
                     {blockDisplay}
                   </StackGrid>
-                  <div style={{marginTop:40}}/>
-                  <div style={bigTextStyle}>Transactions are taking an average of {average} seconds plus network time.</div>
+                  <div style={{marginTop:20}}/>
+                  <div style={bigTextStyle}>Blocks are taking an average of {average} seconds plus network time.</div>
+                  <div style={bigTextStyle}>Your transaction will be mined into a block based on your <img style={{opacity:0.5}} src="/gas.png"/> gas price.</div>
                   <div style={bigTextStyle}>Higher <img style={{opacity:0.5}} src="/gas.png"/> gas prices mean faster trasactions, but they will cost more.</div>
+                  <div style={{marginLeft:150,marginTop:10}}>
+                      <MMButton color={"#6081c3"} onClick={()=>{
+      									window.open(etherscan+"address/"+contracts['Cryptogs']._address);
+      								}}>Watch Contract Transactions</MMButton>
+                  </div>
                 </div>
               )
             }}
