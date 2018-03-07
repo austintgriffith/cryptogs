@@ -322,7 +322,7 @@ class PlayStack extends Component {
     }).on('error',(a,b)=>{
       if(txhash){
         console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-        this.props.throwAlert(
+        /*this.props.throwAlert(
           <div>
             <span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
             <a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
@@ -332,7 +332,7 @@ class PlayStack extends Component {
               }}>close and try again</MMButton>
             </div>
           </div>
-        )
+        )*/
       }
     }).then((receipt)=>{
       console.log("RESULT:",receipt)
@@ -359,7 +359,7 @@ class PlayStack extends Component {
       if(txhash){
         showLoadingScreen(false)
         console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-        this.context.throwAlert(
+        /*this.context.throwAlert(
           <div>
             <span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
             <a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
@@ -375,7 +375,7 @@ class PlayStack extends Component {
               }}>close and try again</MMButton>
             </div>
           </div>
-        )
+        )*/
       }
 
     }).then((receipt)=>{
@@ -398,6 +398,8 @@ class PlayStack extends Component {
       showLoadingScreen(hash)
       txhash=hash
     }).on('error',(a,b)=>{
+      console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+      /*
         if(txhash){
           showLoadingScreen(false)
           console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
@@ -413,7 +415,7 @@ class PlayStack extends Component {
             </div>
           )
         }
-
+        */
     }).then((receipt)=>{
       console.log("RESULT:",receipt)
       window.location = "/stacks"
@@ -446,7 +448,8 @@ class PlayStack extends Component {
         showLoadingScreen(hash)
         txhash=hash
       }).on('error',(a,b)=>{
-
+        console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+        /*
           if(txhash){
             showLoadingScreen(false)
             console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
@@ -462,6 +465,7 @@ class PlayStack extends Component {
     					</div>
     				)
           }
+          */
       }).then((receipt)=>{
         console.log("RESULT:",receipt)
         showLoadingScreen(false)
@@ -488,6 +492,8 @@ class PlayStack extends Component {
         showLoadingScreen(hash)
         txhash=hash
       }).on('error',(a,b)=>{
+        console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+        /*
           if(txhash){
             showLoadingScreen(false)
             console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
@@ -503,6 +509,7 @@ class PlayStack extends Component {
     					</div>
     				)
           }
+          */
       }).then((receipt)=>{
         console.log("RESULT:",receipt)
         showLoadingScreen(false)
@@ -529,7 +536,8 @@ class PlayStack extends Component {
         showLoadingScreen(hash)
         txhash=hash
       }).on('error',(a,b)=>{
-
+        console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+        /*
           if(txhash){
             showLoadingScreen(false)
             console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
@@ -545,6 +553,7 @@ class PlayStack extends Component {
     					</div>
     				)
           }
+          */
       }).then((receipt)=>{
         console.log("RESULT:",receipt)
         showLoadingScreen(false)
@@ -569,7 +578,8 @@ class PlayStack extends Component {
         showLoadingScreen(hash)
         txhash=hash
       }).on('error',(a,b)=>{
-
+        console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+        /*
           if(txhash){
             showLoadingScreen(false)
             console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
@@ -584,7 +594,7 @@ class PlayStack extends Component {
     						</div>
     					</div>
     				)
-          }
+          }*/
       }).then((receipt)=>{
         console.log("RESULT:",receipt)
         showLoadingScreen(false)
@@ -602,7 +612,8 @@ class PlayStack extends Component {
       showLoadingScreen(hash)
       txhash=hash
     }).on('error',(a,b)=>{
-
+      console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+      /*
         if(txhash){
           showLoadingScreen(false)
           console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
@@ -618,7 +629,7 @@ class PlayStack extends Component {
             </div>
           )
         }
-
+        */
     }).then((receipt)=>{
       console.log("RESULT:",receipt)
       showLoadingScreen(false)
@@ -1098,8 +1109,6 @@ class PlayStack extends Component {
 
         {mixedStack}
         {flightStack}
-
-
 
         <Motion
         defaultStyle={{

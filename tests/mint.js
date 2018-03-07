@@ -32,3 +32,11 @@ const cryptogs = require("./cryptogs.js")
 //cryptogs.airdrop(0,"dragon.png","0x707912a400af1cb2d00ffad766d8a675b8dce504")
 //grehg
 //cryptogs.airdrop(0,"dragon.png","0x535c1a27cc5eed222e4c8af6a911a5d181a2f44c")
+
+
+
+//Patrick
+//0x0FA23C532B040f8E93aF72D91fb03aD78Eb367eD
+//
+//Hunter
+//0x55fFbCD5F80a7e22660A3B564447a0c1D5396A5C
