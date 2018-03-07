@@ -49,6 +49,7 @@ class JoinStack extends Component {
       }).on('error',(a,b)=>{
 
 				console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+        /*
 				this.props.throwAlert(
 					<div>
 						<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
@@ -65,7 +66,7 @@ class JoinStack extends Component {
 							}}>close and try again</MMButton>
 						</div>
 					</div>
-				)
+				)*/
 
       }).then((receipt)=>{
         console.log("RESULT:",receipt)

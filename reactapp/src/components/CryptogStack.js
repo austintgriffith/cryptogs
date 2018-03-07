@@ -49,7 +49,7 @@ class CryptogStack extends Component {
       }).on('error',(a,b)=>{
 
 					console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-					this.context.throwAlert(
+					/*this.context.throwAlert(
 						<div>
 							<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
 							<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
@@ -65,8 +65,7 @@ class CryptogStack extends Component {
 								}}>close and try again</MMButton>
 							</div>
 						</div>
-					)
-
+					)*/
 
 			}).then((receipt)=>{
 				console.log("RESULT:",receipt)
