@@ -19,6 +19,7 @@ export default createClass({
 		showLoadingScreen: PropTypes.func,
 		GWEI: PropTypes.number,
 		throwAlert: PropTypes.func,
+		etherscan: PropTypes.string,
 	},
 	render(){
 		const { account,contracts } = this.context
