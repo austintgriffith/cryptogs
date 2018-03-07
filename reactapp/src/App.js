@@ -160,11 +160,11 @@ export default createClass({
 		});
 	},
 	render(){
-		const { count,contracts,loadingTx } = this.state;
+		const { count,contracts,loadingTx,showLoadingScreen } = this.state;
 		let loader = ""
 		if(loadingTx){
 			loader = (
-				<Loader contracts={this.state.contracts} etherscan={this.state.etherscan} web3={this.state.web3} blockNumber={this.state.blockNumber} loadingTx={loadingTx} />
+				<Loader showLoadingScreen={showLoadingScreen} contracts={this.state.contracts} etherscan={this.state.etherscan} web3={this.state.web3} blockNumber={this.state.blockNumber} loadingTx={loadingTx} />
 			)
 		}
 		return (
