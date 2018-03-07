@@ -39,17 +39,20 @@ export default createClass({
   },
   async watchTransaction(){
     let {web3,loadingTx,showLoadingScreen} = this.props
-    const transaction = await web3.eth.getTransaction(loadingTx)
-    if(transaction) {
-      if(!this.state.foundtx){
-        console.log("Loader Found TX:",transaction)
-        this.setState({foundtx:transaction})
+    try{
+      const transaction = await web3.eth.getTransaction(loadingTx)
+      //console.log("ACCORDING TO web3 it is:",transaction)
+      if(transaction) {
+        if(!this.state.foundtx){
+          console.log("Loader Found TX:",transaction)
+          this.setState({foundtx:transaction})
+        }
       }
-    }
-    if(transaction && transaction.gasUsed>0){
-      console.log("looks like it went through, close loader")
-      showLoadingScreen(false)
-    }
+      if(transaction && transaction.gasUsed>0){
+        console.log("looks like it went through, close loader")
+        showLoadingScreen(false)
+      }
+    }catch(e){console.log("LOADERERROR",e)}
   },
   componentWillUnmount(){
     clearInterval(interval)

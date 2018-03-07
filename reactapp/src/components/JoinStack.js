@@ -72,6 +72,8 @@ class JoinStack extends Component {
         console.log("RESULT:",receipt)
         window.location = "/play/"+stack
         showLoadingScreen(false)
+      }).catch(e=> {
+          console.error('caught error', e);
       })
 	}
   render(){

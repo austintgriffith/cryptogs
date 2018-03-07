@@ -73,6 +73,8 @@ export default createClass({
 				console.log("RESULT:",receipt)
 				showLoadingScreen(false)
 				this.findSubmitStackAndGo()
+      }).catch(e=> {
+          console.error('caught error', e);
       })
 	},
 	async findSubmitStackAndGo(){
