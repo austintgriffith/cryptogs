@@ -41,15 +41,16 @@ export default createClass({
     let {web3,loadingTx,showLoadingScreen} = this.props
     try{
       const transaction = await web3.eth.getTransaction(loadingTx)
-      //console.log("ACCORDING TO web3 it is:",transaction)
+      const transactionReceipt = await web3.eth.getTransactionReceipt(loadingTx)
+      //console.log("ACCORDING TO web3 it is:",transaction,transactionReceipt)
       if(transaction) {
         if(!this.state.foundtx){
           console.log("Loader Found TX:",transaction)
           this.setState({foundtx:transaction})
         }
       }
-      if(transaction && transaction.gasUsed>0){
-        console.log("looks like it went through, close loader")
+      if(transactionReceipt){
+        console.log("got transactionReceipt:",transactionReceipt)
         showLoadingScreen(false)
       }
     }catch(e){console.log("LOADERERROR",e)}
