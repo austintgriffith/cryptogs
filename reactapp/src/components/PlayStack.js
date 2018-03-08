@@ -337,6 +337,8 @@ class PlayStack extends Component {
     }).then((receipt)=>{
       console.log("RESULT:",receipt)
       showLoadingScreen(false)
+    }).catch(e=> {
+        console.error('caught error', e);
     })
     this.setState({counterStack:counterStack})
   }
@@ -382,6 +384,8 @@ class PlayStack extends Component {
       console.log("RESULT:",receipt)
       window.location = "/stacks"
       showLoadingScreen(false)
+    }).catch(e=> {
+        console.error('caught error', e);
     })
 
   }
@@ -420,6 +424,8 @@ class PlayStack extends Component {
       console.log("RESULT:",receipt)
       window.location = "/stacks"
       showLoadingScreen(false)
+    }).catch(e=> {
+        console.error('caught error', e);
     })
 
   }
@@ -470,6 +476,8 @@ class PlayStack extends Component {
         console.log("RESULT:",receipt)
         showLoadingScreen(false)
 
+      }).catch(e=> {
+          console.error('caught error', e);
       })
   }
 
@@ -513,6 +521,8 @@ class PlayStack extends Component {
       }).then((receipt)=>{
         console.log("RESULT:",receipt)
         showLoadingScreen(false)
+      }).catch(e=> {
+          console.error('caught error', e);
       })
   }
   raiseSlammer(){
@@ -557,6 +567,8 @@ class PlayStack extends Component {
       }).then((receipt)=>{
         console.log("RESULT:",receipt)
         showLoadingScreen(false)
+      }).catch(e=> {
+          console.error('caught error', e);
       })
   }
   throwSlammer(){
@@ -618,6 +630,8 @@ class PlayStack extends Component {
       }).then((receipt)=>{
         console.log("RESULT:",receipt)
         showLoadingScreen(false)
+      }).catch(e=> {
+          console.error('caught error', e);
       })
   }
   drainStack(){
@@ -653,6 +667,8 @@ class PlayStack extends Component {
     }).then((receipt)=>{
       console.log("RESULT:",receipt)
       showLoadingScreen(false)
+    }).catch(e=> {
+        console.error('caught error', e);
     })
   }
   slammerClick(){

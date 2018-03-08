@@ -41,7 +41,7 @@ contract Cryptogs is NFT, Ownable {
 
     address public slammerTime;
     function setSlammerTime(address _slammerTime) public onlyOwner returns (bool){
-      //in order to trust that this contract isn't sending a players tokens
+      //in order to trust that this contract isn't sending a player's tokens
       // to a different contract, the slammertime contract is set once and
       // only once -- at deploy
       require(slammerTime==address(0));
@@ -352,7 +352,6 @@ contract Cryptogs is NFT, Ownable {
       require(mode[_stack]==2);
 
       //make sure that we are on a later block than the commit block
-      // (added 3/5/2018)
       require(uint32(block.number)>commitBlock[_stack]);
 
       //make sure hash of reveal == commit
@@ -427,7 +426,6 @@ contract Cryptogs is NFT, Ownable {
       require(mode[_stack]==4);
 
       //make sure that we are on a later block than the commit block
-      // (added 3/5/2018)
       require(uint32(block.number)>commitBlock[_stack]);
 
       uint256[10] memory flipped;

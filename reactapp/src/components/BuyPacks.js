@@ -167,7 +167,9 @@ export default createClass({
 	  							        console.log("RESULT:",receipt)
 													showLoadingScreen(false)
 	  											window.location = "/address/"+account
-	  							      })
+	  							      }).catch(e=> {
+									          console.error('caught error', e);
+									      })
 	  								}
 	  							}
 	  						}/>
@@ -239,7 +241,9 @@ export default createClass({
   							        console.log("RESULT:",receipt)
   											window.location = "/address/"+account
 												showLoadingScreen(false)
-  							      })
+  							      }).catch(e=> {
+								          console.error('caught error', e);
+								      })
   								}
   							}
   						}/>

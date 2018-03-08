@@ -9,23 +9,26 @@ import MMButton from '../components/MMButton.js'
 const extraDip = 80
 
 let interval
+let watchTransactionInterval
 
 export default createClass({
   getInitialState(){
     return {
       isMinimized:false,
-      blocks: []
+      blocks: [],
+      foundtx: false
     }
   },
   componentDidMount(){
     interval=setInterval(this.loader,677)
+    watchTransactionInterval=setInterval(this.watchTransaction,793)
     this.loader()
   },
   toggle(){
       this.setState({isMinimized:!(this.state.isMinimized)})
   },
   async loader(){
-    let {web3,blockNumber} = this.props
+    let {web3,blockNumber,showLoadingScreen} = this.props
     if(blockNumber){
       for(let b=0;b<10;b++){
         if(!this.state.blocks[blockNumber-b]){
@@ -34,8 +37,27 @@ export default createClass({
       }
     }
   },
+  async watchTransaction(){
+    let {web3,loadingTx,showLoadingScreen} = this.props
+    try{
+      const transaction = await web3.eth.getTransaction(loadingTx)
+      const transactionReceipt = await web3.eth.getTransactionReceipt(loadingTx)
+      //console.log("ACCORDING TO web3 it is:",transaction,transactionReceipt)
+      if(transaction) {
+        if(!this.state.foundtx){
+          console.log("Loader Found TX:",transaction)
+          this.setState({foundtx:transaction})
+        }
+      }
+      if(transactionReceipt){
+        console.log("got transactionReceipt:",transactionReceipt)
+        showLoadingScreen(false)
+      }
+    }catch(e){console.log("LOADERERROR",e)}
+  },
   componentWillUnmount(){
     clearInterval(interval)
+    clearInterval(watchTransactionInterval)
   },
   render(){
     let {web3,blockNumber,etherscan,contracts} = this.props
@@ -75,6 +97,24 @@ export default createClass({
         bottom = (height*-1)+100
       }
 
+      let rightSideLoader = ""
+      let theMessage = ""
+      if(this.state.foundtx){
+        rightSideLoader = (
+          <LoaderAnimation/>
+        )
+        theMessage = (
+          <span>
+            Waiting for transaction <a href={etherscan+"tx/"+this.props.loadingTx} target="_Blank">{this.props.loadingTx.substr(0,10)}</a> to be mined...
+          </span>
+        )
+      }else {
+        theMessage = (
+          <span>
+            Waiting for the network to acknowledge transaction <a href={etherscan+"tx/"+this.props.loadingTx} target="_Blank">{this.props.loadingTx.substr(0,10)}</a>...
+          </span>
+        )
+      }
 
       let bigTextStyle = {width:"100%",textAlign:"center",fontWidth:'bold',fontSize:16,padding:10}
       return (
@@ -93,9 +133,8 @@ export default createClass({
                 <div onClick={this.toggle} className={"messageGray"}  style={{zIndex:999,opacity:0.9,position:'fixed',bottom:currentStyles.bottom,left:offset,margin:'0 auto',width:width,height:currentStyles.height,backgroundColor:"#eeeeee",padding:20,border:"20px solid #dddddd"}}>
                   <div style={bigTextStyle}>
                       <div style={{opacity:0.3,float:'left',marginTop:-95}}><LoaderAnimation/></div>
-                      <div style={{opacity:0.3,float:'right',marginTop:-95}}><LoaderAnimation/></div>
-
-                      Waiting for transaction <a href={etherscan+"tx/"+this.props.loadingTx} target="_Blank">{this.props.loadingTx.substr(0,10)}</a> to be mined...
+                      <div style={{opacity:0.3,float:'right',marginTop:-95}}>{rightSideLoader}</div>
+                      {theMessage}
                   </div>
 
                   <StackGrid
@@ -106,7 +145,7 @@ export default createClass({
                   </StackGrid>
                   <div style={{marginTop:20}}/>
                   <div style={bigTextStyle}>Blocks are taking an average of {average} seconds plus network time.</div>
-                  <div style={bigTextStyle}>Your transaction will be mined into a block based on your <img style={{opacity:0.5}} src="/gas.png"/> gas price.</div>
+                  <div style={bigTextStyle}>Your transaction will be mined into a block based on your <img style={{opacity:0.5}} src="/gas.png"/> <a href="https://ethgasstation.info" target="_blank">gas price</a>.</div>
                   <div style={bigTextStyle}>Higher <img style={{opacity:0.5}} src="/gas.png"/> gas prices mean faster trasactions, but they will cost more.</div>
                   <div style={{marginLeft:150,marginTop:10}}>
                       <MMButton color={"#6081c3"} onClick={()=>{
