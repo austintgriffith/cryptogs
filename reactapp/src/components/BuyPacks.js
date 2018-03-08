@@ -180,12 +180,12 @@ export default createClass({
   		}
 
       mintedPackRender = (
-				<div className={"centercontainer"}>
-	        <div className={"twobytwogrid"}>
-	          <div className={"twobytwobox"}>
+				<div className={"container-fluid"}>
+	        <div className={"row"}>
+	          <div className={"col-sm-12 col-lg-6"}>
 							{buypacks[0]}
 	          </div>
-	          <div className={"twobytwobox"}>
+	          <div className={"col-sm-12 col-lg-6"}>
 							{buypacks[1]}
 	          </div>
 	        </div>

@@ -40,7 +40,8 @@ export default createClass({
 
     if(compact){
       return (
-        <div style={{position:'relative'}}>
+        <div className="row">
+       <div className="col-sm-9 col-md-7">
         <StackGrid
           style={{marginTop:20,cursor:'pointer',zIndex:5}}
           columnWidth={20}
@@ -48,10 +49,12 @@ export default createClass({
         >
           {cryptogs}
         </StackGrid>
-        <div style={{position:'absolute',right:-20,top:0,zIndex:10}} onClick={this.props.PackClick.bind(this,this.props.id)}>
+        </div>
+        <div className="col-sm-3 col-md-5" onClick={this.props.PackClick.bind(this,this.props.id)}>
           {button}
         </div>
         </div>
+        
       )
     }else{
       return (

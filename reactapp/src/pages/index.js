@@ -31,10 +31,10 @@ export default createClass({
                   <div className="container">
                       <div className="jumbotron p-5">
                           <div className="row align-items-center">
-                              <div className="col-md-3">
+                              <div className="col-sm-12 col-md-3">
                                   <CryptogDocScroll />
                               </div>
-                              <div className="col-md-9">
+                              <div className="col-sm-12 col-md-9">
                                   <div className="pt-2 pb-2">
                                       	<p className="lead-2 mb-0">{"Cryptogs is a cryptographically backed version of the game of pogs (milk caps). It extends the ERC-721 token standard from just collecting and trading to risking tokens using on-chain random game mechanics. Play pogs against people from around the decentralized world."}</p>
 										<p className="lead-2 mb-0" style={{marginTop:20}}>{"TL;DR: You can win or lose tokens depending on your luck and it's all on the blockchain!"}</p>
@@ -168,7 +168,7 @@ export default createClass({
 													<div className="row align-items-center">
 
 
-																<div className="col-md-6">
+																<div className="col-sm-12 col-md-6">
 
 																<div className="d-flex justify-content-center mb-3">
 																		<div style={{position: 'relative',marginLeft:25}}>
@@ -189,7 +189,7 @@ export default createClass({
 
 
 																</div>
-																<div className="col-md-6">
+																<div className="col-sm-12 col-md-6">
 																<div className="d-flex justify-content-center mb-3">
 																		<div style={{position: 'relative',marginLeft:25}}>
 																			<Spinner key={"spinner1"} guts={
