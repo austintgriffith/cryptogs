@@ -179,21 +179,21 @@ export default createClass({
   			}
   		}
 
-      mintedPackRender = (
-				<div className={"centercontainer"}>
-	        <div className={"twobytwogrid"}>
-	          <div className={"twobytwobox"}>
-							{buypacks[0]}
-	          </div>
-	          <div className={"twobytwobox"}>
-							{buypacks[1]}
-	          </div>
-	        </div>
-					<div style={{padding:40}}>
-						<MMButton color={"#6081c3"} onClick={()=>{window.location="/buy"}}>View All Packs</MMButton>
-					</div>
+      	mintedPackRender = (
+			<div>
+		        <div className={"row"}>
+			        <div className={"col-md-6"}>
+						{buypacks[0]}
+			        </div>
+			        <div className={"col-md-6"}>
+						{buypacks[1]}
+			        </div>
+		        </div>
+				<div style={{padding:40}}>
+					<MMButton color={"#6081c3"} onClick={()=>{window.location="/buy"}}>View All Packs</MMButton>
 				</div>
-      )
+			</div>
+      	)
 
     }else{
       mintedPackRender = []
