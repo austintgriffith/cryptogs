@@ -38,7 +38,7 @@ export default createClass({
     }
   },
   async watchTransaction(){
-    let {web3,loadingTx,showLoadingScreen} = this.props
+    let {web3,loadingTx,showLoadingScreen,loadingDest} = this.props
     try{
       const transaction = await web3.eth.getTransaction(loadingTx)
       const transactionReceipt = await web3.eth.getTransactionReceipt(loadingTx)
@@ -52,6 +52,13 @@ export default createClass({
       if(transactionReceipt){
         console.log("got transactionReceipt:",transactionReceipt)
         showLoadingScreen(false)
+        if(loadingDest){
+          if(typeof loadingDest == "function"){
+            loadingDest()
+          }else{
+             window.location = loadingDest
+          }
+        }
       }
     }catch(e){console.log("LOADERERROR",e)}
   },

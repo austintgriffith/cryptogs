@@ -322,17 +322,6 @@ class PlayStack extends Component {
     }).on('error',(a,b)=>{
       if(txhash){
         console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-        /*this.props.throwAlert(
-          <div>
-            <span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
-            <a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
-            <div style={{position:"absolute",left:20,bottom:20}}>
-              <MMButton color={"#f7861c"} onClick={()=>{
-                this.props.throwAlert(false);
-              }}>close and try again</MMButton>
-            </div>
-          </div>
-        )*/
       }
     }).then((receipt)=>{
       console.log("RESULT:",receipt)
@@ -352,32 +341,13 @@ class PlayStack extends Component {
       gasPrice:this.props.GWEI * 1000000000
     },(error,hash)=>{
       console.log("CALLBACK!",error,hash)
-      showLoadingScreen(hash)
+      showLoadingScreen(hash,"/stacks")
       txhash=hash
     }).on('error',(a,b)=>{
 
-
-
       if(txhash){
-        showLoadingScreen(false)
+        //howLoadingScreen(false)
         console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-        /*this.context.throwAlert(
-          <div>
-            <span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
-            <a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
-            <div style={{position:"absolute",right:20,bottom:20}}>
-              <MMButton color={"#6081c3"} onClick={()=>{
-                this.context.throwAlert(false);
-                window.location = "/stacks"
-              }}>continue and wait</MMButton>
-            </div>
-            <div style={{position:"absolute",left:20,bottom:20}}>
-              <MMButton color={"#f7861c"} onClick={()=>{
-                this.context.throwAlert(false);
-              }}>close and try again</MMButton>
-            </div>
-          </div>
-        )*/
       }
 
     }).then((receipt)=>{
@@ -399,27 +369,10 @@ class PlayStack extends Component {
       gasPrice:this.props.GWEI * 1000000000
     },(error,hash)=>{
       console.log("CALLBACK!",error,hash)
-      showLoadingScreen(hash)
+      showLoadingScreen(hash,"/stacks")
       txhash=hash
     }).on('error',(a,b)=>{
       console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-      /*
-        if(txhash){
-          showLoadingScreen(false)
-          console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-          this.props.throwAlert(
-            <div>
-              <span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
-              <a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
-              <div style={{position:"absolute",left:20,bottom:20}}>
-                <MMButton color={"#f7861c"} onClick={()=>{
-                  this.props.throwAlert(false);
-                }}>close and try again</MMButton>
-              </div>
-            </div>
-          )
-        }
-        */
     }).then((receipt)=>{
       console.log("RESULT:",receipt)
       window.location = "/stacks"
@@ -455,27 +408,9 @@ class PlayStack extends Component {
         txhash=hash
       }).on('error',(a,b)=>{
         console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-        /*
-          if(txhash){
-            showLoadingScreen(false)
-            console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-    				this.props.throwAlert(
-    					<div>
-    						<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
-    						<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
-    						<div style={{position:"absolute",left:20,bottom:20}}>
-    							<MMButton color={"#f7861c"} onClick={()=>{
-    								this.props.throwAlert(false);
-    							}}>close and try again</MMButton>
-    						</div>
-    					</div>
-    				)
-          }
-          */
       }).then((receipt)=>{
         console.log("RESULT:",receipt)
         showLoadingScreen(false)
-
       }).catch(e=> {
           console.error('caught error', e);
       })
@@ -501,23 +436,6 @@ class PlayStack extends Component {
         txhash=hash
       }).on('error',(a,b)=>{
         console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-        /*
-          if(txhash){
-            showLoadingScreen(false)
-            console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-    				this.props.throwAlert(
-    					<div>
-    						<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
-    						<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
-    						<div style={{position:"absolute",left:20,bottom:20}}>
-    							<MMButton color={"#f7861c"} onClick={()=>{
-    								this.props.throwAlert(false);
-    							}}>close and try again</MMButton>
-    						</div>
-    					</div>
-    				)
-          }
-          */
       }).then((receipt)=>{
         console.log("RESULT:",receipt)
         showLoadingScreen(false)
@@ -547,23 +465,6 @@ class PlayStack extends Component {
         txhash=hash
       }).on('error',(a,b)=>{
         console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-        /*
-          if(txhash){
-            showLoadingScreen(false)
-            console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-    				this.props.throwAlert(
-    					<div>
-    						<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
-    						<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
-    						<div style={{position:"absolute",left:20,bottom:20}}>
-    							<MMButton color={"#f7861c"} onClick={()=>{
-    								this.props.throwAlert(false);
-    							}}>close and try again</MMButton>
-    						</div>
-    					</div>
-    				)
-          }
-          */
       }).then((receipt)=>{
         console.log("RESULT:",receipt)
         showLoadingScreen(false)
@@ -647,23 +548,6 @@ class PlayStack extends Component {
       txhash=hash
     }).on('error',(a,b)=>{
       console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-      /*
-        if(txhash){
-          showLoadingScreen(false)
-          console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-          this.props.throwAlert(
-            <div>
-              <span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
-              <a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
-              <div style={{position:"absolute",left:20,bottom:20}}>
-                <MMButton color={"#f7861c"} onClick={()=>{
-                  this.props.throwAlert(false);
-                }}>close and try again</MMButton>
-              </div>
-            </div>
-          )
-        }
-        */
     }).then((receipt)=>{
       console.log("RESULT:",receipt)
       showLoadingScreen(false)

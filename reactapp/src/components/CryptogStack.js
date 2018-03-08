@@ -45,7 +45,7 @@ class CryptogStack extends Component {
         gasPrice:this.context.GWEI * 1000000000
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
-				showLoadingScreen(hash)
+				showLoadingScreen(hash,this.findSubmitStackAndGo)
 				txhash=hash
       }).on('error',(a,b)=>{
 				console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")

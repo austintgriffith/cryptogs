@@ -140,7 +140,7 @@ export default createClass({
 	  							        gasPrice:this.context.GWEI * 1000000000
 	  							      },(error,hash)=>{
 	  							        console.log("CALLBACK!",error,hash)
-													showLoadingScreen(hash)
+													showLoadingScreen(hash,"/address/"+account)
 													txhash=hash
 	  							      }).on('error',(a,b)=>{
 
@@ -214,29 +214,10 @@ export default createClass({
   							        gasPrice:this.context.GWEI * 1000000000
   							      },(error,hash)=>{
   							        console.log("CALLBACK!",error,hash)
-												showLoadingScreen(hash)
+												showLoadingScreen(hash,"/address/"+account)
 												txhash=hash
   							      }).on('error',(a,b)=>{
-
 												console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-												/*this.context.throwAlert(
-													<div>
-														<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
-														<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
-														<div style={{position:"absolute",right:20,bottom:20}}>
-															<MMButton color={"#6081c3"} onClick={()=>{
-																this.context.throwAlert(false);
-																window.location = "/address/"+account
-															}}>continue and wait</MMButton>
-														</div>
-														<div style={{position:"absolute",left:20,bottom:20}}>
-															<MMButton color={"#f7861c"} onClick={()=>{
-																this.context.throwAlert(false);
-															}}>close and try again</MMButton>
-														</div>
-													</div>
-												)*/
-
 											}).then((receipt)=>{
   							        console.log("RESULT:",receipt)
   											window.location = "/address/"+account

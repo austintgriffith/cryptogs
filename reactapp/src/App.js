@@ -65,8 +65,8 @@ export default createClass({
 	throwAlert(message){
 		this.setState({alert:message})
 	},
-	showLoadingScreen(tx){
-		this.setState({loadingTx:tx})
+	showLoadingScreen(tx,dest){
+		this.setState({loadingTx:tx,loadingDest:dest})
 	},
 	setGWEI(GWEI){
 		this.setState({GWEI:parseInt(GWEI)})
@@ -87,6 +87,7 @@ export default createClass({
 			contracts: [],
 			metamaskHint: 10,
 			loadingTx:"",
+			loadingDest:"",
 			GWEI:GWEI,
 			alert: "",
 		};
@@ -160,11 +161,11 @@ export default createClass({
 		});
 	},
 	render(){
-		const { count,contracts,loadingTx } = this.state;
+		const { count,contracts,loadingTx,loadingDest } = this.state;
 		let loader = ""
 		if(loadingTx){
 			loader = (
-				<Loader showLoadingScreen={this.showLoadingScreen} contracts={this.state.contracts} etherscan={this.state.etherscan} web3={this.state.web3} blockNumber={this.state.blockNumber} loadingTx={loadingTx} />
+				<Loader showLoadingScreen={this.showLoadingScreen} contracts={this.state.contracts} etherscan={this.state.etherscan} web3={this.state.web3} blockNumber={this.state.blockNumber} loadingTx={loadingTx} loadingDest={loadingDest} />
 			)
 		}
 		return (

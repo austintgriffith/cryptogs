@@ -189,20 +189,23 @@ export default createClass({
 						)
 					)
 				){
-					console.log("allStacksFlipped[s].canceledSenders",allStacksFlipped[s].canceledSenders)
-				myStacks.push(
-					<Stack key={"mystack"+s} {...allStacksFlipped[s]} callToAction={
-						<div  style={{marginTop:20,marginLeft:30}}>
-							<MMButton color={"#6081c3"} onClick={()=>{
-								if(account){
-									window.location="/play/"+allStacksFlipped[s]._stack
-								}else{
-									metaMaskHintFn()
-								}
-							}}>view</MMButton>
-						</div>
-					}/>
-				)
+				//	console.log("allStacksFlipped[s].canceledSenders",allStacksFlipped[s].canceledSenders)
+				if(allStacksFlipped[s]._stack){
+					myStacks.push(
+						<Stack key={"mystack"+s} {...allStacksFlipped[s]} callToAction={
+							<div  style={{marginTop:20,marginLeft:30}}>
+								<MMButton color={"#6081c3"} onClick={()=>{
+									if(account){
+										window.location="/play/"+allStacksFlipped[s]._stack
+									}else{
+										metaMaskHintFn()
+									}
+								}}>view</MMButton>
+							</div>
+						}/>
+					)
+				}
+
 			}else if(account && allStacksFlipped[s].otherPlayer && !allStacksFlipped[s].canceled &&
 					(
 						!allStacksFlipped[s].canceledSenders ||

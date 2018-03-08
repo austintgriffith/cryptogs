@@ -49,10 +49,10 @@ class AddressStack extends Component {
 
 		let tokenDisplay = tokenData.map((token)=>{
 			return (
-        <Spinner guts={
+        <Spinner key={"cryptog"+token.id} guts={
           (spinning)=>{
             return (
-              <Cryptog key={"cryptog"+token.id} id={token.id} scale={0.90} slowrolling={spinning} image={token.image} zIndex={1}/>
+              <Cryptog  id={token.id} scale={0.90} slowrolling={spinning} image={token.image} zIndex={1}/>
             )
           }
         } click={()=>{
