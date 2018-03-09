@@ -95,17 +95,12 @@ export default createClass({
 			alert: "",
 		};
 	},
-	waitForWeb3(){
-		if(web3){
-
-		}
-	},
 	componentDidMount(){
 
 		let provider
 		if(web3 && web3.currentProvider ){
 			provider=web3.currentProvider
-		}else{
+		}else if(window&&window.web){
 			provider=window.web3.currentProvider
 		}
 		console.log("Current Web3 Provider",provider)
