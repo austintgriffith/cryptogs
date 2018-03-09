@@ -34,7 +34,7 @@ export default createClass({
       <div className="text-center">
         <div style={{opacity:0.5,fontSize:12}}>for sale</div>
         <div style={{opacity:0.9,fontSize:20,backgroundColor:"#FFFFFF"}}>Ξ{price}</div>
-        <MMButton color={"#6ac360"}>Purchase</MMButton>
+        <MMButton onClick={this.props.PackClick.bind(this,this.props.id)} color={"#6ac360"}>Purchase</MMButton>
       </div>
     )
 

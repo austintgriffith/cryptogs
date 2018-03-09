@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Blockies from 'react-blockies'
-
+var web3
 class MetaMask extends Component {
   constructor(props) {
     super(props);
@@ -20,17 +20,23 @@ class MetaMask extends Component {
     this.checkMetamask()
   }
   checkMetamask() {
-    if (typeof window.web3 == 'undefined') {
+    if (typeof window.web3 == 'undefined' && typeof web3 == 'undefined' ) {
       if(this.state.metamask!=0) this.setState({metamask:0})
     } else {
-      window.web3.version.getNetwork((err,network)=>{
+      let thisWeb3
+      if(typeof web3 != 'undefined'){
+        thisWeb3 = web3
+      }else{
+        thisWeb3 = window.web3
+      }
+      thisWeb3.version.getNetwork((err,network)=>{
         network = translateNetwork(network);
         if( network=="Morden" || network=="Rinkeby" || network=="Kovan"){
           if(this.state.metamask!=2) this.setState({metamask:2,network:network})
         }else{
           let accounts
           try{
-            window.web3.eth.getAccounts((err,_accounts)=>{
+            thisWeb3.eth.getAccounts((err,_accounts)=>{
               if(err){
                 console.log("metamask error",err)
                 if(this.state.metamask!=-1) this.setState({metamask:-1,network:network})
@@ -177,7 +183,7 @@ class MetaMask extends Component {
 
         let networkDisplay = this.state.network
         if(this.state.network=="Mainnet"){
-          networkDisplay = <span>Mainnet</span>
+          networkDisplay = <span onClick={()=>{window.location = "/debug"}}>Mainnet</span>
         }
 
         metamask = (

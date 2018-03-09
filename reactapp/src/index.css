@@ -54,6 +54,8 @@
     border-radius: 10px;
     background: #ffffff;
     padding: 5px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 
