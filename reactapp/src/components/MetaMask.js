@@ -81,6 +81,7 @@ class MetaMask extends Component {
   }
   render(){
     let metamask
+    let debug = ""
 
     let blockDisplay = (
       <span style={{padding:5,opacity:0.3}}>
@@ -228,6 +229,7 @@ class MetaMask extends Component {
     return (
       <div style={{float:'left',padding:2,paddingRight:10,marginLeft:this.props.currentStyles.marginLeft}}>
       {metamask}
+      {debug}
       </div>
     )
   }
