@@ -1,3 +1,3 @@
 #!/bin/bash
 npm run build
-cp -rf build static
+cp -rf build/* static/

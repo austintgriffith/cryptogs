@@ -184,7 +184,7 @@ class MetaMask extends Component {
 
         let networkDisplay = this.state.network
         if(this.state.network=="Mainnet"){
-          networkDisplay = <span>Mainnet!</span>
+          networkDisplay = <span>Mainnet!!</span>
         }
 
         metamask = (
