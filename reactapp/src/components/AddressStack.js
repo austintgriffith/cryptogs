@@ -35,7 +35,7 @@ class AddressStack extends Component {
     this.setState({tokenData:tokens,hasLoadedFirst:true})
   }
   render(){
-    let {hasLoadedFirst,tokenData,hovers,} = this.state
+    let {hasLoadedFirst,tokenData,hovers} = this.state
     if(!tokenData){
       return (
         <div style={{opacity:0.3}}><PogAnimation loader={true} image={"unicorn.png"}/></div>
@@ -47,12 +47,16 @@ class AddressStack extends Component {
       )
     }
 
+    let cryptogScale = Math.min(0.8, 0.8 * (window.innerWidth/700))
+    console.log("cryptogScale",cryptogScale)
+    let stackWidth = cryptogScale*115
+
 		let tokenDisplay = tokenData.map((token)=>{
 			return (
         <Spinner key={"cryptog"+token.id} guts={
           (spinning)=>{
             return (
-              <Cryptog  id={token.id} scale={0.90} slowrolling={spinning} image={token.image} zIndex={1}/>
+              <Cryptog  id={token.id} scale={1} slowrolling={spinning} image={token.image} zIndex={1}/>
             )
           }
         } click={()=>{
@@ -89,7 +93,7 @@ class AddressStack extends Component {
         </div>
       )
     }
-
+//transform:"scale("+cryptogScale+"),
     return (
       <div>
 
@@ -105,12 +109,14 @@ class AddressStack extends Component {
           <span style={{fontSize:20,paddingLeft:5}}><a target="_blank" href={this.props.etherscan+"address/"+this.props.match.params.address}>{this.props.match.params.address}</a></span>
         </div>
         <div style={{float:'right',marginTop:-140,opacity:0.4}}>({tokenData.length})</div>
-        <StackGrid
-          style={{marginTop:90}}
-          columnWidth={115}
-        >
-           {tokenDisplay}
-        </StackGrid>
+
+          <StackGrid
+            style={{marginTop:20}}
+            columnWidth={115}
+          >
+             {tokenDisplay}
+          </StackGrid>
+
         {callToBuy}
       </div>
     )
