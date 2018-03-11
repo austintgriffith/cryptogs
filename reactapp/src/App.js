@@ -94,10 +94,11 @@ export default createClass({
 			loadingDest:"",
 			GWEI:GWEI,
 			alert: "",
+			network:0,
 		};
 	},
 	componentDidMount(){
-		waitForWeb3Interval = setInterval(this.waitForWeb3,191)
+		waitForWeb3Interval = setInterval(this.waitForWeb3,979)
 		this.waitForContracts()
 	},
 	componentWillUnmount(){
@@ -113,6 +114,7 @@ export default createClass({
 		this.setState({account:account})
 	},
 	waitForWeb3(){
+		console.log("checking in on web3...")
 		try{
 			let thisWeb3
 			if(web3&&web3.currentProvider){
@@ -123,17 +125,19 @@ export default createClass({
 			if(thisWeb3){
 				thisWeb3.eth.net.getId().then((network)=>{
 					if(network>9999) network=9999;
-					let contracts = ContractLoader(["Cryptogs","SlammerTime"],thisWeb3,network);
-					let update = {web3:thisWeb3,contracts:contracts,contractsLoaded:true,network:network}
-					if(!this.state || !this.state.GWEI || this.state.GWEI == STARTINGGWEI){
-						if(network>1){
-							this.setGWEI(STARTINGGWEI)
-						}else{
-							this.setGWEI(MAINNETGWEI)
+					if(network!=this.state.network){
+						console.log("SAVING WEB3 and LOADING CONTRACTS...")
+						let contracts = ContractLoader(["Cryptogs","SlammerTime"],thisWeb3,network);
+						let update = {web3:thisWeb3,contracts:contracts,contractsLoaded:true,network:network}
+						if(!this.state || !this.state.GWEI || this.state.GWEI == STARTINGGWEI){
+							if(network>1){
+								this.setGWEI(STARTINGGWEI)
+							}else{
+								this.setGWEI(MAINNETGWEI)
+							}
 						}
+						this.setState(update)
 					}
-					this.setState(update)
-					clearInterval(waitForWeb3Interval)
 				})
 			}
 		} catch(e) {
