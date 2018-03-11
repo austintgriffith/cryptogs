@@ -13,7 +13,7 @@ export default createClass({
     if(compact){
       for(let t=0;t<10;t++){
         cryptogs.push(
-          <Cryptog key={"cryptog"+tokens[t]} id={tokens[t]} image={images[t]} scale={0.55} zIndex={1}/>
+          <Cryptog key={"cryptog"+tokens[t]} id={tokens[t]} image={images[t]} zIndex={1}/>
         )
       }
     }else{
@@ -22,7 +22,7 @@ export default createClass({
           <Spinner key={"spinner"+tokens[t]} guts={
             (spinning)=>{
               return (
-                <Cryptog  id={tokens[t]} slowrolling={spinning} image={images[t]} zIndex={1}/>
+                <Cryptog id={tokens[t]} slowrolling={spinning} image={images[t]} zIndex={1}/>
               )
             }
           }/>
@@ -31,39 +31,48 @@ export default createClass({
     }
 
     let button = (
-      <div>
-        <div style={{marginTop:30,opacity:0.5,fontSize:12}}>for sale</div>
+      <div className="text-center">
+        <div style={{opacity:0.5,fontSize:12}}>for sale</div>
         <div style={{opacity:0.9,fontSize:20,backgroundColor:"#FFFFFF"}}>Ξ{price}</div>
-        <MMButton color={"#6ac360"}>Purchase</MMButton>
+        <MMButton onClick={this.props.PackClick.bind(this,this.props.id)} color={"#6ac360"}>Purchase</MMButton>
       </div>
     )
 
     if(compact){
       return (
         <div style={{position:'relative'}}>
-        <StackGrid
-          style={{marginTop:20,cursor:'pointer',zIndex:5}}
-          columnWidth={20}
-          onClick={this.props.PackClick.bind(this,this.props.id)}
-        >
-          {cryptogs}
-        </StackGrid>
-        <div style={{position:'absolute',right:-20,top:0,zIndex:10}} onClick={this.props.PackClick.bind(this,this.props.id)}>
-          {button}
-        </div>
+          <StackGrid
+            className="stack-grid--compact"
+            style={{cursor:'pointer',zIndex:5}}
+            columnWidth={20}
+            onClick={this.props.PackClick.bind(this,this.props.id)}
+          >
+            {cryptogs}
+          </StackGrid>
+          <div className="mt-3 mb-3" onClick={this.props.PackClick.bind(this,this.props.id)}>
+            {button}
+          </div>
         </div>
       )
     }else{
       return (
-        <StackGrid
-          style={{marginTop:50,cursor:'pointer'}}
-          columnWidth={70}
-          onClick={this.props.PackClick.bind(this,this.props.id)}
-        >
-          {cryptogs}
-        <div></div>
-        {button}
-        </StackGrid>
+        <div className="row align-items-center">
+          <div className="col-md-10">
+            <StackGrid
+              className="stack-grid"
+              style={{marginTop:50,cursor:'pointer'}}
+              columnWidth={70}
+              onClick={this.props.PackClick.bind(this,this.props.id)}
+            >
+              {cryptogs}
+            </StackGrid>
+          </div>
+          <div className="col-md-2">
+            <div className="buy-wrapper">
+              {button}
+            </div>
+          </div>
+        </div>
       )
     }
 

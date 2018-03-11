@@ -29,8 +29,12 @@ const DEBUG = false
 const MAINNETGWEI = 5
 const STARTINGGWEI = 21
 
-var Web3 = require('web3');
-let contractLoadingInterval;
+var Web3 = require('web3')
+var web3
+let contractLoadingInterval
+let webWaitInterval
+let waitForWeb3Interval
+
 export default createClass({
 	displayName: 'MainLayout',
 	propTypes: {children: PropTypes.func},
@@ -93,25 +97,7 @@ export default createClass({
 		};
 	},
 	componentDidMount(){
-		try{
-			let web3 = new Web3(window.web3.currentProvider)
-			web3.eth.net.getId().then((network)=>{
-				if(network>9999) network=9999;
-				let contracts = ContractLoader(["Cryptogs","SlammerTime"],web3,network);
-				let update = {web3:web3,contracts:contracts,contractsLoaded:true,network:network}
-				if(!this.state || !this.state.GWEI || this.state.GWEI == STARTINGGWEI){
-					if(network>1){
-						this.setGWEI(STARTINGGWEI)
-					}else{
-						this.setGWEI(MAINNETGWEI)
-					}
-				}
-				this.setState(update)
-			})
-
-		} catch(e) {
-			console.log(e)
-		}
+		waitForWeb3Interval = setInterval(this.waitForWeb3,191)
 		this.waitForContracts()
 	},
 	componentWillUnmount(){
@@ -125,6 +111,34 @@ export default createClass({
 	init(account) {
 		if(DEBUG) console.log("INIT")
 		this.setState({account:account})
+	},
+	waitForWeb3(){
+		try{
+			let thisWeb3
+			if(web3&&web3.currentProvider){
+				thisWeb3 = new Web3(web3.currentProvider)
+			}else if(window.web3&&window.web3.currentProvider){
+				thisWeb3 = new Web3(window.web3.currentProvider)
+			}
+			if(thisWeb3){
+				thisWeb3.eth.net.getId().then((network)=>{
+					if(network>9999) network=9999;
+					let contracts = ContractLoader(["Cryptogs","SlammerTime"],thisWeb3,network);
+					let update = {web3:thisWeb3,contracts:contracts,contractsLoaded:true,network:network}
+					if(!this.state || !this.state.GWEI || this.state.GWEI == STARTINGGWEI){
+						if(network>1){
+							this.setGWEI(STARTINGGWEI)
+						}else{
+							this.setGWEI(MAINNETGWEI)
+						}
+					}
+					this.setState(update)
+					clearInterval(waitForWeb3Interval)
+				})
+			}
+		} catch(e) {
+			console.log(e)
+		}
 	},
 	waitForContracts(){
 		if(this.state && this.state.contractsLoaded){

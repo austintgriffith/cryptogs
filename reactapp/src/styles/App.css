@@ -1,138 +1,136 @@
 body {
     background: #f8f8f8;
-    font-family: 'Lato', sans-serif
+    font-family: "Lato", sans-serif;
 }
 
 a:hover {
-    text-decoration: none
+    text-decoration: none;
 }
 
 hr {
-    background: none
+    background: none;
 }
 
 .btn {
-    color: #fff
+    color: #fff;
 }
 
 .btn--alt {
-    position: relative
+    position: relative;
 }
 
 .btn--alt.btn-lg {
-    padding-bottom: 1rem
+    padding-bottom: 1rem;
 }
 
 .btn.btn--alt::after {
-    content: '';
+    content: "";
     position: absolute;
     top: -5px;
     left: 5px;
     width: 100%;
     height: 100%;
-    border: 2px solid rgba(0, 0, 0, 0.4)
+    border: 2px solid rgba(0, 0, 0, 0.4);
 }
 
 .lead-2 {
     font-size: 1.2rem;
-    font-weight: 300
+    font-weight: 300;
 }
 
 .site-header {
     background: #f8f8f8;
-    padding: 1rem 0
+    padding: 1rem 0;
 }
 
 .logo {
     margin: 0;
-    font-size: 1.8rem
+    font-size: 1.8rem;
 }
 
 .logo a {
-    color: #333
+    color: #333;
 }
 
-.site-nav>ul {
-    margin: 0;
+.site-nav > ul {
+    margin: 0.5rem 0;
     padding: 0;
     list-style: none;
-    text-align: center
+    text-align: center;
 }
 
-.site-nav>ul>li {
+.site-nav > ul > li {
     display: inline-block;
-    margin: 0
+    margin: 0;
 }
 
-.site-nav>ul>li>a {
+.site-nav > ul > li > a {
     display: inline-block;
     padding: 0.5rem 0.8rem;
     color: #333;
-    font-weight: 700
+    font-weight: 700;
 }
 
-.site-nav>ul>li>a:hover,
-.site-nav>ul>li>a:focus {
-    color: #6ac360
+.site-nav > ul > li > a:hover,
+.site-nav > ul > li > a:focus {
+    color: #6ac360;
 }
-
-
 
 .banner {
     position: relative;
     padding: 4rem 0 4rem;
-    overflow: hidden
+    overflow: hidden;
 }
 
 .banner.banner--alt {
-    padding: 4rem 3rem
+    padding: 4rem 3rem;
 }
 
 .jumbotron {
     background: rgba(238, 238, 238, 0.8);
-    border-radius: 8px
+    border-radius: 8px;
 }
 
 .jumbotron--white {
-    background: #fff
+    background: #fff;
 }
 
 .background-primary {
-    background: url("./img/halftone.png")
+    background: url("./img/halftone.png");
 }
 
 .background-secondary {
-    background: url("./img/stacked_circles.png")
+    background: url("./img/stacked_circles.png");
 }
 
 .background-grey {
-    background: #f1f1f1
+    background: #f1f1f1;
 }
 
 .pack {
-    margin-bottom: 1.5rem
+    margin-bottom: 1.5rem;
 }
 
 .pack__contents {
     padding: 1rem;
     background: rgba(238, 238, 238, 0.8);
     border: 1px solid #ddd;
-    border-radius: 6px
+    border-radius: 6px;
 }
 
 .pack__sale {
     margin-bottom: 0.8rem;
-    font-size: 0.8rem
+    font-size: 0.8rem;
 }
 
 .pack__buy {
-    margin-top: 1rem
+    margin-top: 1rem;
 }
 
 /* === Pogs === */
 
 .pog {
-    border-radius: 50%
+    border-radius: 50%;
 }
 
 .pog.pog--large {
@@ -142,459 +140,525 @@ hr {
     height: 180px;
     background: #fff;
     border: 7px solid #eee;
-    box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.3)
+    box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.3);
 }
 
 .pog.pog--alt {
     background: #fff;
     border: 7px solid #eee;
-    box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.3)
+    box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.3);
 }
 
-
 .field {
-  position: relative;
-  height: 800px;
+    position: relative;
+    height: 800px;
 }
 
 @keyframes flightPath350 {
-    from { transform: rotate(180deg) translateX(-350px) translateY(175px) rotate(-180deg); }
-    to   { transform: rotate(0deg) translateX(0px) translateY(0px)  rotate(0deg); }
+    from {
+        transform: rotate(180deg) translateX(-350px) translateY(175px) rotate(-180deg);
+    }
+    to {
+        transform: rotate(0deg) translateX(0px) translateY(0px) rotate(0deg);
+    }
 }
 @keyframes flightPath300 {
-    from { transform: rotate(180deg) translateX(-300px) translateY(150px) rotate(-180deg); }
-    to   { transform: rotate(0deg) translateX(0px) translateY(0px)  rotate(0deg); }
+    from {
+        transform: rotate(180deg) translateX(-300px) translateY(150px) rotate(-180deg);
+    }
+    to {
+        transform: rotate(0deg) translateX(0px) translateY(0px) rotate(0deg);
+    }
 }
 @keyframes flightPath250 {
-    from { transform: rotate(180deg) translateX(-250px) translateY(125px) rotate(-180deg); }
-    to   { transform: rotate(0deg) translateX(0px) translateY(0px)  rotate(0deg); }
+    from {
+        transform: rotate(180deg) translateX(-250px) translateY(125px) rotate(-180deg);
+    }
+    to {
+        transform: rotate(0deg) translateX(0px) translateY(0px) rotate(0deg);
+    }
 }
 @keyframes flightPath200 {
-    from { transform: rotate(180deg) translateX(-200px) translateY(100px) rotate(-180deg); }
-    to   { transform: rotate(0deg) translateX(0px) translateY(0px)  rotate(0deg); }
+    from {
+        transform: rotate(180deg) translateX(-200px) translateY(100px) rotate(-180deg);
+    }
+    to {
+        transform: rotate(0deg) translateX(0px) translateY(0px) rotate(0deg);
+    }
 }
 @keyframes flightPath150 {
-    from { transform: rotate(180deg) translateX(-150px) translateY(75px) rotate(-180deg); }
-    to   { transform: rotate(0deg) translateX(0px) translateY(0px)  rotate(0deg); }
+    from {
+        transform: rotate(180deg) translateX(-150px) translateY(75px) rotate(-180deg);
+    }
+    to {
+        transform: rotate(0deg) translateX(0px) translateY(0px) rotate(0deg);
+    }
 }
 @keyframes flightPathN150 {
-    from { transform: rotate(-180deg) translateX(150px) translateY(75px) rotate(180deg); }
-    to   { transform: rotate(0deg) translateX(0px) translateY(0px)  rotate(0deg); }
+    from {
+        transform: rotate(-180deg) translateX(150px) translateY(75px) rotate(180deg);
+    }
+    to {
+        transform: rotate(0deg) translateX(0px) translateY(0px) rotate(0deg);
+    }
 }
 @keyframes flightPathN200 {
-    from { transform: rotate(-180deg) translateX(200px) translateY(100px) rotate(180deg); }
-    to   { transform: rotate(0deg) translateX(0px) translateY(0px)  rotate(0deg); }
+    from {
+        transform: rotate(-180deg) translateX(200px) translateY(100px) rotate(180deg);
+    }
+    to {
+        transform: rotate(0deg) translateX(0px) translateY(0px) rotate(0deg);
+    }
 }
 @keyframes flightPathN250 {
-    from { transform: rotate(-180deg) translateX(250px) translateY(125px) rotate(180deg); }
-    to   { transform: rotate(0deg) translateX(0px) translateY(0px)  rotate(0deg); }
+    from {
+        transform: rotate(-180deg) translateX(250px) translateY(125px) rotate(180deg);
+    }
+    to {
+        transform: rotate(0deg) translateX(0px) translateY(0px) rotate(0deg);
+    }
 }
 @keyframes flightPathN300 {
-    from { transform: rotate(-180deg) translateX(300px) translateY(150px) rotate(180deg); }
-    to   { transform: rotate(0deg) translateX(0px) translateY(0px)  rotate(0deg); }
+    from {
+        transform: rotate(-180deg) translateX(300px) translateY(150px) rotate(180deg);
+    }
+    to {
+        transform: rotate(0deg) translateX(0px) translateY(0px) rotate(0deg);
+    }
 }
 @keyframes flightPathN350 {
-    from { transform: rotate(-180deg) translateX(350px) translateY(175px) rotate(180deg); }
-    to   { transform: rotate(0deg) translateX(0px) translateY(0px)  rotate(0deg); }
+    from {
+        transform: rotate(-180deg) translateX(350px) translateY(175px) rotate(180deg);
+    }
+    to {
+        transform: rotate(0deg) translateX(0px) translateY(0px) rotate(0deg);
+    }
 }
 
 .spinner {
-  animation-iteration-count: 1;
-  animation-timing-function:linear;
-  animation-duration:1s;
-  animation-delay:0.1s;
+    animation-iteration-count: 1;
+    animation-timing-function: linear;
+    animation-duration: 1s;
+    animation-delay: 0.1s;
 }
 
-
 .coin__container {
-  height: 160px;
-  width: 160px;
-  transition: all 1s ease;
+    margin: 0 auto;
+    height: 160px;
+    width: 160px;
+    transition: all 1s ease;
 }
 
 .is-stacked .coin__container {
-  height: 10px;
+    height: 10px;
 }
 
 .coin {
-  height: 160px;
-  width: 160px;
-  position: absolute;
-  transform-style: preserve-3d;
-  transform-origin: 50%;
+    height: 160px;
+    width: 160px;
+    position: absolute;
+    transform-style: preserve-3d;
+    transform-origin: 50%;
 }
 
 .is-slam .coin__container {
-  height: 160px;
-  position: absolute;
-  transition: all 0.6s ease;
+    height: 160px;
+    position: absolute;
+    transition: all 0.6s ease;
 }
 
 .is-slam .coin {
-  animation: spin 0.4s infinite;
-  animation-timing-function: linear;
-  transform: rotateX(75deg);
+    animation: spin 0.4s infinite;
+    animation-timing-function: linear;
+    transform: rotateX(75deg);
 }
 
 .is-flip .coin {
-  animation: spin 0.6s infinite;
-  animation-timing-function: linear;
+    animation: spin 0.6s infinite;
+    animation-timing-function: linear;
 }
 
 .is-slowroll .coin {
-  animation: spin 3s infinite;
-  animation-timing-function: linear;
+    animation: spin 3s infinite;
+    animation-timing-function: linear;
 }
 
 .is-creeproll .coin {
-  animation: spin 11s infinite;
-  animation-timing-function: linear;
+    animation: spin 11s infinite;
+    animation-timing-function: linear;
 }
 
 .coin .coin__front,
 .coin .coin__back {
-  position: absolute;
-  height: 160px;
-  width: 160px;
-  border-radius: 50%;
-  background-size: cover;
+    position: absolute;
+    height: 160px;
+    width: 160px;
+    border-radius: 50%;
+    background-size: cover;
 }
 
 .coin .coin__front {
-  transform: translateZ(5px);
+    transform: translateZ(5px);
 }
 
 .coin .coin__back {
-  transform: translateZ(-5px) rotateY(180deg);
+    transform: translateZ(-5px) rotateY(180deg);
 }
 
 .coin .coin__side {
-  transform: translateX(75px);
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
+    transform: translateX(75px);
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
 }
 
 .coin .coin__side .coin__c {
-  height: 160px;
-  width: 10px;
-  position: absolute;
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
+    height: 160px;
+    width: 10px;
+    position: absolute;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
 }
 
 .coin .coin__side .coin__c:before,
 .coin .coin__side .coin__c:after {
-  content: '';
-  display: block;
-  height: 15.682742452729697px;
-  width: 10px;
-  position: absolute;
-  transform: rotateX(84.375deg);
-  background: #999999;
+    content: "";
+    display: block;
+    height: 15.682742452729697px;
+    width: 10px;
+    position: absolute;
+    transform: rotateX(84.375deg);
+    background: #999999;
 }
 
 .coin .coin__side .coin__c:before {
-  transform-origin: top center;
+    transform-origin: top center;
 }
 .coin .coin__side .coin__c:after {
-  bottom: 0;
-  transform-origin: center bottom;
+    bottom: 0;
+    transform-origin: center bottom;
 }
 .coin .coin__side .coin__c:nth-child(16) {
-  transform: rotateY(90deg) rotateX(180deg);
+    transform: rotateY(90deg) rotateX(180deg);
 }
 .coin .coin__side .coin__c:nth-child(15) {
-  transform: rotateY(90deg) rotateX(168.75deg);
+    transform: rotateY(90deg) rotateX(168.75deg);
 }
 .coin .coin__side .coin__c:nth-child(14) {
-  transform: rotateY(90deg) rotateX(157.5deg);
+    transform: rotateY(90deg) rotateX(157.5deg);
 }
 .coin .coin__side .coin__c:nth-child(13) {
-  transform: rotateY(90deg) rotateX(146.25deg);
+    transform: rotateY(90deg) rotateX(146.25deg);
 }
 .coin .coin__side .coin__c:nth-child(12) {
-  transform: rotateY(90deg) rotateX(135deg);
+    transform: rotateY(90deg) rotateX(135deg);
 }
 .coin .coin__side .coin__c:nth-child(11) {
-  transform: rotateY(90deg) rotateX(123.75deg);
+    transform: rotateY(90deg) rotateX(123.75deg);
 }
 .coin .coin__side .coin__c:nth-child(10) {
-  transform: rotateY(90deg) rotateX(112.5deg);
+    transform: rotateY(90deg) rotateX(112.5deg);
 }
 .coin .coin__side .coin__c:nth-child(9) {
-  transform: rotateY(90deg) rotateX(101.25deg);
+    transform: rotateY(90deg) rotateX(101.25deg);
 }
 .coin .coin__side .coin__c:nth-child(8) {
-  transform: rotateY(90deg) rotateX(90deg);
+    transform: rotateY(90deg) rotateX(90deg);
 }
 .coin .coin__side .coin__c:nth-child(7) {
-  transform: rotateY(90deg) rotateX(78.75deg);
+    transform: rotateY(90deg) rotateX(78.75deg);
 }
 .coin .coin__side .coin__c:nth-child(6) {
-  transform: rotateY(90deg) rotateX(67.5deg);
+    transform: rotateY(90deg) rotateX(67.5deg);
 }
 .coin .coin__side .coin__c:nth-child(5) {
-  transform: rotateY(90deg) rotateX(56.25deg);
+    transform: rotateY(90deg) rotateX(56.25deg);
 }
 .coin .coin__side .coin__c:nth-child(4) {
-  transform: rotateY(90deg) rotateX(45deg);
+    transform: rotateY(90deg) rotateX(45deg);
 }
 .coin .coin__side .coin__c:nth-child(3) {
-  transform: rotateY(90deg) rotateX(33.75deg);
+    transform: rotateY(90deg) rotateX(33.75deg);
 }
 .coin .coin__side .coin__c:nth-child(2) {
-  transform: rotateY(90deg) rotateX(22.5deg);
+    transform: rotateY(90deg) rotateX(22.5deg);
 }
 .coin .coin__side .coin__c:nth-child(1) {
-  transform: rotateY(90deg) rotateX(11.25deg);
+    transform: rotateY(90deg) rotateX(11.25deg);
 }
 
 .coin .coin__front {
-  background-color: #CCCCCC;
-  background-position: center center;
+    background-color: #cccccc;
+    background-position: center center;
 }
 
 .coin .coin__back {
-  background-color: #CCCCCC;
+    background-color: #cccccc;
+}
+
+.stack-grid {}
+
+.stack-grid .coin__container {
+    width: 120px;
+    height: 120px;
+}
+
+.stack-grid--compact {
+    max-width: 380px;
+    margin: 0 auto;
+}
+
+.stack-grid--compact .coin__container {
+    width: 120px;
+    height: 120px;
+}
+
+.buy-wrapper {
+    margin-top: 1rem;
 }
 
 @keyframes spin {
-  from {
-    transform: rotateX(75deg);
-  }
-  to {
-    transform: rotateX(435deg);
-  }
+    from {
+        transform: rotateX(75deg);
+    }
+    to {
+        transform: rotateX(435deg);
+    }
 }
-
 
 .slammer__container {
-  height: 160px;
-  width: 160px;
-  transition: all 1s ease;
+    height: 160px;
+    width: 160px;
+    transition: all 1s ease;
 }
 
-
 .slammer {
-  height: 160px;
-  width: 160px;
-  position: absolute;
-  transform-style: preserve-3d;
-  transform-origin: 50%;
-  /*transform: rotateY(45deg);*/
+    height: 160px;
+    width: 160px;
+    position: absolute;
+    transform-style: preserve-3d;
+    transform-origin: 50%;
+    /*transform: rotateY(45deg);*/
 }
 
 .slammer .slammer__front,
 .slammer .slammer__back {
-  position: absolute;
-  height: 160px;
-  width: 160px;
-  border-radius: 50%;
-  background-size: cover;
+    position: absolute;
+    height: 160px;
+    width: 160px;
+    border-radius: 50%;
+    background-size: cover;
 }
 
 .slammer .slammer__front {
-  transform: translateZ(15px);
+    transform: translateZ(15px);
 }
 
 .slammer .slammer__back {
-  transform: translateZ(-15px) rotateY(180deg);
+    transform: translateZ(-15px) rotateY(180deg);
 }
 
 .slammer .slammer__side {
-  transform: translateX(65px);
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
+    transform: translateX(65px);
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
 }
 
 .slammer .slammer__side .slammer__c {
-  height: 160px;
-  width: 30px;
-  position: absolute;
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
+    height: 160px;
+    width: 30px;
+    position: absolute;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
 }
 
 .slammer .slammer__side .slammer__c:before,
 .slammer .slammer__side .slammer__c:after {
-  content: '';
-  display: block;
-  height: 15.682742452729697px;
-  width: 30px;
-  position: absolute;
-  transform: rotateX(84.375deg);
-  background: #B3BEBF;
+    content: "";
+    display: block;
+    height: 15.682742452729697px;
+    width: 30px;
+    position: absolute;
+    transform: rotateX(84.375deg);
+    background: #b3bebf;
 }
 
 .slammer .slammer__side .slammer__c:before {
-  transform-origin: top center;
+    transform-origin: top center;
 }
 .slammer .slammer__side .slammer__c:after {
-  bottom: 0;
-  transform-origin: center bottom;
+    bottom: 0;
+    transform-origin: center bottom;
 }
 .slammer .slammer__side .slammer__c:nth-child(16) {
-  transform: rotateY(90deg) rotateX(180deg);
+    transform: rotateY(90deg) rotateX(180deg);
 }
 .slammer .slammer__side .slammer__c:nth-child(15) {
-  transform: rotateY(90deg) rotateX(168.75deg);
+    transform: rotateY(90deg) rotateX(168.75deg);
 }
 .slammer .slammer__side .slammer__c:nth-child(14) {
-  transform: rotateY(90deg) rotateX(157.5deg);
+    transform: rotateY(90deg) rotateX(157.5deg);
 }
 .slammer .slammer__side .slammer__c:nth-child(13) {
-  transform: rotateY(90deg) rotateX(146.25deg);
+    transform: rotateY(90deg) rotateX(146.25deg);
 }
 .slammer .slammer__side .slammer__c:nth-child(12) {
-  transform: rotateY(90deg) rotateX(135deg);
+    transform: rotateY(90deg) rotateX(135deg);
 }
 .slammer .slammer__side .slammer__c:nth-child(11) {
-  transform: rotateY(90deg) rotateX(123.75deg);
+    transform: rotateY(90deg) rotateX(123.75deg);
 }
 .slammer .slammer__side .slammer__c:nth-child(10) {
-  transform: rotateY(90deg) rotateX(112.5deg);
+    transform: rotateY(90deg) rotateX(112.5deg);
 }
 .slammer .slammer__side .slammer__c:nth-child(9) {
-  transform: rotateY(90deg) rotateX(101.25deg);
+    transform: rotateY(90deg) rotateX(101.25deg);
 }
 .slammer .slammer__side .slammer__c:nth-child(8) {
-  transform: rotateY(90deg) rotateX(90deg);
+    transform: rotateY(90deg) rotateX(90deg);
 }
 .slammer .slammer__side .slammer__c:nth-child(7) {
-  transform: rotateY(90deg) rotateX(78.75deg);
+    transform: rotateY(90deg) rotateX(78.75deg);
 }
 .slammer .slammer__side .slammer__c:nth-child(6) {
-  transform: rotateY(90deg) rotateX(67.5deg);
+    transform: rotateY(90deg) rotateX(67.5deg);
 }
 .slammer .slammer__side .slammer__c:nth-child(5) {
-  transform: rotateY(90deg) rotateX(56.25deg);
+    transform: rotateY(90deg) rotateX(56.25deg);
 }
 .slammer .slammer__side .slammer__c:nth-child(4) {
-  transform: rotateY(90deg) rotateX(45deg);
+    transform: rotateY(90deg) rotateX(45deg);
 }
 .slammer .slammer__side .slammer__c:nth-child(3) {
-  transform: rotateY(90deg) rotateX(33.75deg);
+    transform: rotateY(90deg) rotateX(33.75deg);
 }
 .slammer .slammer__side .slammer__c:nth-child(2) {
-  transform: rotateY(90deg) rotateX(22.5deg);
+    transform: rotateY(90deg) rotateX(22.5deg);
 }
 .slammer .slammer__side .slammer__c:nth-child(1) {
-  transform: rotateY(90deg) rotateX(11.25deg);
+    transform: rotateY(90deg) rotateX(11.25deg);
 }
 
 .slammer .slammer__front {
-  background-color: #999999;
-  background-position: center center;
+    background-color: #999999;
+    background-position: center center;
 }
 
 .slammer .slammer__back {
-  /*background-color: #e5c100;*/
-  background-image: -webkit-radial-gradient(  50%   0%,  8% 50%, hsla(0,0%,100%,.5) 0%, hsla(0,0%,100%,0) 100%),
-    -webkit-radial-gradient(  50% 100%, 12% 50%, hsla(0,0%,100%,.6) 0%, hsla(0,0%,100%,0) 100%),
-    -webkit-radial-gradient(   0%  50%, 50%  7%, hsla(0,0%,100%,.5) 0%, hsla(0,0%,100%,0) 100%),
-    -webkit-radial-gradient( 100%  50%, 50%  5%, hsla(0,0%,100%,.5) 0%, hsla(0,0%,100%,0) 100%),
-
-    -webkit-repeating-radial-gradient( 50% 50%, 100% 100%, hsla(0,0%,  0%,0) 0%, hsla(0,0%,  0%,0)   3%, hsla(0,0%,  0%,.1) 3.5%),
-    -webkit-repeating-radial-gradient( 50% 50%, 100% 100%, hsla(0,0%,100%,0) 0%, hsla(0,0%,100%,0)   6%, hsla(0,0%,100%,.1) 7.5%),
-    -webkit-repeating-radial-gradient( 50% 50%, 100% 100%, hsla(0,0%,100%,0) 0%, hsla(0,0%,100%,0) 1.2%, hsla(0,0%,100%,.2) 2.2%),
-
-    -webkit-radial-gradient( 50% 50%, 200% 50%, hsla(0,0%,90%,1) 5%, hsla(0,0%,85%,1) 30%, hsla(0,0%,60%,1) 100%);
+    /*background-color: #e5c100;*/
+    background-image: -webkit-radial-gradient(50% 0%, 8% 50%, hsla(0, 0%, 100%, 0.5) 0%, hsla(0, 0%, 100%, 0) 100%), -webkit-radial-gradient(50% 100%, 12% 50%, hsla(0, 0%, 100%, 0.6) 0%, hsla(0, 0%, 100%, 0) 100%), -webkit-radial-gradient(0% 50%, 50% 7%, hsla(0, 0%, 100%, 0.5) 0%, hsla(0, 0%, 100%, 0) 100%), -webkit-radial-gradient(100% 50%, 50% 5%, hsla(0, 0%, 100%, 0.5) 0%, hsla(0, 0%, 100%, 0) 100%), -webkit-repeating-radial-gradient(50% 50%, 100% 100%, hsla(0, 0%, 0%, 0) 0%, hsla(0, 0%, 0%, 0) 3%, hsla(0, 0%, 0%, 0.1) 3.5%), -webkit-repeating-radial-gradient(50% 50%, 100% 100%, hsla(0, 0%, 100%, 0) 0%, hsla(0, 0%, 100%, 0) 6%, hsla(0, 0%, 100%, 0.1) 7.5%), -webkit-repeating-radial-gradient(50% 50%, 100% 100%, hsla(0, 0%, 100%, 0) 0%, hsla(0, 0%, 100%, 0) 1.2%, hsla(0, 0%, 100%, 0.2) 2.2%), -webkit-radial-gradient(50% 50%, 200% 50%, hsla(0, 0%, 90%, 1) 5%, hsla(0, 0%, 85%, 1) 30%, hsla(0, 0%, 60%, 1) 100%);
 }
 
 @keyframes spinY {
-  from {
-    transform: rotateY(0deg);
-  }
-  to {
-    transform: rotateY(360deg);
-  }
+    from {
+        transform: rotateY(0deg);
+    }
+    to {
+        transform: rotateY(360deg);
+    }
 }
-
 
 .coin--animation {
     animation: spinY 4s infinite;
-    animation-timing-function: linear
+    animation-timing-function: linear;
 }
 
 .coin--animationfast {
     animation: spinY 0.8s infinite;
-    animation-timing-function: linear
+    animation-timing-function: linear;
 }
 
 .coin__container--center {
-    margin: 0 auto
+    margin: 0 auto;
 }
 
 /* === Loader === */
 
 .spinner-b {
-  margin: 100px auto 0;
-  width: 70px;
-  text-align: center;
+    margin: 100px auto 0;
+    width: 70px;
+    text-align: center;
 }
 
 .spinner-b > div {
-  width: 18px;
-  height: 18px;
-  background-color: #333;
+    width: 18px;
+    height: 18px;
+    background-color: #333;
 
-  border-radius: 100%;
-  display: inline-block;
-  -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
-  animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+    border-radius: 100%;
+    display: inline-block;
+    -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+    animation: sk-bouncedelay 1.4s infinite ease-in-out both;
 }
 
 .spinner-b .bounce1 {
-  -webkit-animation-delay: -0.32s;
-  animation-delay: -0.32s;
+    -webkit-animation-delay: -0.32s;
+    animation-delay: -0.32s;
 }
 
 .spinner-b .bounce2 {
-  -webkit-animation-delay: -0.16s;
-  animation-delay: -0.16s;
+    -webkit-animation-delay: -0.16s;
+    animation-delay: -0.16s;
 }
 
 @-webkit-keyframes sk-bouncedelay {
-  0%, 80%, 100% { -webkit-transform: scale(0) }
-  40% { -webkit-transform: scale(1.0) }
+    0%,
+    80%,
+    100% {
+        -webkit-transform: scale(0);
+    }
+    40% {
+        -webkit-transform: scale(1);
+    }
 }
 
 @keyframes sk-bouncedelay {
-  0%, 80%, 100% {
-    -webkit-transform: scale(0);
-    transform: scale(0);
-  } 40% {
-    -webkit-transform: scale(1.0);
-    transform: scale(1.0);
-  }
+    0%,
+    80%,
+    100% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+    40% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
 }
 
 /* === Media Queries === */
 
+@media (max-width: 767px) {
+}
+
 @media (min-width: 768px) {
-    .site-nav>ul {
-        text-align: right
+    .site-nav > ul {
+        margin: 0;
+        text-align: right;
     }
 
     .banner {
-        padding: 4rem 0 7rem
+        padding: 4rem 0 7rem;
     }
     .banner.banner--alt {
-        height: 480px
+        height: 480px;
     }
 
     .pog.pog--large {
-        display: block
+        display: block;
     }
 }
 
 @media (min-width: 992px) {
     .banner {
-        padding: 4rem 0 8rem
+        padding: 4rem 0 8rem;
     }
 
     .pog.pog--large {
         width: 240px;
-        height: 240px
+        height: 240px;
     }
+
+    .buy-wrapper {
+        margin-top: 4rem;
+    }
+
 }

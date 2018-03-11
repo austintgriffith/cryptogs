@@ -123,7 +123,7 @@ export default createClass({
         )
       }
 
-      let bigTextStyle = {width:"100%",textAlign:"center",fontWidth:'bold',fontSize:16,padding:10}
+      let bigTextStyle = {width:"100%",textAlign:"center",fontWidth:'bold',fontSize:14,padding:3}
       return (
         <Motion
           defaultStyle={{
@@ -137,23 +137,25 @@ export default createClass({
           >
             {currentStyles => {
               return (
-                <div onClick={this.toggle} className={"messageGray"}  style={{zIndex:999,opacity:0.9,position:'fixed',bottom:currentStyles.bottom,left:offset,margin:'0 auto',width:width,height:currentStyles.height,backgroundColor:"#eeeeee",padding:20,border:"20px solid #dddddd"}}>
+                <div onClick={this.toggle} className={"messageGray"}  style={{zIndex:999,opacity:0.95,position:'fixed',bottom:currentStyles.bottom,left:offset,margin:'0 auto',width:width,height:currentStyles.height,backgroundColor:"#eeeeee",padding:20,border:"20px solid #dddddd"}}>
                   <div style={bigTextStyle}>
-                      <div style={{opacity:0.3,float:'left',marginTop:-95}}><LoaderAnimation/></div>
-                      <div style={{opacity:0.3,float:'right',marginTop:-95}}>{rightSideLoader}</div>
+                      <div style={{opacity:0.3,float:'left',marginTop:-100,paddingLeft:30}}><LoaderAnimation/></div>
+                      <div style={{opacity:0.3,float:'right',marginTop:-100,paddingRight:30}}>{rightSideLoader}</div>
                       {theMessage}
+                      <div style={{marginTop:10}}></div>
                   </div>
 
                   <StackGrid
-                    style={{width:"100%",marginLeft:8}}
-                    columnWidth={110}
+                    style={{width:"100%",marginLeft:54}}
+                    columnWidth={95}
                   >
                     {blockDisplay}
                   </StackGrid>
-                  <div style={{marginTop:20}}/>
+                  <div style={{marginTop:12}}/>
                   <div style={bigTextStyle}>Blocks are taking an average of {average} seconds plus network time.</div>
-                  <div style={bigTextStyle}>Your transaction will be mined into a block based on your <img style={{opacity:0.5}} src="/gas.png"/> <a href="https://ethgasstation.info" target="_blank">gas price</a>.</div>
-                  <div style={bigTextStyle}>Higher <img style={{opacity:0.5}} src="/gas.png"/> gas prices mean faster trasactions, but they will cost more.</div>
+                  <div style={bigTextStyle}>Your transaction will be mined into a block based on your gas price.</div>
+                  <div style={bigTextStyle}>Higher <img style={{opacity:0.5}} src="/gas.png"/> means faster trasactions.</div>
+                  <div style={bigTextStyle}>Gas prices must be at least higher than the <a href="https://ethgasstation.info" target="_blank">Safe Low</a>.</div>
                   <div style={{marginLeft:150,marginTop:10}}>
                       <MMButton color={"#6081c3"} onClick={()=>{
       									window.open(etherscan+"address/"+contracts['Cryptogs']._address);

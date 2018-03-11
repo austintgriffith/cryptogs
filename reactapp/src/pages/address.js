@@ -14,6 +14,7 @@ export default createClass({
 		contracts: PropTypes.array,
 		account: PropTypes.string,
 		myTokens: PropTypes.array,
+		etherscan: PropTypes.string,
 	},
 	render(){
 		const { contracts } = this.context
@@ -33,6 +34,7 @@ export default createClass({
 	              path="/address/:address"
 	              component={AddressStack}
 								context={this.context}
+								etherscan={this.context.etherscan}
 	            />
 	          </div>
 	        )}

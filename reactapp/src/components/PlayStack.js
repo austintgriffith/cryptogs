@@ -718,7 +718,7 @@ class PlayStack extends Component {
               if(parseInt(throwSlammerEvent['token'+i+'Flipped'])!=0&&throwSlammerEvent['token'+i+'Flipped']){
                 //console.log("throwSlammerEvent['token'+i+'Flipped']",throwSlammerEvent['token'+i+'Flipped'])
                 flipped.push(
-                  <div key={"flipped"+i} style={{position:'absolute',left:40+((count++)*20),top:-40,zIndex:1}}>
+                  <div key={"flipped"+i} style={{position:'absolute',left:20+((count++)*20),top:-40,zIndex:1}}>
                     <Cryptog angle={25} scale={0.4} id={throwSlammerEvent['token'+i+'Flipped'].id} image={throwSlammerEvent['token'+i+'Flipped'].image}/>
                   </div>
                 )
@@ -733,15 +733,16 @@ class PlayStack extends Component {
 
          return (
            <div key={"logdiv"+throwSlammerEvent.blockNumber} style={{position:"relative",width:"100%",height:70,zIndex:99}}>
-              <div style={{position:"absolute",left:0,top:16}}>
-              <a target="_blank" href={"/address/"+throwSlammerEvent.whoDoneIt}>
-                <Blockies
-                  seed={throwSlammerEvent.whoDoneIt.toLowerCase()}
-                  scale={6}
-                />
+              {flipped}
+              <div style={{position:"absolute",left:0,top:16,zIndex:3}}>
+                <a target="_blank" href={"/address/"+throwSlammerEvent.whoDoneIt} style={{zIndex:4}}>
+                  <Blockies
+                    seed={throwSlammerEvent.whoDoneIt.toLowerCase()}
+                    scale={6}
+                  />
                 </a>
               </div>
-              {flipped}
+
            </div>
          )
        }
@@ -848,7 +849,7 @@ class PlayStack extends Component {
         }else{
           message = (
             <div>
-              <div style={{padding:10,paddingTop:20}}>Waiting for other players to join, share game url to challenge your friends:</div>
+              <div style={{padding:10,paddingTop:20}}>Waiting for other players, share game url to challenge your friends:</div>
               <pre id="url" style={{fontSize:14}} onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
 
               <div className={"centercontainer"}>
@@ -1001,7 +1002,7 @@ class PlayStack extends Component {
 
       if(stackMode<9){
         timerDisplay = (
-          <div style={{float:'right'}}>
+          <div style={{position:'fixed',bottom:30,right:60}}>
             <div style={{fontSize:30}}>{turn}</div>
             <div style={{fontSize:12,opacity:0.2}}>{blockNumber-lastBlock}/{TIMEOUTBLOCKS} blocks to timeout</div>
             <div>{drainDisplay}</div>
@@ -1017,7 +1018,7 @@ class PlayStack extends Component {
     let flipDisplyContent = ""
     if(coinFlipResultDisplay || flipDisplay){
       flipDisplyContent = (
-        <div className={"messageGray"} style={{clear:'both',marginTop:50,width:250,float:'right',padding:20}}>
+        <div className={"messageGray"} style={{clear:'both',marginTop:50,width:200,float:'right',padding:20}}>
           {coinFlipResultDisplay}
           {flipDisplay}
         </div>
@@ -1035,7 +1036,7 @@ class PlayStack extends Component {
       {timerDisplay}
       {flipDisplyContent}
       {display}
-      <div style={{position:'absolute',left:window.innerWidth/3,top:550}}>
+      <div style={{position:'absolute',left:window.innerWidth/4,top:550}}>
 
         {mixedStack}
         {flightStack}

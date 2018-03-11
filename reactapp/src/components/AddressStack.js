@@ -35,7 +35,7 @@ class AddressStack extends Component {
     this.setState({tokenData:tokens,hasLoadedFirst:true})
   }
   render(){
-    let {hasLoadedFirst,tokenData,hovers} = this.state
+    let {hasLoadedFirst,tokenData,hovers,} = this.state
     if(!tokenData){
       return (
         <div style={{opacity:0.3}}><PogAnimation loader={true} image={"unicorn.png"}/></div>
@@ -99,12 +99,12 @@ class AddressStack extends Component {
           <span style={{verticalAlign:'middle'}}>
           <Blockies
             seed={this.props.match.params.address.toLowerCase()}
-            scale={4}
+            scale={3}
           />
           </span>
-          <span style={{fontSize:20,paddingLeft:5}}>{this.props.match.params.address}</span>
+          <span style={{fontSize:20,paddingLeft:5}}><a target="_blank" href={this.props.etherscan+"address/"+this.props.match.params.address}>{this.props.match.params.address}</a></span>
         </div>
-        <div style={{float:'right',marginTop:-40}}>({tokenData.length})</div>
+        <div style={{float:'right',marginTop:-140,opacity:0.4}}>({tokenData.length})</div>
         <StackGrid
           style={{marginTop:90}}
           columnWidth={115}
