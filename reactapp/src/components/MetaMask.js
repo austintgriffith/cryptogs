@@ -116,7 +116,7 @@ class MetaMask extends Component {
           <a target="_blank" href="https://metamask.io/">
           {metamaskImage}
           <span style={this.state.textStyle}>
-            Install MetaMask to play
+            Install MetaMask to play!
           </span>
           </a>
         </div>
@@ -177,7 +177,7 @@ class MetaMask extends Component {
 
         let networkDisplay = this.state.network
         if(this.state.network=="Mainnet"){
-          networkDisplay = <span>Mainnet</span>
+          networkDisplay = <span>Mainnet!</span>
         }
 
         metamask = (

@@ -1,3 +1,6 @@
+reactapp/fullchain.pem
+reactapp/privkey.pem
+reactapp/static/
 token.report
 deploy.network
 reactapp/src/contracts/*999*
