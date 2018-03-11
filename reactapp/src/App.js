@@ -95,6 +95,7 @@ export default createClass({
 			GWEI:GWEI,
 			alert: "",
 			network:0,
+			web3Used:"",
 		};
 	},
 	componentDidMount(){
@@ -114,21 +115,23 @@ export default createClass({
 		this.setState({account:account})
 	},
 	waitForWeb3(){
-		console.log("checking in on web3...")
 		try{
 			let thisWeb3
+			let web3Used = ""
 			if(web3&&web3.currentProvider){
+				web3Used = "native"
 				thisWeb3 = new Web3(web3.currentProvider)
 			}else if(window.web3&&window.web3.currentProvider){
+				web3Used = "window"
 				thisWeb3 = new Web3(window.web3.currentProvider)
 			}
-			if(thisWeb3){
+			if(thisWeb3&&thisWeb3.eth&&thisWeb3.eth.net){
 				thisWeb3.eth.net.getId().then((network)=>{
 					if(network>9999) network=9999;
-					if(network!=this.state.network){
+					if(network!=this.state.network || web3Used!=this.state.web3Used){
 						console.log("SAVING WEB3 and LOADING CONTRACTS...")
 						let contracts = ContractLoader(["Cryptogs","SlammerTime"],thisWeb3,network);
-						let update = {web3:thisWeb3,contracts:contracts,contractsLoaded:true,network:network}
+						let update = {web3:thisWeb3,contracts:contracts,contractsLoaded:true,network:network,web3Used:web3Used}
 						if(!this.state || !this.state.GWEI || this.state.GWEI == STARTINGGWEI){
 							if(network>1){
 								this.setGWEI(STARTINGGWEI)
@@ -197,6 +200,8 @@ export default createClass({
 					setEtherscan={this.setEtherscan}
 					metamaskHint={this.state.metamaskHint}
 					metaMaskHintFn={this.metaMaskHintFn}
+					web3={this.state.web3}
+					network={this.state.network}
 				/>
 
 				<div>

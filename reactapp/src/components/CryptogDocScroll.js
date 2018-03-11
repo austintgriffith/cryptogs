@@ -11,12 +11,11 @@ export default createClass({
     window.removeEventListener('scroll', this.handleScroll);
   },
   handleScroll() {
-    console.log("SCROLL")
     this.setState({scroll:(window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop})
   },
   render(){
     if(!this.state) return (<div></div>)
-    if(this.state.scroll<100 || this.state.scroll>1200) return  (<div></div>)
+    if(this.state.scroll>1200) return  (<div></div>)
     return (
       <Cryptog key={"cryptogdocscroll"} id={0} scale={1} angle={(this.state.scroll*2)%360}image={"awyinandyang.jpg"}/>
     )

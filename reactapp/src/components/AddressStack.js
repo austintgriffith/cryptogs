@@ -48,7 +48,7 @@ class AddressStack extends Component {
     }
 
     let cryptogScale = Math.min(0.8, 0.8 * (window.innerWidth/700))
-    console.log("cryptogScale",cryptogScale)
+    //console.log("cryptogScale",cryptogScale)
     let stackWidth = cryptogScale*115
 
 		let tokenDisplay = tokenData.map((token)=>{

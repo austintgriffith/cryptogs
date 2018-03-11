@@ -6,6 +6,7 @@ import Stack from '../components/Stack.js'
 import EventParser from '../modules/eventParser.js';
 import LiveParser from '../modules/liveParser.js';
 import MMButton from '../components/MMButton.js'
+import PogAnimation from '../components/PogAnimation'
 
 const DEBUG = false;
 const BLOCKLOOKBACK = 240*8; //show the last 8 hours
@@ -142,7 +143,7 @@ export default createClass({
 		const { contracts,account,metaMaskHintFn } = this.context
 		if(!contracts.Cryptogs){
 			return (
-				<div style={{opacity:0.3}}>Loading...</div>
+				<div style={{opacity:0.3}}><PogAnimation loader={true} image={'unicorn.png'} /></div>
 			)
 		}
 		const {allStacks} = this.state
