@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Blockies from 'react-blockies'
+
 class MetaMask extends Component {
   constructor(props) {
     super(props);
@@ -19,18 +20,17 @@ class MetaMask extends Component {
     this.checkMetamask()
   }
   checkMetamask() {
-    if (typeof this.props.web3 == 'undefined' || typeof this.props.web3.eth == 'undefined') {
+    if (typeof window.web3 == 'undefined') {
       if(this.state.metamask!=0) this.setState({metamask:0})
     } else {
-
-        let network = translateNetwork(this.props.network);
+      window.web3.version.getNetwork((err,network)=>{
+        network = translateNetwork(network);
         if( network=="Morden" || network=="Rinkeby" || network=="Kovan"){
           if(this.state.metamask!=2) this.setState({metamask:2,network:network})
         }else{
           let accounts
           try{
-            this.props.web3.eth.getAccounts((err,_accounts)=>{
-
+            window.web3.eth.getAccounts((err,_accounts)=>{
               if(err){
                 console.log("metamask error",err)
                 if(this.state.metamask!=-1) this.setState({metamask:-1,network:network})
@@ -70,11 +70,11 @@ class MetaMask extends Component {
           }
         }
 
+      })
     }
   }
   render(){
     let metamask
-    let debug = ""
 
     let blockDisplay = (
       <span style={{padding:5,opacity:0.3}}>
@@ -116,7 +116,7 @@ class MetaMask extends Component {
           <a target="_blank" href="https://metamask.io/">
           {metamaskImage}
           <span style={this.state.textStyle}>
-            Install MetaMask to play!
+            Install MetaMask to play
           </span>
           </a>
         </div>
@@ -210,7 +210,7 @@ class MetaMask extends Component {
             <div style={{position:"absolute",left:10,top:10}}>
               <a target="_Blank" href="https://wallet.ethereum.org/">
               <Blockies
-                seed={this.state.accounts[0].toLowerCase()}
+                seed={this.state.accounts[0]}
                 scale={6}
               />
               </a>
@@ -222,7 +222,6 @@ class MetaMask extends Component {
     return (
       <div style={{float:'left',padding:2,paddingRight:10,marginLeft:this.props.currentStyles.marginLeft}}>
       {metamask}
-      {debug}
       </div>
     )
   }
