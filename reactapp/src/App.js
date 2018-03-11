@@ -99,7 +99,7 @@ export default createClass({
 	},
 	componentDidMount(){
 		try{
-			let web3 = new Web3(window.web3.currentProvider)
+			web3 = new Web3(window.web3.currentProvider)
 			web3.eth.net.getId().then((network)=>{
 				if(network>9999) network=9999;
 				let contracts = ContractLoader(["Cryptogs","SlammerTime"],web3,network);
