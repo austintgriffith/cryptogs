@@ -18,7 +18,7 @@ export default createClass({
           <Spinner key={"sendspinner"+t} guts={
             (spinning)=>{
               return (
-                <Cryptog key={"cryptog"+this.props["_token"+t]} scale={0.6} id={this.props["_token"+t]} slowrolling={spinning} image={this.props["_token"+t+"Image"]} zIndex={1}/>
+                <Cryptog key={"cryptog"+this.props["_token"+t]} scale={1} id={this.props["_token"+t]} slowrolling={spinning} image={this.props["_token"+t+"Image"]} zIndex={1}/>
               )
             }
           }/>
@@ -32,7 +32,7 @@ export default createClass({
            <Spinner key={"ownspinner"+t} guts={
              (spinning)=>{
                return (
-                 <Cryptog key={"cryptog"+this.props["token"+t]} scale={0.6} id={this.props["token"+t]} slowrolling={spinning} image={this.props["token"+t+"Image"]} zIndex={1}/>
+                 <Cryptog key={"cryptog"+this.props["token"+t]} scale={1} id={this.props["token"+t]} slowrolling={spinning} image={this.props["token"+t+"Image"]} zIndex={1}/>
                )
              }
            }/>
@@ -52,7 +52,7 @@ export default createClass({
     return (
       <StackGrid
         style={{marginTop:50,backgroundColor:"#fbfbfb"}}
-        columnWidth={55}
+        columnWidth={110}
       >
       <div style={{paddingTop:45,paddingLeft:10}}>
         <a href={"/address/"+account}>

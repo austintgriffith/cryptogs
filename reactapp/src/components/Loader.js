@@ -6,10 +6,14 @@ import StackGrid from 'react-stack-grid'
 import PogAnimation from '../components/PogAnimation.js'
 import LoaderAnimation from '../components/LoaderAnimation.js'
 import MMButton from '../components/MMButton.js'
-const extraDip = 80
+
 
 let interval
 let watchTransactionInterval
+
+const extraDip = 80
+const width = 700
+const height = 400+extraDip
 
 export default createClass({
   getInitialState(){
@@ -74,10 +78,8 @@ export default createClass({
       )
     }
     if(this.props.loadingTx) {
-      let width = 700
-      let offset = (document.body.clientWidth-700)/2;
-      let height = 400+extraDip
-      let bottom = extraDip*-1 //height-100*-1
+      let offset = (document.body.clientWidth-width)/2;
+
       let blockDisplay = []
       let avgBlockTime = 0
       let timestamps = []
@@ -87,9 +89,17 @@ export default createClass({
           //var randTx = this.state.blocks[blockNumber-b].transactions[Math.floor(Math.random() * this.state.blocks[blockNumber-b].transactions.length)];
         //  let txObf = web3.eth.getTransaction(randTx)
         }
-        if(b<=3) blockDisplay.push(<Block key={"block"+b} etherscan={etherscan} {...this.state.blocks[blockNumber-b]} blockNumber={blockNumber-b}/>)
+        if(b<=3) blockDisplay.push(
+          <div style={{position:'absolute',left:300-(b*100),top:0}}>
+            <Block key={"block"+b} etherscan={etherscan} {...this.state.blocks[blockNumber-b]} blockNumber={blockNumber-b}/>
+          </div>
+        )
       }
-      blockDisplay.push(<Block key={"waiting"} waitingFor={blockNumber+1}/>)
+      blockDisplay.push(
+        <div style={{position:'absolute',left:400,top:0}}>
+          <Block key={"waiting"} waitingFor={blockNumber+1}/>
+        </div>
+      )
       let total = 0;
       let count = 0;
       for(let t=0;t<timestamps.length-1;t++){
@@ -99,6 +109,21 @@ export default createClass({
           count++;
         }
       }
+
+
+      let bottom = extraDip*-1 //height-100*-1
+
+      let transform = ""
+
+      let loaderPad = 80
+
+      if(window.innerWidth < width+loaderPad){
+        let scale = (window.innerWidth/(width+loaderPad))
+        transform =  "scale("+scale+")"
+        bottom -= (1-scale)*140
+      }
+
+
       let average = Math.round(total*10/count)/10;
       if((this.state.isMinimized)){
         bottom = (height*-1)+100
@@ -123,6 +148,7 @@ export default createClass({
         )
       }
 
+
       let bigTextStyle = {width:"100%",textAlign:"center",fontWidth:'bold',fontSize:14,padding:3}
       return (
         <Motion
@@ -137,7 +163,7 @@ export default createClass({
           >
             {currentStyles => {
               return (
-                <div onClick={this.toggle} className={"messageGray"}  style={{zIndex:999,opacity:0.95,position:'fixed',bottom:currentStyles.bottom,left:offset,margin:'0 auto',width:width,height:currentStyles.height,backgroundColor:"#eeeeee",padding:20,border:"20px solid #dddddd"}}>
+                <div onClick={this.toggle} className={"messageGray"}  style={{transform:transform,zIndex:999,opacity:0.95,position:'fixed',bottom:currentStyles.bottom,left:offset,margin:'0 auto',width:width,height:currentStyles.height,backgroundColor:"#eeeeee",padding:20,border:"20px solid #dddddd"}}>
                   <div style={bigTextStyle}>
                       <div style={{opacity:0.3,float:'left',marginTop:-100,paddingLeft:30}}><LoaderAnimation/></div>
                       <div style={{opacity:0.3,float:'right',marginTop:-100,paddingRight:30}}>{rightSideLoader}</div>
@@ -145,12 +171,9 @@ export default createClass({
                       <div style={{marginTop:10}}></div>
                   </div>
 
-                  <StackGrid
-                    style={{width:"100%",marginLeft:54}}
-                    columnWidth={95}
-                  >
+                  <div style={{position:"relative",marginLeft:60,width:500,height:100}}>
                     {blockDisplay}
-                  </StackGrid>
+                  </div>
                   <div style={{marginTop:12}}/>
                   <div style={bigTextStyle}>Blocks are taking an average of {average} seconds plus network time.</div>
                   <div style={bigTextStyle}>Your transaction will be mined into a block based on your gas price.</div>

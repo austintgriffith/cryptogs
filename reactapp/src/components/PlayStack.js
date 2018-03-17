@@ -993,16 +993,19 @@ class PlayStack extends Component {
 
 
       let drainDisplay = ""
-      if(blockNumber-lastBlock >= TIMEOUTBLOCKS && !spectator){
+      if( blockNumber-lastBlock >= TIMEOUTBLOCKS && !spectator){
         drainDisplay = (
           <MMButton color={"#fe2311"} onClick={this.drainStack.bind(this)}>drain</MMButton>
         )
       }
 
 
+      let turnHeight = 80
+      if(drainDisplay) turnHeight+=50
+
       if(stackMode<9){
         timerDisplay = (
-          <div style={{position:'fixed',bottom:30,right:60}}>
+          <div style={{height:turnHeight}}>
             <div style={{fontSize:30}}>{turn}</div>
             <div style={{fontSize:12,opacity:0.2}}>{blockNumber-lastBlock}/{TIMEOUTBLOCKS} blocks to timeout</div>
             <div>{drainDisplay}</div>
@@ -1019,6 +1022,7 @@ class PlayStack extends Component {
     if(coinFlipResultDisplay || flipDisplay){
       flipDisplyContent = (
         <div className={"messageGray"} style={{clear:'both',marginTop:50,width:200,float:'right',padding:20}}>
+          {timerDisplay}
           {coinFlipResultDisplay}
           {flipDisplay}
         </div>
@@ -1031,12 +1035,39 @@ class PlayStack extends Component {
     }
 
 
+    let width = 700
+    let mainStyle = {backgroundColor:"#FFFFFF",width:width,height:800}
+    let scale
+    let leftOffset = 0
+    let topOffset = 0
+    let left=0
+    let top=0
+    if(stackMode>0 && window.innerWidth < width){
+
+
+        scale = ((window.innerWidth-100)/(width))
+        mainStyle.transform =  "scale("+scale+")"
+        mainStyle.marginLeft=-240*(1-(scale-.39))+100
+        mainStyle.marginTop=-270*(1-(scale-.39))+70
+        left = 0
+        top = 350
+
+
+
+    }else{
+      mainStyle.width = window.innerWidth-100
+      left=(window.innerWidth/4)
+      top=550
+    }
+
+    //console.log(mainStyle)
+
     return (
-      <div  style={{backgroundColor:"#FFFFFF",width:"100%",height:800}}>
-      {timerDisplay}
+      <div  style={mainStyle}>
+
       {flipDisplyContent}
       {display}
-      <div style={{position:'absolute',left:window.innerWidth/4,top:550}}>
+      <div style={{position:'absolute',left:left,top:top}}>
 
         {mixedStack}
         {flightStack}

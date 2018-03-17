@@ -78,7 +78,7 @@ contract PizzaParlor {
   //in order to make game costs fair, the frontend should randomly select
   // one of the two players and give them the reveal to generate the game
   // in a bit you could give it to the other player too .... then after the
-  // timeout, they would get the secret to drain the stack 
+  // timeout, they would get the secret to drain the stack
   function generateGame(bytes32 _commit,bytes32 _reveal,address _opponent,uint _token1, uint _token2, uint _token3, uint _token4, uint _token5,uint _token6, uint _token7, uint _token8, uint _token9, uint _token10){
     //verify that receipts are valid
     require( commitReceipt[_commit][msg.sender] == keccak256(_commit,msg.sender,_token1,_token2,_token3,_token4,_token5) );
@@ -114,7 +114,7 @@ contract PizzaParlor {
           uint8 rand = _getRandom(pseudoRandoms,(round-1)*10 + i);
 
           uint8 threshold = (FLIPPINESS+round*FLIPPINESSROUNDBONUS);
-          if( rand < threshold ){
+          if( rand < threshold || round==MAXROUNDS ){
             _flip(_commit,round,cryptogsContract,_tokens,i-1,_opponent,whosTurn);
           }
         }

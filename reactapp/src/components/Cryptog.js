@@ -30,7 +30,7 @@ export default createClass({
     }
     return (
       <div className={className} style={{transform: "scale("+scale+")"}}>
-        <div className="coin__container">
+        <div className="coin__container" >
 
             <div className="coin is-slam" style={{
                 zIndex: this.props.zIndex,

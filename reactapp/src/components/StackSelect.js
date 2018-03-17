@@ -12,7 +12,6 @@ class StackSelect extends Component {
     }
   }
   tokenClick(id){
-		console.log("CLICK",id)
 		if(this.state.selectedTokens[id]){
 			this.state.selectedTokens[id]=false;
 		}else{
@@ -38,12 +37,20 @@ class StackSelect extends Component {
       }
       images[token.id]=token.image
       tokenCount++
-      return <div style={style} onClick={this.tokenClick.bind(this,token.id)} key={"cryptog"+token.id} id={token.id} ><Cryptog scale={0.6} image={token.image}/></div>
+      return (
+        <div style={style} onClick={this.tokenClick.bind(this,token.id)} key={"cryptog"+token.id} id={token.id} >
+          <Cryptog scale={1} image={token.image}/>
+        </div>
+      )
     })
     let selectedTokens = []
     for(let id in this.state.selectedTokens){
       if(this.state.selectedTokens[id]){
-        selectedTokens.push( <div style={{cursor:"pointer"}} onClick={this.tokenClick.bind(this,id,true)} key={"selectedcryptog"+id} id={"selected"+id} ><Cryptog scale={0.55} image={images[id]}/></div> )
+        selectedTokens.push(
+          <div style={{cursor:"pointer"}} onClick={this.tokenClick.bind(this,id,true)} key={"selectedcryptog"+id} id={"selected"+id} >
+            <Cryptog scale={1} image={images[id]}/>
+          </div>
+        )
       }
     }
     let gobutton = ""
@@ -74,7 +81,7 @@ class StackSelect extends Component {
 
     return (
       <div>
-        <StackGrid style={{marginTop:50}} columnWidth={60}>
+        <StackGrid style={{marginTop:50}} columnWidth={120}>
           {selectedTokens}
           <div key="gobutton">
             {gobutton}
@@ -84,7 +91,7 @@ class StackSelect extends Component {
           {this.props.message}
         </div>
         <div style={{float:'right',opacity:0.3}}>({tokenDisplay.length})</div>
-        <StackGrid style={{marginTop:50}} columnWidth={90}>
+        <StackGrid style={{maringRight:0,marginTop:50}} columnWidth={120}>
           {tokenDisplay}
         </StackGrid>
         {extraTokenDisplay}

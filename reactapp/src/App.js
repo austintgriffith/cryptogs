@@ -204,13 +204,17 @@ export default createClass({
           </Router>
 				</div>
 				{loader}
-				<GasSlider setGWEI={this.setGWEI} GWEI={this.state.GWEI} network={this.state.network}/>
-				<Slack />
-				<Alert
-					message={this.state.alert}
-				/>
+
 			</div>
     )
 
 	}
 });
+/*
+<Slack />
+<GasSlider setGWEI={this.setGWEI} GWEI={this.state.GWEI} network={this.state.network}/>
+
+<Alert
+	message={this.state.alert}
+/>
+ */
