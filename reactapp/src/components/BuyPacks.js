@@ -133,43 +133,26 @@ export default createClass({
 	  								if(!account){
 	  									metaMaskHintFn()
 	  								}else{
-	  									contracts["Cryptogs"].methods.buyPack(p).send({
-	  							        from: account,
-	  											value: web3.utils.toWei(mintedPacks[p].price,"ether"),
-	  							        gas:GASTOBUYPACKS,
-	  							        gasPrice:this.context.GWEI * 1000000000
-	  							      },(error,hash)=>{
-	  							        console.log("CALLBACK!",error,hash)
+
+												contracts["Cryptogs"].methods.buyPack(p).send({
+													from: account,
+													value: web3.utils.toWei(mintedPacks[p].price,"ether"),
+													gas:GASTOBUYPACKS,
+													gasPrice:this.context.GWEI * 1000000000
+												},(error,hash)=>{
+													console.log("CALLBACK!",error,hash)
 													showLoadingScreen(hash,"/address/"+account)
 													txhash=hash
-	  							      }).on('error',(a,b)=>{
-
+												}).on('error',(a,b)=>{
 													console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-													/*this.context.throwAlert(
-														<div>
-															<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
-															<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
-															<div style={{position:"absolute",right:20,bottom:20}}>
-																<MMButton color={"#6081c3"} onClick={()=>{
-																	this.context.throwAlert(false);
-																	window.location = "/address/"+account
-																}}>continue and wait</MMButton>
-															</div>
-															<div style={{position:"absolute",left:20,bottom:20}}>
-																<MMButton color={"#f7861c"} onClick={()=>{
-																	this.context.throwAlert(false);
-																}}>close and try again</MMButton>
-															</div>
-														</div>
-													)*/
-
 												}).then((receipt)=>{
-	  							        console.log("RESULT:",receipt)
+													console.log("RESULT:",receipt)
 													showLoadingScreen(false)
-	  											window.location = "/address/"+account
-	  							      }).catch(e=> {
-									          console.error('caught error', e);
-									      })
+													window.location = "/address/"+account
+												}).catch(e=> {
+														console.error('caught error', e);
+												})
+
 	  								}
 	  							}
 	  						}/>
@@ -179,21 +162,21 @@ export default createClass({
   			}
   		}
 
-      mintedPackRender = (
-				<div className={"centercontainer"}>
-	        <div className={"twobytwogrid"}>
-	          <div className={"twobytwobox"}>
-							{buypacks[0]}
-	          </div>
-	          <div className={"twobytwobox"}>
-							{buypacks[1]}
-	          </div>
-	        </div>
-					<div style={{padding:40}}>
-						<MMButton color={"#6081c3"} onClick={()=>{window.location="/buy"}}>View All Packs</MMButton>
-					</div>
+      	mintedPackRender = (
+			<div>
+		        <div className={"row"}>
+			        <div className={"col-md-6"}>
+						{buypacks[0]}
+			        </div>
+			        <div className={"col-md-6"}>
+						{buypacks[1]}
+			        </div>
+		        </div>
+				<div style={{padding:40}}>
+					<MMButton color={"#6081c3"} onClick={()=>{window.location="/buy"}}>View All Packs</MMButton>
 				</div>
-      )
+			</div>
+      	)
 
     }else{
       mintedPackRender = []
@@ -207,7 +190,8 @@ export default createClass({
   								if(!account){
   									metaMaskHintFn()
   								}else{
-  									contracts["Cryptogs"].methods.buyPack(p).send({
+
+  										contracts["Cryptogs"].methods.buyPack(p).send({
   							        from: account,
   											value: web3.utils.toWei(mintedPacks[p].price,"ether"),
   							        gas:GASTOBUYPACKS,
@@ -225,6 +209,7 @@ export default createClass({
   							      }).catch(e=> {
 								          console.error('caught error', e);
 								      })
+
   								}
   							}
   						}/>

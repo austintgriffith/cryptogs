@@ -29,8 +29,12 @@ const DEBUG = false
 const MAINNETGWEI = 5
 const STARTINGGWEI = 21
 
-var Web3 = require('web3');
-let contractLoadingInterval;
+var Web3 = require('web3')
+var web3
+let contractLoadingInterval
+let webWaitInterval
+let waitForWeb3Interval
+
 export default createClass({
 	displayName: 'MainLayout',
 	propTypes: {children: PropTypes.func},
@@ -90,11 +94,12 @@ export default createClass({
 			loadingDest:"",
 			GWEI:GWEI,
 			alert: "",
+			network:0,
 		};
 	},
 	componentDidMount(){
 		try{
-			let web3 = new Web3(window.web3.currentProvider)
+			web3 = new Web3(window.web3.currentProvider)
 			web3.eth.net.getId().then((network)=>{
 				if(network>9999) network=9999;
 				let contracts = ContractLoader(["Cryptogs","SlammerTime"],web3,network);
@@ -108,7 +113,6 @@ export default createClass({
 				}
 				this.setState(update)
 			})
-
 		} catch(e) {
 			console.log(e)
 		}
@@ -179,6 +183,8 @@ export default createClass({
 					setEtherscan={this.setEtherscan}
 					metamaskHint={this.state.metamaskHint}
 					metaMaskHintFn={this.metaMaskHintFn}
+					web3={this.state.web3}
+					network={this.state.network}
 				/>
 
 				<div>
