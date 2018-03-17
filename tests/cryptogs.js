@@ -45,6 +45,9 @@ function migrationBlackList(){
   //tokens migrated from one deployment to the next
 }
 
+//global object for saving tokens that get transferred for game generation
+let savedTokens = {}
+
 
 function isOurAddress(address){
 
@@ -98,6 +101,16 @@ module.exports = {
       });
     });
   },
+  generateCommit:()=>{
+    let web3 = new Web3()
+    let secret = web3.utils.sha3(Math.random()+Date.now()+"CRYPTOGS4LIFE");
+    console.log(tab,"Using secret:",secret.blue)
+    let reveal = web3.utils.sha3(secret);
+    console.log(tab,"reveal:",reveal.magenta)
+    let commit = web3.utils.sha3(reveal);
+    console.log(tab,"commit:",commit.cyan)
+    return [secret,reveal,commit]
+  },
   setSlammerTime:(accountindex)=>{
     describe('#setSlammerTime() ', function() {
       it('should set SlammerTime (once and only once)', async function() {
@@ -128,6 +141,26 @@ module.exports = {
       });
     });
   },
+  mintBatch:(accountindex,image,toIndex)=>{
+    describe('#testMint() ', function() {
+      it('should mint a batch of cryptogs', async function() {
+        this.timeout(120000)
+        const accounts = await clevis("accounts")
+        assert(image,"No Image!?")
+        let bytes32Image = web3.utils.fromAscii(image);
+        const result = await clevis("contract","mintBatch","Cryptogs",accountindex,bytes32Image,bytes32Image,bytes32Image,bytes32Image,bytes32Image,accounts[toIndex])
+        printTxResult(result)
+        const tokensOfOwner = await clevis("contract","tokensOfOwner","Cryptogs",accounts[toIndex])
+        const lastToken = tokensOfOwner[tokensOfOwner.length-1]
+        const token = await clevis("contract","getToken","Cryptogs",lastToken)
+        assert(token.owner==accounts[toIndex],"This should never be wrong!?!")
+        const cleanImage = web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
+        assert(cleanImage==image,"Image of minted token doesn't equal image we meant to mint.. hah.")
+        console.log(tab,accounts[accountindex].blue+" minted 5 Cryptogs "+lastToken.magenta+" to account "+accounts[toIndex].cyan+" with image "+cleanImage.white)
+      });
+    });
+  },
+
   airdrop:(accountindex,image,toAddress)=>{
     describe('#testMint() ', function() {
       it('should mint a cryptog', async function() {
@@ -155,6 +188,95 @@ module.exports = {
         const result = await clevis("contract","mintPack","Cryptogs",accountindex,web3.utils.toWei(""+price, "ether"),imageBytes[0],imageBytes[1],imageBytes[2],imageBytes[3],imageBytes[4],imageBytes[5],imageBytes[6],imageBytes[7],imageBytes[8],imageBytes[9])
         printTxResult(result)
         console.log(tab,accounts[accountindex].blue+" minted pack ")
+      });
+    });
+  },
+  transferStack:(accountindex,commit)=>{
+    describe('#transferStack() ', function() {
+      it('should send stack to PizzaParlor', async function() {
+        this.timeout(120000)
+        const accounts = await clevis("accounts")
+        const tokensOfOwner = await clevis("contract","tokensOfOwner","Cryptogs",accounts[accountindex])
+        console.log("tokensOfOwner",tokensOfOwner)
+        const token5 = tokensOfOwner[tokensOfOwner.length-1]
+        const token4 = tokensOfOwner[tokensOfOwner.length-2]
+        const token3 = tokensOfOwner[tokensOfOwner.length-3]
+        const token2 = tokensOfOwner[tokensOfOwner.length-4]
+        const token1 = tokensOfOwner[tokensOfOwner.length-5]
+
+        //cache tokens for next call
+        if(!savedTokens[commit]) savedTokens[commit] = {}
+        savedTokens[commit][accounts[accountindex]] = [token1,token2,token3,token4,token5]
+
+        const PizzaParlorAddress = localContractAddress("PizzaParlor")
+        //function transferStackAndCall(address _to, uint _token1, uint _token2, uint _token3, uint _token4, uint _token5, bytes32 _commit)
+        const result = await clevis("contract","transferStackAndCall","Cryptogs",accountindex,PizzaParlorAddress,token1,token2,token3,token4,token5,commit)
+        printTxResult(result)
+        const newOwnerAddress = await clevis("contract","ownerOf","Cryptogs",token5)
+        assert(newOwnerAddress == PizzaParlorAddress,"PizzaParlorAddress "+PizzaParlorAddress+" is not the owner of token "+token5)
+      });
+    });
+  },
+  revokeStack:(accountindex,commit)=>{
+    describe('#revokeStack() ', function() {
+      it('should revoke a stack from PizzaParlor', async function() {
+        this.timeout(120000)
+        const accounts = await clevis("accounts")
+
+        let token1 = savedTokens[commit][accounts[accountindex]][0]
+        let token2 = savedTokens[commit][accounts[accountindex]][1]
+        let token3 = savedTokens[commit][accounts[accountindex]][2]
+        let token4 = savedTokens[commit][accounts[accountindex]][3]
+        let token5 = savedTokens[commit][accounts[accountindex]][4]
+
+        delete savedTokens[commit];
+
+        const PizzaParlorAddress = localContractAddress("PizzaParlor")
+        //function revokeStack(bytes32 _commit,uint _token1, uint _token2, uint _token3, uint _token4, uint _token5){
+        const result = await clevis("contract","revokeStack","PizzaParlor",accountindex,commit,token1,token2,token3,token4,token5,commit)
+        printTxResult(result)
+        const newOwnerAddress = await clevis("contract","ownerOf","Cryptogs",token5)
+        assert(newOwnerAddress == accounts[accountindex],"Account index "+accountindex+" is not the owner of token "+token5)
+      });
+    });
+  },
+  generateGame:(accountindex,reveal,commit,opponent)=>{
+    describe('#generateGame() ', function() {
+      it('should generateGame on PizzaParlor', async function() {
+          this.timeout(120000)
+          const accounts = await clevis("accounts")
+
+          console.log("my saved tokens",savedTokens[commit][accounts[accountindex]])
+          console.log("opponent saved tokens",savedTokens[commit][accounts[opponent]])
+
+          let token1 = savedTokens[commit][accounts[accountindex]][0]
+          let token2 = savedTokens[commit][accounts[accountindex]][1]
+          let token3 = savedTokens[commit][accounts[accountindex]][2]
+          let token4 = savedTokens[commit][accounts[accountindex]][3]
+          let token5 = savedTokens[commit][accounts[accountindex]][4]
+
+          let token6 = savedTokens[commit][accounts[opponent]][0]
+          let token7 = savedTokens[commit][accounts[opponent]][1]
+          let token8 = savedTokens[commit][accounts[opponent]][2]
+          let token9 = savedTokens[commit][accounts[opponent]][3]
+          let token10 = savedTokens[commit][accounts[opponent]][4]
+
+          console.log("commit",commit,"reveal",reveal,"accounts[opponent]",accounts[opponent])
+          console.log("tokens",token1,token2,token3,token4,token5,token6,token7,token8,token9,token10)
+
+          //generateGame(bytes32 _commit,bytes32 _reveal,address _opponent,uint _token1, uint _token2, uint _token3, uint _token4, uint _token5,uint _token6, uint _token7, uint _token8, uint _token9, uint _token10)
+          const result = await clevis("contract","generateGame","PizzaParlor",accountindex,commit,reveal,accounts[opponent],token1,token2,token3,token4,token5,token6,token7,token8,token9,token10)
+          printTxResult(result)
+
+
+          const tokensOfOwner1 = await clevis("contract","tokensOfOwner","Cryptogs",accounts[accountindex])
+          console.log("Player 1 finished with ",tokensOfOwner1)
+          const tokensOfOwner2 = await clevis("contract","tokensOfOwner","Cryptogs",accounts[opponent])
+          console.log("Player 2 finished with ",tokensOfOwner2)
+
+          delete savedTokens[commit];
+
+
       });
     });
   },
@@ -528,9 +650,11 @@ module.exports = {
 
         loadAddress("Cryptogs",deployNetwork)
         loadAddress("SlammerTime",deployNetwork)
+        loadAddress("PizzaParlor",deployNetwork)
 
         loadAbi("Cryptogs",deployNetwork)
         loadAbi("SlammerTime",deployNetwork)
+        loadAbi("PizzaParlor",deployNetwork)
 
         loadBlockNumber("Cryptogs",deployNetwork)
 

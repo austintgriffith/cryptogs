@@ -11,7 +11,7 @@ contract NFT {
   mapping (address => uint256) ownershipTokenCount;
   mapping (uint256 => address) public tokenIndexToApproved;
 
-  function transfer(address _to,uint256 _tokenId) external {
+  function transfer(address _to,uint256 _tokenId) public {
       require(_to != address(0));
       require(_to != address(this));
       require(_owns(msg.sender, _tokenId));

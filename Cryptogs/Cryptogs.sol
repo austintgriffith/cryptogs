@@ -584,6 +584,37 @@ contract Cryptogs is NFT, Ownable {
       token.transfer(msg.sender,_amount);
       return true;
     }
+
+
+    //adapted from ERC-677 from my dude Steve Ellis - thanks man!
+    function transferStackAndCall(address _to, uint _token1, uint _token2, uint _token3, uint _token4, uint _token5, bytes32 _data) public returns (bool) {
+      transfer(_to, _token1);
+      transfer(_to, _token2);
+      transfer(_to, _token3);
+      transfer(_to, _token4);
+      transfer(_to, _token5);
+
+      if (isContract(_to)) {
+        contractFallback(_to,_token1,_token2,_token3,_token4,_token5,_data);
+      }
+      return true;
+    }
+
+    function contractFallback(address _to, uint _token1, uint _token2, uint _token3, uint _token4, uint _token5, bytes32 _data) private {
+      StackReceiver receiver = StackReceiver(_to);
+      receiver.onTransferStack(msg.sender,_token1,_token2,_token3,_token4,_token5,_data);
+    }
+
+    function isContract(address _addr) private returns (bool hasCode) {
+      uint length;
+      assembly { length := extcodesize(_addr) }
+      return length > 0;
+    }
+
+}
+
+contract StackReceiver {
+  function onTransferStack(address _sender, uint _token1, uint _token2, uint _token3, uint _token4, uint _token5, bytes32 _data);
 }
 
 contract StandardToken {

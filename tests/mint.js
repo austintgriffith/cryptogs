@@ -1,17 +1,22 @@
 const cryptogs = require("./cryptogs.js")
 
- cryptogs.mint(0,"aggenesiscryptog.png",1)
- // cryptogs.mint(0,"agethereumlogo.png",1)
- // cryptogs.mint(0,"agethereumlogo.png",1)
- // cryptogs.mint(0,"agethereumlogo.png",1)
- // cryptogs.mint(0,"agethereumlogo.png",1)
- //
- // cryptogs.mint(0,"agethereumlogo.png",2)
- // cryptogs.mint(0,"agethereumlogo.png",2)
- // cryptogs.mint(0,"agethereumlogo.png",2)
- // cryptogs.mint(0,"agethereumlogo.png",2)
- // cryptogs.mint(0,"agethereumlogo.png",2)
+cryptogs.mintBatch(0,"agethereumlogo.png",1)
+cryptogs.mintBatch(0,"agethereumlogo.png",2)
 
+
+/*
+ cryptogs.mint(0,"aggenesiscryptog.png",1)
+ cryptogs.mint(0,"agethereumlogo.png",1)
+ cryptogs.mint(0,"agethereumlogo.png",1)
+ cryptogs.mint(0,"agethereumlogo.png",1)
+ cryptogs.mint(0,"agethereumlogo.png",1)
+
+ cryptogs.mint(0,"agethereumlogo.png",2)
+ cryptogs.mint(0,"agethereumlogo.png",2)
+ cryptogs.mint(0,"agethereumlogo.png",2)
+ cryptogs.mint(0,"agethereumlogo.png",2)
+ cryptogs.mint(0,"agethereumlogo.png",2)
+*/
 /*
  cryptogs.airdrop(0,"aggenesiscryptog.png","0x5f19cefc9c9d1bc63f9e4d4780493ff5577d238b")
  cryptogs.airdrop(0,"agdragon.png","0x5f19cefc9c9d1bc63f9e4d4780493ff5577d238b")

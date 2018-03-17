@@ -1,3 +1,5 @@
+backend/src/node_modules
+backend/docker/redisdata
 token.report
 deploy.network
 reactapp/src/contracts/*999*
