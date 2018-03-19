@@ -7,6 +7,7 @@ import EventParser from '../modules/eventParser.js';
 import LiveParser from '../modules/liveParser.js';
 import MMButton from '../components/MMButton.js'
 import PogAnimation from '../components/PogAnimation'
+import axios from 'axios'
 
 const DEBUG = false;
 const BLOCKLOOKBACK = 240*8; //show the last 8 hours
@@ -19,7 +20,8 @@ export default createClass({
 		contracts: PropTypes.array,
 		account: PropTypes.string,
 		blockNumber: PropTypes.number,
-		metaMaskHintFn: PropTypes.func
+		metaMaskHintFn: PropTypes.func,
+		api: PropTypes.object,
 	},
 	getInitialState(){
 		return {allStacks:[]}
@@ -27,6 +29,8 @@ export default createClass({
 	componentDidMount(){
 		this.loadStackData()
 		loadInterval = setInterval(this.loadStackData,101)
+
+
 	},
 	componentWillUnmount(){
 		clearInterval(loadInterval)
@@ -136,6 +140,52 @@ export default createClass({
 				LiveParser(contracts["Cryptogs"],"CancelCounterStack",blockNumber,updateCancelCounterStack)
 			},997)
 
+			//setInterval(()=>{
+				if(this.context.api&&this.context.api.version){
+					console.log("Connecting to API...")
+					try{
+						axios.get(this.context.api.host+"/commits/")
+						.then((response)=>{
+							let commits = response.data
+							console.log("COMMITS BACK FROM API");
+							for(let c in commits){
+								let commitId = "0x"+commits[c].replace("commit_","")
+								if(!this.state.allStacks[commitId]){
+									axios.get(this.context.api.host+"/commit/"+commitId)
+									.then((commitData)=>{
+										console.log("commitData for "+commitId,commitData.data.stackData)
+										let stackObject = {
+											_public: true,
+											_sender: commitData.data.stackData.owner,
+											_stack: commitId,
+											_token1: commitData.data.stackData.token1,
+											_token1Image: commitData.data.stackData.token1Image,
+											_token2: commitData.data.stackData.token2,
+											_token2Image: commitData.data.stackData.token2Image,
+											_token3: commitData.data.stackData.token3,
+											_token3Image: commitData.data.stackData.token3Image,
+											_token4: commitData.data.stackData.token4,
+											_token4Image: commitData.data.stackData.token4Image,
+											_token5: commitData.data.stackData.token5,
+											_token5Image: commitData.data.stackData.token5Image,
+											_blockNumber: commitData.data.stackData.block,
+											timestamp: Date.now()
+										}
+
+										console.log("Saving stack object",stackObject)
+										this.state.allStacks[commitId] = stackObject
+										this.setState({allStacks:this.state.allStacks})
+									})
+								}
+							}
+						})
+					} catch(e) {
+						console.log(e)
+					}
+				}
+			//},1001)
+
+
 			clearInterval(loadInterval)
 		}
 	},
@@ -147,6 +197,8 @@ export default createClass({
 			)
 		}
 		const {allStacks} = this.state
+
+		console.log("allStacks",allStacks)
 
 		let myStacks = []
 		let stacks = []

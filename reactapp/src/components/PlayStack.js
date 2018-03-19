@@ -12,6 +12,7 @@ import PogAnimation from '../components/PogAnimation'
 import StackGrid from 'react-stack-grid'
 import Blockies from 'react-blockies'
 import cookie from 'react-cookies'
+import axios from 'axios'
 
 let loadInterval
 let waitInterval
@@ -37,8 +38,15 @@ class PlayStack extends Component {
 
     this.waitForStuff()
     waitInterval = setInterval(this.waitForStuff.bind(this),171)
-    this.loadStackData()
-    loadInterval = setInterval(this.loadStackData.bind(this),707)
+
+    if(props&&props.api&&props.api.version){
+      this.loadAPIStackData()
+      loadInterval = setInterval(this.loadAPIStackData.bind(this),707)
+    }else{
+      this.loadStackData()
+      loadInterval = setInterval(this.loadStackData.bind(this),707)
+    }
+
   }
   componentWillUnmount(){
     clearInterval(loadInterval)
@@ -82,6 +90,19 @@ class PlayStack extends Component {
     setInterval(()=>{
       LiveParser(contracts["Cryptogs"],"ThrowSlammer",blockNumber,updateThrowSlammer,filter)
     },737)
+  }
+  async loadAPIStackData(){
+    try{
+      axios.get(this.props.api.host+"/commit/"+this.state.stack)
+      .then((response)=>{
+        console.log("COMMIT BACK FROM API",response);
+
+        console.log("SETSTATE",response.data)
+        this.doUpdate(response.data)
+      })
+    } catch(e) {
+      console.log(e)
+    }
   }
   async loadStackData(){
     let stack
@@ -260,6 +281,9 @@ class PlayStack extends Component {
       */
     //}
 
+    this.doUpdate(update)
+  }
+  doUpdate(update){
     if(update.stackMode==3){
       update.slammerTop = -160
       update.slammerLeft = 0
@@ -292,7 +316,7 @@ class PlayStack extends Component {
     }
 
 
-
+    console.log("STACK SAVE ",update)
     this.setState(update,()=>{
       if(update.flippingPogs){
         this.setState({slammerTop:-80,slammerAngle:45})

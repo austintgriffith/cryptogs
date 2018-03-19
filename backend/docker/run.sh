@@ -6,5 +6,5 @@ docker run --name="cryptogs" \
         -c 5120 \
         -m 2g \
         -v ${PWD}/../src:/root/app \
-        -p 56834:8000 \
+        -p 56834:8001 \
         -d cryptogs

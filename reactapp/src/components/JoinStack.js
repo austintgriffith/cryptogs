@@ -3,6 +3,7 @@ import Stack from '../components/Stack.js'
 import StackSelect from '../components/StackSelect.js'
 import MMButton from '../components/MMButton.js'
 import PogAnimation from '../components/PogAnimation'
+import axios from 'axios'
 
 let waitInterval
 let txhash
@@ -17,13 +18,30 @@ class JoinStack extends Component {
   }
   async loadStackData(){
     let stack
-    let stackData = await this.props.context.contracts['Cryptogs'].methods.getStack(this.state.stack).call()
-    for(let t=1;t<=5;t++){
+  /*  if(this.props.api && this.props.api.version){
+      try{
+        axios.get(this.props.api.host+"/commit/"+this.state.stack)
+        .then((response)=>{
+          console.log("COMMIT BACK FROM API",response);
 
-      let token = await this.props.context.contracts['Cryptogs'].methods.getToken(stackData["token"+t]).call()
-      stackData["token"+t+"Image"] = this.props.context.web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
-    }
-    this.setState({stackData:stackData})
+          console.log("SETSTATE",response.data)
+          this.setState({stackData:response.data})
+        })
+      } catch(e) {
+        console.log(e)
+      }
+    }else{*/
+      let stackData = await this.props.context.contracts['Cryptogs'].methods.getStack(this.state.stack).call()
+      for(let t=1;t<=5;t++){
+
+        let token = await this.props.context.contracts['Cryptogs'].methods.getToken(stackData["token"+t]).call()
+        stackData["token"+t+"Image"] = this.props.context.web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
+      }
+      console.log("stackData",stackData)
+      this.setState({stackData:stackData})
+    //}
+
+
   }
   joinStack(tokens){
 		const { account,contracts,showLoadingScreen } = this.props.context

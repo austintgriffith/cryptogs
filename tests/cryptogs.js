@@ -22,23 +22,27 @@ function rand(min, max) {
   return Math.floor( Math.random() * (max - min) + min );
 }
 const contractsDir = "reactapp/src/contracts/"
+const contractsDirBackend = "backend/src/contracts/"
 function loadAbi(contract,deployNetwork){
   let abi = fs.readFileSync(contract+"/"+contract+".abi").toString().trim()
   console.log(tab,contract.cyan,"ABI:",(""+abi.length).yellow)
   assert(abi,"No ABI for "+contract+"!?")
   fs.writeFileSync(contractsDir+contract+"."+deployNetwork+".abi.js","module.exports = "+abi);
+  fs.writeFileSync(contractsDirBackend+contract+"."+deployNetwork+".abi.js","module.exports = "+abi);
 }
 function loadAddress(contract,deployNetwork){
   let addr = fs.readFileSync(contract+"/"+contract+".address").toString().trim()
   console.log(tab,contract.cyan,"ADDRESS:",addr.blue)
   assert(addr,"No Address for "+contract+"!?")
   fs.writeFileSync(contractsDir+contract+"."+deployNetwork+".address.js","module.exports = \""+addr+"\"");
+  fs.writeFileSync(contractsDirBackend+contract+"."+deployNetwork+".address.js","module.exports = \""+addr+"\"");
 }
 function loadBlockNumber(contract,deployNetwork){
   let blockNumber = fs.readFileSync(contract+"/"+contract+".blockNumber").toString().trim()
   console.log(tab,contract.cyan,"blockNumber:",blockNumber.blue)
   assert(blockNumber,"No blockNumber for "+contract+"!?")
   fs.writeFileSync(contractsDir+contract+"."+deployNetwork+".blockNumber.js","module.exports = \""+blockNumber+"\"");
+  fs.writeFileSync(contractsDirBackend+contract+"."+deployNetwork+".blockNumber.js","module.exports = \""+blockNumber+"\"");
 }
 function migrationBlackList(){
   //list any account here that you don't want to spend the gas to get

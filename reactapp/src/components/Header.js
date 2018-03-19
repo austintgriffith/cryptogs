@@ -7,11 +7,25 @@ import {Motion, spring, presets} from 'react-motion';
 export default createClass({
 	render(){
 		let {metamaskHint,account,metaMaskHintFn} = this.props
+
+		let apiImage
+		if(this.props.api&&this.props.api.timestamp){
+			apiImage = "/lightclogo.png"
+		}else{
+			apiImage = "/darkclogo.png"
+		}
+
+
 		return (
 			<header className="site-header">
+
 			<div className="container-fluid">
+					<div style={{position:'absolute',right:0,top:0,cursor:"pointer",zIndex:999}} onClick={this.props.apiClick}>
+						<img style={{width:60,margin:20}} src={apiImage} />
+					</div>
 					<div className="row align-items-center">
 							<div className="col-md-4">
+
 									<Motion
 									defaultStyle={{
 										marginLeft:10
@@ -24,11 +38,12 @@ export default createClass({
 											return <Metamask {...this.props} currentStyles={currentStyles}/>
 										}}
 									</Motion>
+
 							</div>
 							<div className="col-md-4 text-center">
 								<a href="/"><img style={{maxHeight:60}}src="/logo.png"/></a>
 							</div>
-							<div className="col-md-4">
+							<div className="col-md-4" style={{paddingRight:100}}>
 									<nav className="site-nav">
 											<ul>
 													<li>

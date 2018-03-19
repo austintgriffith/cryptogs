@@ -24,6 +24,9 @@ import Alert from './components/Alert.js'
 import GasSlider from './components/GasSlider.js'
 import MMButton from './components/MMButton.js'
 import cookie from 'react-cookies'
+import axios from 'axios'
+
+const OPTIONALBACKEND = "http://stage.cryptogs.io:56834"
 
 const DEBUG = false
 const MAINNETGWEI = 5
@@ -50,6 +53,7 @@ export default createClass({
 		throwAlert: PropTypes.func,
 		network: PropTypes.number,
 		GWEI: PropTypes.number,
+		api: PropTypes.object,
 	},
 	getChildContext(){
 		return {
@@ -64,6 +68,7 @@ export default createClass({
 			throwAlert: this.throwAlert,
 			network: this.state.network,
 			GWEI: this.state.GWEI,
+			api: this.state.api,
 		};
 	},
 	throwAlert(message){
@@ -95,6 +100,7 @@ export default createClass({
 			GWEI:GWEI,
 			alert: "",
 			network:0,
+			api:{},
 		};
 	},
 	componentDidMount(){
@@ -117,6 +123,21 @@ export default createClass({
 			console.log(e)
 		}
 		this.waitForContracts()
+		//check to see if we can talk to the api
+		this.setupApi()
+	},
+	setupApi(){
+		try{
+			console.log("Looking for a backend @ ",OPTIONALBACKEND)
+			axios.get(OPTIONALBACKEND)
+		  .then((response)=>{
+				let update = {host:OPTIONALBACKEND,...response.data}
+		    console.log("API!!!!",response,update);
+				this.setState({api:update})
+		  })
+		} catch(e) {
+			console.log(e)
+		}
 	},
 	componentWillUnmount(){
 		if (this._timer){
@@ -140,6 +161,13 @@ export default createClass({
 					clearInterval(contractLoadingInterval)
 				}
 			},707)
+		}
+	},
+	apiClick(){
+		if(this.state.api&&this.state.api.version){
+			this.setState({api:false})
+		}else{
+			this.setupApi()
 		}
 	},
 	whenContractsAreReady(){
@@ -172,8 +200,11 @@ export default createClass({
 				<Loader showLoadingScreen={this.showLoadingScreen} contracts={this.state.contracts} etherscan={this.state.etherscan} web3={this.state.web3} blockNumber={this.state.blockNumber} loadingTx={loadingTx} loadingDest={loadingDest} />
 			)
 		}
+
+
 		return (
 			<div style={{backgroundColor:"#FFFFFF"}}>
+
 				<Header
 					syncBlockNumber={this.syncBlockNumber}
 					account={this.state.account}
@@ -185,6 +216,8 @@ export default createClass({
 					metaMaskHintFn={this.metaMaskHintFn}
 					web3={this.state.web3}
 					network={this.state.network}
+					api={this.state.api}
+					apiClick={this.apiClick}
 				/>
 
 				<div>

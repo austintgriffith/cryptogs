@@ -1,3 +1,4 @@
+backend/src/contracts/*999*
 backend/src/node_modules
 backend/docker/redisdata
 reactapp/fullchain.pem

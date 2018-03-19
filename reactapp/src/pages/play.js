@@ -20,6 +20,7 @@ export default createClass({
 		GWEI: PropTypes.number,
 		throwAlert: PropTypes.func,
 		etherscan: PropTypes.string,
+		api: PropTypes.object,
 	},
 	render(){
 		const { account,contracts } = this.context
@@ -41,6 +42,7 @@ export default createClass({
 								context={this.context}
 								GWEI={this.context.GWEI}
 								throwAlert={this.context.throwAlert}
+								api={this.context.api}
 	            />
 	          </div>
 	        )}

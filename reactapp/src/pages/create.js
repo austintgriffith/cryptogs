@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import PropTypes from 'prop-types'
 import StackSelect from '../components/StackSelect.js'
 import MMButton from '../components/MMButton.js'
+import axios from 'axios'
 
 let txhash
 
@@ -18,6 +19,7 @@ export default createClass({
 		showLoadingScreen: PropTypes.func,
 		throwAlert: PropTypes.func,
 		GWEI: PropTypes.number,
+		api: PropTypes.object,
 	},
 	getInitialState(){
 		return {
@@ -28,7 +30,7 @@ export default createClass({
 	submitStack(tokens){
 		console.log("GO tokens",tokens)
 
-		const { account,contracts,showLoadingScreen } = this.context
+		const { account,contracts,showLoadingScreen,api } = this.context
 		let finalArray = []
 		for(let id in tokens){
 			if(tokens[id]){
@@ -37,24 +39,43 @@ export default createClass({
 		}
 
 		console.log("GO",finalArray)
-		//submitStack(address _slammerTime, uint256 _id,uint256 _id2,uint256 _id3,uint256 _id4,uint256 _id5, bool _public)
-		contracts["Cryptogs"].methods.submitStack(finalArray[0],finalArray[1],finalArray[2],finalArray[3],finalArray[4],true).send({
-        from: account,
-        gas:350000,
-        gasPrice:this.context.GWEI * 1000000000
-      },(error,hash)=>{
-        console.log("CALLBACK!",error,hash)
-				showLoadingScreen(hash,this.findSubmitStackAndGo)
-				txhash=hash
-      }).on('error',(a,b)=>{
-					console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-			}).then((receipt)=>{
-				console.log("RESULT:",receipt)
-				showLoadingScreen(false)
-				this.findSubmitStackAndGo()
-      }).catch(e=> {
-          console.error('caught error', e);
-      })
+		if(api&&api.version){
+			console.log("USING API")
+			axios.post(api.host+'/create', {
+				account: account,
+		    finalArray: finalArray
+		  })
+		  .then(function (response) {
+				console.log(response)
+		    console.log("APIDATA",response.data);
+				if(response && response.data && response.data.commit) window.location = "/play/0x"+response.data.commit
+		  })
+		  .catch(function (error) {
+		    console.log(error);
+		  });
+
+		}else{
+			console.log("USING CONTRACT")
+			//submitStack(address _slammerTime, uint256 _id,uint256 _id2,uint256 _id3,uint256 _id4,uint256 _id5, bool _public)
+			contracts["Cryptogs"].methods.submitStack(finalArray[0],finalArray[1],finalArray[2],finalArray[3],finalArray[4],true).send({
+	        from: account,
+	        gas:350000,
+	        gasPrice:this.context.GWEI * 1000000000
+	      },(error,hash)=>{
+	        console.log("CALLBACK!",error,hash)
+					showLoadingScreen(hash,this.findSubmitStackAndGo)
+					txhash=hash
+	      }).on('error',(a,b)=>{
+						console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+				}).then((receipt)=>{
+					console.log("RESULT:",receipt)
+					showLoadingScreen(false)
+					this.findSubmitStackAndGo()
+	      }).catch(e=> {
+	          console.error('caught error', e);
+	      })
+		}
+
 	},
 	async findSubmitStackAndGo(){
 		const { account,contracts } = this.context
