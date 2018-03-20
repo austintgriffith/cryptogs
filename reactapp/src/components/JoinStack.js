@@ -18,19 +18,20 @@ class JoinStack extends Component {
   }
   async loadStackData(){
     let stack
-  /*  if(this.props.api && this.props.api.version){
+    if(this.props.api && this.props.api.version){
       try{
+        console.log("Loading commit data from api...")
         axios.get(this.props.api.host+"/commit/"+this.state.stack)
         .then((response)=>{
           console.log("COMMIT BACK FROM API",response);
 
           console.log("SETSTATE",response.data)
-          this.setState({stackData:response.data})
+          this.setState(response.data)
         })
       } catch(e) {
         console.log(e)
       }
-    }else{*/
+    }else{
       let stackData = await this.props.context.contracts['Cryptogs'].methods.getStack(this.state.stack).call()
       for(let t=1;t<=5;t++){
 
@@ -39,7 +40,7 @@ class JoinStack extends Component {
       }
       console.log("stackData",stackData)
       this.setState({stackData:stackData})
-    //}
+    }
 
 
   }
@@ -54,9 +55,30 @@ class JoinStack extends Component {
 			}
 		}
 
+
 		console.log("submitCounterStack as "+account,finalArray)
-		//submitCounterStack(address _slammerTime, bytes32 _stack, uint256 _id, uint256 _id2, uint256 _id3, uint256 _id4, uint256 _id5)
-		contracts["Cryptogs"].methods.submitCounterStack(stack,finalArray[0],finalArray[1],finalArray[2],finalArray[3],finalArray[4]).send({
+
+    if(this.props.api && this.props.api.version){
+      try{
+        axios.post(this.props.api.host+'/counter', {
+  				account: account,
+          commit: this.state.stack,
+  		    finalArray: finalArray
+  		  })
+  		  .then(function (response) {
+  				console.log(response)
+  		    console.log("APIDATA",response.data);
+  				if(response && response.data && response.data.commit) window.location = "/play/0x"+response.data.commit
+  		  })
+  		  .catch(function (error) {
+  		    console.log(error);
+  		  });
+      } catch(e) {
+        console.log(e)
+      }
+    }else{
+  		//submitCounterStack(address _slammerTime, bytes32 _stack, uint256 _id, uint256 _id2, uint256 _id3, uint256 _id4, uint256 _id5)
+  		contracts["Cryptogs"].methods.submitCounterStack(stack,finalArray[0],finalArray[1],finalArray[2],finalArray[3],finalArray[4]).send({
         from: account,
         gas:350000,
         gasPrice:this.props.GWEI * 1000000000
@@ -75,6 +97,7 @@ class JoinStack extends Component {
       }).catch(e=> {
           console.error('caught error', e);
       })
+    }
 	}
   render(){
     if(!this.state.stackData){

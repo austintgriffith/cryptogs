@@ -67,7 +67,14 @@ var sslOptions = {
 app.use(helmet());
 
 app.get('/', (req, res) => {
-    res.end(JSON.stringify({version:1,timestamp:Date.now()}));
+  let stamp=Date.now()
+  console.log("/",stamp)
+    res.end(JSON.stringify({version:1,timestamp:stamp}));
+});
+
+app.get('/hook', (req, res) => {
+  console.log("HOOK",req.params,req.query)
+    res.end(JSON.stringify({timestamp:Date.now()}));
 });
 
 app.get('/token/:token', (req, res) => {
@@ -108,11 +115,11 @@ app.get('/commits', (req, res) => {
 });
 
 app.get('/commit/:commit', (req, res) => {
+  console.log("Getting Commit ",req.params.commit)
   let commit = req.params.commit
   if(commit.indexOf("0x")>=0) commit=commit.replace("0x","");
-  console.log("Getting Commit ",commit)
   redis.get("commit_"+commit, function (err, result) {
-    console.log(result);
+    //console.log(result);
     res.end(result)
   });
 });
@@ -126,9 +133,11 @@ app.post('/create', function(request, response){
     d.update(secret);
     let reveal = d.digest('hex');
     console.log("reveal",reveal)
+    redis.set(reveal,secret,"ex",COMMIT_EXPIRE);
     d.update(reveal);
     let commit = d.digest('hex');
     console.log("commit",commit)
+    redis.set(commit,reveal,"ex",COMMIT_EXPIRE);
 
     let key = "commit_"+commit
 
@@ -159,11 +168,75 @@ app.post('/create', function(request, response){
         token5Image: token5.image,
       }
     }
+
     let value = JSON.stringify(update)
     console.log("SETTING REDIS "+key+" TO "+value)
     redis.set(key,value,"ex",COMMIT_EXPIRE);
     response.end(value)
 });
+
+app.post('/counter', function(request, response){
+  let commit = request.body.commit
+  if(commit.indexOf("0x")>=0) commit=commit.replace("0x","");
+  console.log("Getting Commit ",commit)
+  redis.get("commit_"+commit, function (err, commitData) {
+    commitData=JSON.parse(commitData)
+    console.log(commitData);
+
+    let token1 = getToken(request.body.finalArray[0])
+    let token2 = getToken(request.body.finalArray[1])
+    let token3 = getToken(request.body.finalArray[2])
+    let token4 = getToken(request.body.finalArray[3])
+    let token5 = getToken(request.body.finalArray[4])
+
+    var d = new SHA3.SHA3Hash(224);
+    d.update(Math.random()+Date.now()+""+JSON.stringify(request.body));
+    let id = d.digest('hex');
+
+    let counterStack = {
+      _counterStack:id,
+      block:-1,
+      commit: commit,
+      owner: request.body.account,
+      token1: token1.id,
+      token2: token2.id,
+      token3: token3.id,
+      token4: token4.id,
+      token5: token5.id,
+      token1Image: token1.image,
+      token2Image: token2.image,
+      token3Image: token3.image,
+      token4Image: token4.image,
+      token5Image: token5.image,
+    }
+
+    commitData.counterStacks.push(counterStack)
+    let key = "commit_"+commit
+    let value = JSON.stringify(commitData)
+    console.log("SETTING REDIS "+key+" TO "+value)
+    redis.set(key,value,"ex",COMMIT_EXPIRE);
+    response.end(value)
+
+  });
+
+});
+
+app.post('/accept', function(request, response){
+    console.log(request.body);      // your JSON
+    let commit = request.body.commit
+    if(commit.indexOf("0x")>=0) commit=commit.replace("0x","");
+    console.log("Getting Commit ",commit)
+    redis.get("commit_"+commit, function (err, commitData) {
+      commitData=JSON.parse(commitData)
+      commitData._counterStack = request.body.counterStack
+      let key = "commit_"+commit
+      let value = JSON.stringify(commitData)
+      console.log("SETTING REDIS "+key+" TO "+value)
+      redis.set(key,value,"ex",COMMIT_EXPIRE);
+      response.end(value)
+    })
+
+})
 
 
 app.listen(8001);

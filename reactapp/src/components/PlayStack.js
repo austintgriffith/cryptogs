@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import EventParser from '../modules/eventParser.js';
 import LiveParser from '../modules/liveParser.js';
 import Stack from '../components/Stack.js'
+import SimpleStack from '../components/SimpleStack.js'
 import Cryptog from '../components/Cryptog.js'
 import Slammer from '../components/Slammer.js'
 import Spinner from '../components/Spinner.js'
@@ -9,7 +10,6 @@ import StackSelect from '../components/StackSelect.js'
 import {Motion, spring, presets} from 'react-motion';
 import MMButton from '../components/MMButton.js'
 import PogAnimation from '../components/PogAnimation'
-import StackGrid from 'react-stack-grid'
 import Blockies from 'react-blockies'
 import cookie from 'react-cookies'
 import axios from 'axios'
@@ -41,7 +41,7 @@ class PlayStack extends Component {
 
     if(props&&props.api&&props.api.version){
       this.loadAPIStackData()
-      loadInterval = setInterval(this.loadAPIStackData.bind(this),707)
+      loadInterval = setInterval(this.loadAPIStackData.bind(this),3000)
     }else{
       this.loadStackData()
       loadInterval = setInterval(this.loadStackData.bind(this),707)
@@ -95,8 +95,6 @@ class PlayStack extends Component {
     try{
       axios.get(this.props.api.host+"/commit/"+this.state.stack)
       .then((response)=>{
-        console.log("COMMIT BACK FROM API",response);
-
         console.log("SETSTATE",response.data)
         this.doUpdate(response.data)
       })
@@ -316,7 +314,7 @@ class PlayStack extends Component {
     }
 
 
-    console.log("STACK SAVE ",update)
+    //console.log("STACK SAVE ",update)
     this.setState(update,()=>{
       if(update.flippingPogs){
         this.setState({slammerTop:-80,slammerAngle:45})
@@ -335,25 +333,48 @@ class PlayStack extends Component {
     console.log("ACCEPT",this.state.stack,counterStack)
     let {contracts,account,showLoadingScreen} = this.props.context
     //acceptCounterStack(address _slammerTime, bytes32 _stack, bytes32 _counterStack)
-    contracts["Cryptogs"].methods.acceptCounterStack(this.state.stack,counterStack).send({
-      from: account,
-      gas:1000000,
-      gasPrice:this.props.GWEI * 1000000000
-    },(error,hash)=>{
-      console.log("CALLBACK!",error,hash)
-      showLoadingScreen(hash)
-      txhash=hash
-    }).on('error',(a,b)=>{
-      if(txhash){
-        console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+    //
+    if(this.props&&this.props.api&&this.props.api.version){
+      try{
+        axios.post(this.props.api.host+'/accept', {
+  				account: account,
+          commit: this.state.stack,
+          counterStack: counterStack,
+  		  })
+  		  .then(function (response) {
+  				console.log(response)
+  		    console.log("APIDATA",response.data);
+
+  		  })
+  		  .catch(function (error) {
+  		    console.log(error);
+  		  });
+      } catch(e) {
+        console.log(e)
       }
-    }).then((receipt)=>{
-      console.log("RESULT:",receipt)
-      showLoadingScreen(false)
-    }).catch(e=> {
-        console.error('caught error', e);
-    })
-    this.setState({counterStack:counterStack})
+
+    }else{
+      contracts["Cryptogs"].methods.acceptCounterStack(this.state.stack,counterStack).send({
+        from: account,
+        gas:1000000,
+        gasPrice:this.props.GWEI * 1000000000
+      },(error,hash)=>{
+        console.log("CALLBACK!",error,hash)
+        showLoadingScreen(hash)
+        txhash=hash
+      }).on('error',(a,b)=>{
+        if(txhash){
+          console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+        }
+      }).then((receipt)=>{
+        console.log("RESULT:",receipt)
+        showLoadingScreen(false)
+      }).catch(e=> {
+          console.error('caught error', e);
+      })
+      this.setState({counterStack:counterStack})
+    }
+
   }
   cancelStack(stack){
     console.log("CANCEL STACK")
@@ -607,6 +628,13 @@ class PlayStack extends Component {
 
     }
   }
+  transferStack(stack){
+    console.log("TRANSFER STACK",stack)
+    //cryptogs contract call but you need to know pizza parlor address :
+    //function transferStackAndCall(address _to, uint _token1, uint _token2, uint _token3, uint _token4, uint _token5, bytes32 _data) public returns (bool) {
+
+
+  }
   render(){
     let {account,blockNumber,contracts,etherscan} = this.props.context
     let {coinFlipResult,stackMode,stackData,counterStacks,lastBlock,lastActor,TIMEOUTBLOCKS,flipEvents,throwSlammerEvents,player1,player2,spectator} = this.state;
@@ -818,93 +846,146 @@ class PlayStack extends Component {
 
     let display = ""
     if(stackMode==0){
-      let callToAction
-      if(account.toLowerCase()==stackData.owner.toLowerCase()){
-        callToAction=(
-          <div key={"cancelstackbutton"+this.state.stack} style={{marginTop:20,marginLeft:20}}>
-            <MMButton color={"#f7861c"} onClick={this.cancelStack.bind(this,this.state.stack)}>cancel</MMButton>
+
+      if(this.props&&this.props.api&&this.props.api.version&&this.state._counterStack){
+        //  console.log("this.state",this.state)
+
+        let transferStackBoxStyle = {
+          marginTop:80,
+          fontSize:16
+        }
+
+
+        let counterStackData = false
+        for(let i in this.state.counterStacks){
+          if(this.state.counterStacks[i]._counterStack == this.state._counterStack){
+            counterStackData=this.state.counterStacks[i]
+          }
+        }
+
+
+        display = (
+          <div className="row align-items-center">
+            <div className="col-md-6">
+              <div style={transferStackBoxStyle}>
+                <p className="text-center">Waiting for player 1 to transfer stack to smart contract...</p>
+                <div className="container text-center">
+    							<p>
+                    <SimpleStack key={"mainstack"} scale={0.7} spacing={70} height={180} {...stackData}/>
+                    <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
+                      <MMButton color={"#6ac360"} onClick={this.transferStack.bind(this,this.state._counterStack)}>Tranfer to Contract</MMButton>
+                    </div>
+    							</p>
+    						</div>
+              </div>
+            </div>
+            <div className="col-md-6" syle={transferStackBoxStyle}>
+              <div style={transferStackBoxStyle}>
+                <p className="text-center">Waiting for player 2 to transfer stack to smart contract...</p>
+                <div className="container text-center">
+                  <p>
+                    <SimpleStack key={"mainstack"} scale={0.7} spacing={70} height={180} {...counterStackData}/>
+                    <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
+                      <MMButton color={"#6ac360"} onClick={this.transferStack.bind(this,this.state._counterStack)}>Tranfer to Contract</MMButton>
+                    </div>
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
-
         )
-      }
 
-      let stackDisplay = (
-        <Stack key={"mainstack"} {...stackData} callToAction={callToAction}/>
-      )
+      }else{
+        let callToAction
+        if(account.toLowerCase()==stackData.owner.toLowerCase()){
+          callToAction=(
+            <div key={"cancelstackbutton"+this.state.stack} style={{marginTop:20,marginLeft:20}}>
+              <MMButton color={"#f7861c"} onClick={this.cancelStack.bind(this,this.state.stack)}>cancel</MMButton>
+            </div>
+
+          )
+        }
+
+        let stackDisplay = (
+          <Stack key={"mainstack"} {...stackData} callToAction={callToAction}/>
+        )
 
 
-      let drawCounterStacks = counterStacks.map((counterstack)=>{
-        if(!stackData.canceledCounterStacks || stackData.canceledCounterStacks.indexOf(counterstack._counterStack)<0){
-          let callToAction
-          if(account.toLowerCase()==stackData.owner.toLowerCase()){
-            callToAction=(
-              <div key={"counterstackbutton"+counterstack._counterStack} style={{marginTop:16,marginLeft:16}}>
-                <MMButton color={"#6ac360"} onClick={this.acceptStack.bind(this,counterstack._counterStack)}>accept</MMButton>
+        let drawCounterStacks = counterStacks.map((counterstack)=>{
+          if(!stackData.canceledCounterStacks || stackData.canceledCounterStacks.indexOf(counterstack._counterStack)<0){
+            let callToAction
+            if(account.toLowerCase()==stackData.owner.toLowerCase()){
+              callToAction=(
+                <div key={"counterstackbutton"+counterstack._counterStack} style={{marginTop:16,marginLeft:16}}>
+                  <MMButton color={"#6ac360"} onClick={this.acceptStack.bind(this,counterstack._counterStack)}>accept</MMButton>
+                </div>
+              )
+            }else if(counterstack.owner.toLowerCase()==account.toLowerCase()){
+              callToAction=(
+                <div key={"counterstackcancelbutton"+counterstack._counterStack} style={{marginTop:20,marginLeft:20}}>
+                  <MMButton color={"#f7861c"} onClick={this.cancelCounterStack.bind(this,this.state.stack,counterstack._counterStack)}>cancel</MMButton>
+                </div>
+              )
+            }
+            return (
+                <Stack key={"counterstack"+counterstack._counterStack} {...counterstack} callToAction={callToAction}/>
+            )
+          }
+        })
+
+        let message
+        let portInfo = ""
+        if(window.location.port && window.location.port!="80"){
+          portInfo=":"+window.location.port
+        }
+        if(account.toLowerCase()==stackData.owner.toLowerCase()){
+          if(drawCounterStacks.length>0){
+            message = ""
+            message = (
+              <div>
+                <div style={{padding:10,paddingTop:20}}>Share game url:</div>
+                <pre id="url" style={{fontSize:14}} onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
+                <div style={{padding:10,paddingTop:20}} className={"actionable"}>{"Accept an opponent's stack:"}</div>
               </div>
             )
-          }else if(counterstack.owner.toLowerCase()==account.toLowerCase()){
-            callToAction=(
-              <div key={"counterstackcancelbutton"+counterstack._counterStack} style={{marginTop:20,marginLeft:20}}>
-                <MMButton color={"#f7861c"} onClick={this.cancelCounterStack.bind(this,this.state.stack,counterstack._counterStack)}>cancel</MMButton>
+          }else{
+            message = (
+              <div>
+                <div style={{padding:10,paddingTop:20}}>Waiting for other players, share game url to challenge your friends:</div>
+                <pre id="url" style={{fontSize:14}} onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
+
+                <div className={"centercontainer"}>
+                  <div style={{padding:40,marginTop:60}}>
+                    <MMButton color={"#6081c3"} onClick={()=>{
+                      window.open(etherscan+"address/"+contracts['Cryptogs']._address);
+                    }}>Watch Contract Transactions</MMButton>
+                  </div>
+                </div>
+
+
               </div>
             )
           }
-          return (
-              <Stack key={"counterstack"+counterstack._counterStack} {...counterstack} callToAction={callToAction}/>
-          )
-        }
-      })
-
-      let message
-      let portInfo = ""
-      if(window.location.port && window.location.port!="80"){
-        portInfo=":"+window.location.port
-      }
-      if(account.toLowerCase()==stackData.owner.toLowerCase()){
-        if(drawCounterStacks.length>0){
-          message = ""
-          message = (
-            <div>
-              <div style={{padding:10,paddingTop:20}}>Share game url:</div>
-              <pre id="url" style={{fontSize:14}} onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
-              <div style={{padding:10,paddingTop:20}} className={"actionable"}>{"Accept an opponent's stack:"}</div>
-            </div>
-          )
         }else{
-          message = (
-            <div>
-              <div style={{padding:10,paddingTop:20}}>Waiting for other players, share game url to challenge your friends:</div>
-              <pre id="url" style={{fontSize:14}} onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
 
-              <div className={"centercontainer"}>
-                <div style={{padding:40,marginTop:60}}>
-                  <MMButton color={"#6081c3"} onClick={()=>{
-                    window.open(etherscan+"address/"+contracts['Cryptogs']._address);
-                  }}>Watch Contract Transactions</MMButton>
-                </div>
+            message = (
+              <div style={{padding:20}} className={"actionable"}>
+                {"Waiting for the player 1 to accept a stack..."}
               </div>
+            )
 
-
-            </div>
-          )
         }
-      }else{
 
-          message = (
-            <div style={{padding:20}} className={"actionable"}>
-              {"Waiting for the player 1 to accept a stack..."}
-            </div>
-          )
-
+        display = (
+          <div>
+            {stackDisplay}
+            <div>{message}</div>
+            {drawCounterStacks}
+          </div>
+        )
       }
 
-      display = (
-        <div>
-          {stackDisplay}
-          <div>{message}</div>
-          {drawCounterStacks}
-        </div>
-      )
+
     }else if(stackMode==1){
       if(account.toLowerCase()==stackData.owner.toLowerCase()){
         display = (
@@ -1058,7 +1139,6 @@ class PlayStack extends Component {
       slammerCursor = 'pointer'
     }
 
-
     let width = 700
     let mainStyle = {backgroundColor:"#FFFFFF",width:width,height:800}
     let scale
@@ -1067,17 +1147,12 @@ class PlayStack extends Component {
     let left=0
     let top=0
     if(stackMode>0 && window.innerWidth < width){
-
-
-        scale = ((window.innerWidth-100)/(width))
-        mainStyle.transform =  "scale("+scale+")"
-        mainStyle.marginLeft=-240*(1-(scale-.39))+100
-        mainStyle.marginTop=-270*(1-(scale-.39))+70
-        left = 0
-        top = 350
-
-
-
+      scale = ((window.innerWidth-100)/(width))
+      mainStyle.transform =  "scale("+scale+")"
+      mainStyle.marginLeft=-240*(1-(scale-.39))+100
+      mainStyle.marginTop=-270*(1-(scale-.39))+70
+      left = 0
+      top = 350
     }else{
       mainStyle.width = window.innerWidth-100
       left=(window.innerWidth/4)
@@ -1088,14 +1163,11 @@ class PlayStack extends Component {
 
     return (
       <div  style={mainStyle}>
-
       {flipDisplyContent}
       {display}
       <div style={{position:'absolute',left:left,top:top}}>
-
         {mixedStack}
         {flightStack}
-
         <Motion
         defaultStyle={{
           left:0,

@@ -140,7 +140,7 @@ export default createClass({
 				LiveParser(contracts["Cryptogs"],"CancelCounterStack",blockNumber,updateCancelCounterStack)
 			},997)
 
-			//setInterval(()=>{
+			setInterval(()=>{
 				if(this.context.api&&this.context.api.version){
 					console.log("Connecting to API...")
 					try{
@@ -183,7 +183,7 @@ export default createClass({
 						console.log(e)
 					}
 				}
-			//},1001)
+			},3001)
 
 
 			clearInterval(loadInterval)

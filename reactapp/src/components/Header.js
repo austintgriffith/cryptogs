@@ -9,7 +9,7 @@ export default createClass({
 		let {metamaskHint,account,metaMaskHintFn} = this.props
 
 		let apiImage
-		if(this.props.api&&this.props.api.timestamp){
+		if(this.props.api&&this.props.api.version){
 			apiImage = "/lightclogo.png"
 		}else{
 			apiImage = "/darkclogo.png"

@@ -25,8 +25,9 @@ import GasSlider from './components/GasSlider.js'
 import MMButton from './components/MMButton.js'
 import cookie from 'react-cookies'
 import axios from 'axios'
+import {Motion, spring, presets} from 'react-motion';
 
-const OPTIONALBACKEND = "http://stage.cryptogs.io:56834"
+const OPTIONALBACKEND = "http://stage.cryptogs.io:8080"
 
 const DEBUG = false
 const MAINNETGWEI = 5
@@ -101,6 +102,7 @@ export default createClass({
 			alert: "",
 			network:0,
 			api:{},
+			apiHint:-600,
 		};
 	},
 	componentDidMount(){
@@ -127,16 +129,32 @@ export default createClass({
 		this.setupApi()
 	},
 	setupApi(){
-		try{
-			console.log("Looking for a backend @ ",OPTIONALBACKEND)
-			axios.get(OPTIONALBACKEND)
-		  .then((response)=>{
-				let update = {host:OPTIONALBACKEND,...response.data}
-		    console.log("API!!!!",response,update);
-				this.setState({api:update})
-		  })
-		} catch(e) {
-			console.log(e)
+		let apiCookie = parseInt(cookie.load('api'))
+		if(apiCookie==-1){
+			console.log("don't even try centralized, they have turned it off")
+		}else{
+			try{
+				console.log("Looking for a backend @ ",OPTIONALBACKEND)
+				axios.get(OPTIONALBACKEND)
+				.then((response)=>{
+					let update = {host:OPTIONALBACKEND,...response.data}
+					console.log("API!!!!",response,update);
+					cookie.save('api', 1, { path: '/', maxAge:1800 })
+					this.setState({api:update})
+					let apiinfo =  parseInt(cookie.load('apiinfo'))
+					if(!apiinfo){
+						setTimeout(()=>{
+							this.setState({apiHint:-100})
+						},1500)
+						setTimeout(()=>{
+							this.setState({apiHint:-600})
+						},4500)
+						cookie.save('apiinfo', 1, { path: '/', maxAge:1800 })
+					}
+				})
+			} catch(e) {
+				console.log(e)
+			}
 		}
 	},
 	componentWillUnmount(){
@@ -164,10 +182,22 @@ export default createClass({
 		}
 	},
 	apiClick(){
+		cookie.save('apiinfo', 0, { path: '/', maxAge:1800 })
 		if(this.state.api&&this.state.api.version){
-			this.setState({api:false})
+			console.log("clear api and go dencentralized")
+			this.setState({api:false,apiHint:-100})
+			cookie.save('api', -1, { path: '/', maxAge:1800 })
+			setTimeout(()=>{
+				this.setState({apiHint:-600})
+			},4000)
 		}else{
-			this.setupApi()
+			console.log("Give me just a little centralization for less transactions")
+			cookie.save('api', 1, { path: '/', maxAge:1800 })
+		  setTimeout(()=>{
+				this.setupApi()
+			},500)
+
+
 		}
 	},
 	whenContractsAreReady(){
@@ -194,6 +224,7 @@ export default createClass({
 	},
 	render(){
 		const { count,contracts,loadingTx,loadingDest } = this.state;
+
 		let loader = ""
 		if(loadingTx){
 			loader = (
@@ -201,6 +232,19 @@ export default createClass({
 			)
 		}
 
+
+		let apiHintContent = (
+			<div>
+				<img src="/darkclogo.png" style={{maxHeight:20}}/> Fully decentralized, you should run the <a href="https://github.com/austintgriffith/cryptogs/tree/master/reactapp" target="_blank">react app</a> locally too.
+			</div>
+		)
+		if(this.state.api&&this.state.api.version){
+			apiHintContent = (
+				<div>
+					<img src="/lightclogo.png" style={{maxHeight:20}}/> Connected to centralized API for faster and fewer transactions.
+				</div>
+			)
+		}
 
 		return (
 			<div style={{backgroundColor:"#FFFFFF"}}>
@@ -219,6 +263,23 @@ export default createClass({
 					api={this.state.api}
 					apiClick={this.apiClick}
 				/>
+
+				<Motion
+				defaultStyle={{
+					right:-600,
+				}}
+				style={{
+					right:spring(this.state.apiHint,{ stiffness: 100, damping: 12 })
+				}}
+				>
+					{currentStyles => {
+						return (
+							<div style={{width:550,padding:20,fontSize:14,backgroundColor:"#FFFFFF",cursor:"pointer",position:"absolute",right:currentStyles.right,top:97,zIndex:90}}>
+								{apiHintContent}
+							</div>
+						)
+					}}
+				</Motion>
 
 				<div>
           <Router>

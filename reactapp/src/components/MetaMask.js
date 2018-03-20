@@ -190,7 +190,7 @@ class MetaMask extends Component {
               <span style={{
                 float:'left',
                 marginTop:3,
-                paddingLeft:60,
+                paddingLeft:40,
                 zIndex:210,
                 fontWeight:'bold',
                 fontSize:18,
