@@ -110,7 +110,7 @@ export default createClass({
 			web3 = new Web3(window.web3.currentProvider)
 			web3.eth.net.getId().then((network)=>{
 				if(network>9999) network=9999;
-				let contracts = ContractLoader(["Cryptogs","SlammerTime"],web3,network);
+				let contracts = ContractLoader(["Cryptogs","SlammerTime","PizzaParlor"],web3,network);
 				let update = {web3:web3,contracts:contracts,contractsLoaded:true,network:network}
 				if(!this.state || !this.state.GWEI || this.state.GWEI == STARTINGGWEI){
 					if(network>1){

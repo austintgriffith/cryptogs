@@ -62,34 +62,69 @@ class PlayStack extends Component {
   async startEventParsers(){
     if(DEBUG) console.log("STARTING PARSERS")
     let {account,contracts,web3,showLoadingScreen,blockNumber} = this.props.context
-    let thisStack = await contracts['Cryptogs'].methods.getStack(this.state.stack).call()
-    let updateThrowSlammer = async (update)=>{
-      let id = web3.utils.sha3(update.stack+update.blockNumber+update.whoDoneIt);
-      if(!this.state.throwSlammerEvents) this.state.throwSlammerEvents={};
-      if(!this.state.throwSlammerEvents[id]) {
-        this.state.throwSlammerEvents[id]=update;
-        //console.log("UPDATE this.state.throwSlammerEvents",this.state.throwSlammerEvents)
-        for(let t=1;t<=10;t++){
-          let thisTokenId = update["token"+t+"Flipped"]
-          //console.log("thisTokenId",thisTokenId)
-          if(thisTokenId>0){
-            let token = await contracts['Cryptogs'].methods.getToken(thisTokenId).call()//this.state.allStacks[id]
-            //console.log("THIS TOKEN",token)
-            this.state.throwSlammerEvents[id]["token"+t+"Flipped"] = {
-              id:thisTokenId,
-              image:web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
+
+    if(this.props&&this.props.api&&this.props.api.version){
+      console.log("FIRING UP 'centralized' EVENT PARSERS")
+      let updateTransferStack = async (update)=>{
+        console.log("updateTransferStack",update)
+        if(!this.state.receipts) this.state.receipts={};
+        if(!this.state.receipts[update._sender.toLowerCase()]) {
+          this.state.receipts[update._sender.toLowerCase()] = update._receipt
+          let receipts = []
+          let users = []
+          for(let r  in this.state.receipts){
+            users.push(r)
+            receipts.push(this.state.receipts[r])
+          }
+          if(receipts.length>=2){
+            axios.get(this.props.api.host+"/reveal/"+this.state.stack+"/"+receipts[0]+"/"+users[0]+"/"+receipts[1]+"/"+users[1])
+            .then((response)=>{
+              console.log("REVEAL",response.data)
+              this.setState({reveal:response.data});
+            })
+          }
+          this.setState({receipts:this.state.receipts});
+        }
+      }
+      let filter = {stack: this.state.stack}
+      EventParser(contracts["PizzaParlor"],"TransferStack",contracts["Cryptogs"].blockNumber,blockNumber,updateTransferStack,filter);
+      setInterval(()=>{
+        LiveParser(contracts["PizzaParlor"],"TransferStack",blockNumber,updateTransferStack,filter)
+      },737)
+    }else{
+      console.log("FIRING UP DECENTRALIZED EVENT PARSERS")
+      let thisStack = await contracts['Cryptogs'].methods.getStack(this.state.stack).call()
+      let updateThrowSlammer = async (update)=>{
+        let id = web3.utils.sha3(update.stack+update.blockNumber+update.whoDoneIt);
+        if(!this.state.throwSlammerEvents) this.state.throwSlammerEvents={};
+        if(!this.state.throwSlammerEvents[id]) {
+          this.state.throwSlammerEvents[id]=update;
+          //console.log("UPDATE this.state.throwSlammerEvents",this.state.throwSlammerEvents)
+          for(let t=1;t<=10;t++){
+            let thisTokenId = update["token"+t+"Flipped"]
+            //console.log("thisTokenId",thisTokenId)
+            if(thisTokenId>0){
+              let token = await contracts['Cryptogs'].methods.getToken(thisTokenId).call()//this.state.allStacks[id]
+              //console.log("THIS TOKEN",token)
+              this.state.throwSlammerEvents[id]["token"+t+"Flipped"] = {
+                id:thisTokenId,
+                image:web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
+              }
             }
           }
+          //console.log("UPDATEETETE",  this.state.throwSlammerEvents)
+          this.setState({throwSlammerEvents:this.state.throwSlammerEvents});
         }
-        //console.log("UPDATEETETE",  this.state.throwSlammerEvents)
-        this.setState({throwSlammerEvents:this.state.throwSlammerEvents});
       }
+      let filter = {stack: this.state.stack}
+      EventParser(contracts["Cryptogs"],"ThrowSlammer",thisStack.block,blockNumber,updateThrowSlammer,filter);
+      setInterval(()=>{
+        LiveParser(contracts["Cryptogs"],"ThrowSlammer",blockNumber,updateThrowSlammer,filter)
+      },737)
     }
-    let filter = {stack: this.state.stack}
-    EventParser(contracts["Cryptogs"],"ThrowSlammer",thisStack.block,blockNumber,updateThrowSlammer,filter);
-    setInterval(()=>{
-      LiveParser(contracts["Cryptogs"],"ThrowSlammer",blockNumber,updateThrowSlammer,filter)
-    },737)
+
+
+
   }
   async loadAPIStackData(){
     try{
@@ -101,6 +136,9 @@ class PlayStack extends Component {
     } catch(e) {
       console.log(e)
     }
+
+    //event TransferStack(bytes32 indexed _commit,address indexed _sender,bytes32 indexed _receipt,uint256 _token1,uint256 _token2,uint256 _token3,uint256 _token4,uint256 _token5);
+    //
   }
   async loadStackData(){
     let stack
@@ -282,6 +320,7 @@ class PlayStack extends Component {
     this.doUpdate(update)
   }
   doUpdate(update){
+    if(!update) update={}
     if(update.stackMode==3){
       update.slammerTop = -160
       update.slammerLeft = 0
@@ -628,11 +667,59 @@ class PlayStack extends Component {
 
     }
   }
-  transferStack(stack){
-    console.log("TRANSFER STACK",stack)
+  transferStack(stackData){
+    let {account,blockNumber,contracts,etherscan,showLoadingScreen} = this.props.context
+    let pizzaParlorAddress = contracts["PizzaParlor"]._address;
+    console.log("TRANSFER STACK",stackData,"pizzaParlorAddress",pizzaParlorAddress)
     //cryptogs contract call but you need to know pizza parlor address :
     //function transferStackAndCall(address _to, uint _token1, uint _token2, uint _token3, uint _token4, uint _token5, bytes32 _data) public returns (bool) {
+    contracts["Cryptogs"].methods.transferStackAndCall(pizzaParlorAddress,stackData.token1,stackData.token2,stackData.token3,stackData.token4,stackData.token5,"0x"+stackData.commit).send({
+      from: account,
+      gas:300000,
+      gasPrice:this.props.GWEI * 1000000000
+    },(error,hash)=>{
+      console.log("CALLBACK!",error,hash)
+      showLoadingScreen(hash)
+      txhash=hash
+    }).on('error',(a,b)=>{
+      if(txhash){
+        //howLoadingScreen(false)
+        console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+      }
+    }).then((receipt)=>{
+      console.log("RESULT:",receipt)
+      showLoadingScreen(false)
+    }).catch(e=> {
+        console.error('caught error', e);
+    })
 
+
+  }
+  generateGame(stackData){
+    let {account,blockNumber,contracts,etherscan,showLoadingScreen} = this.props.context
+
+    //generateGame(bytes32 _commit,bytes32 _reveal,address _opponent,uint _token1, uint _token2, uint _token3, uint _token4, uint _token5,uint _token6, uint _token7, uint _token8, uint _token9, uint _token10){
+/*
+    contracts["PizzaParlor"].methods.transferStackAndCall(pizzaParlorAddress,stackData.token1,stackData.token2,stackData.token3,stackData.token4,stackData.token5,"0x"+stackData.commit).send({
+      from: account,
+      gas:300000,
+      gasPrice:this.props.GWEI * 1000000000
+    },(error,hash)=>{
+      console.log("CALLBACK!",error,hash)
+      showLoadingScreen(hash)
+      txhash=hash
+    }).on('error',(a,b)=>{
+      if(txhash){
+        //howLoadingScreen(false)
+        console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+      }
+    }).then((receipt)=>{
+      console.log("RESULT:",receipt)
+      showLoadingScreen(false)
+    }).catch(e=> {
+        console.error('caught error', e);
+    })
+*/
 
   }
   render(){
@@ -863,37 +950,162 @@ class PlayStack extends Component {
           }
         }
 
+        this.state.stackData.commit = this.state.commit
 
-        display = (
-          <div className="row align-items-center">
-            <div className="col-md-6">
-              <div style={transferStackBoxStyle}>
-                <p className="text-center">Waiting for player 1 to transfer stack to smart contract...</p>
-                <div className="container text-center">
-    							<p>
-                    <SimpleStack key={"mainstack"} scale={0.7} spacing={70} height={180} {...stackData}/>
-                    <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
-                      <MMButton color={"#6ac360"} onClick={this.transferStack.bind(this,this.state._counterStack)}>Tranfer to Contract</MMButton>
-                    </div>
-    							</p>
-    						</div>
+
+
+
+        console.log("this.state.receipts",this.state.receipts)
+
+        if(this.state && this.state.receipts && this.state.receipts[stackData.owner.toLowerCase()] && this.state.receipts[counterStackData.owner.toLowerCase()])
+        {
+
+          let player1hashSize = parseInt(this.state.receipts[stackData.owner.toLowerCase()].substr(2,12),16);
+          let player2hashSize = parseInt(this.state.receipts[counterStackData.owner.toLowerCase()].substr(2,12),16);
+
+          console.log(player1hashSize,player2hashSize)
+
+
+          let playerToGenerate;
+          let playerNumber;
+
+          if( player1hashSize < player2hashSize ){
+            playerNumber = 1
+            playerToGenerate = stackData.owner.toLowerCase()
+          }else{
+            playerNumber = 2
+            playerToGenerate = counterStackData.owner.toLowerCase()
+          }
+          console.log("playerToGenerate",playerToGenerate)
+
+          let buttonColor = "#AAAAAA"
+          let clickFunction = ()=>{}
+
+          if(playerToGenerate == account.toLowerCase()){
+            buttonColor = "#6ac360"
+            clickFunction = this.generateGame
+          }
+
+          display = (
+            <div className="row align-items-center">
+
+              <div className="container text-center">
+
+                <p className="text-center" style={{padding:50}}>Player {playerNumber} has the lower receipt hash and is chosen to generate the on-chain randomness...</p>
+
+                  <a target="_blank" href={"/address/"+stackData.owner}>
+                   <Blockies
+                     seed={playerToGenerate}
+                     scale={10}
+                   />
+                  </a>
+                  <SimpleStack key={"mainstack"} scale={0.7} spacing={70} height={180} {...stackData}/>
+                  <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
+                    <MMButton color={buttonColor} onClick={clickFunction}>Generate Game</MMButton>
+                  </div>
               </div>
+
             </div>
-            <div className="col-md-6" syle={transferStackBoxStyle}>
-              <div style={transferStackBoxStyle}>
-                <p className="text-center">Waiting for player 2 to transfer stack to smart contract...</p>
-                <div className="container text-center">
-                  <p>
+          )
+        }else{
+
+          let firstStackColor = "#AAAAAA"
+          let secondStackColor = "#AAAAAA"
+          let firstClickFunction = ()=>{}
+          let secondClickFunction = ()=>{}
+
+
+          if(account.toLowerCase()==stackData.owner.toLowerCase()){
+            firstClickFunction = this.transferStack.bind(this,this.state.stackData)
+            firstStackColor = "#6ac360"
+          }else if(counterStackData.owner.toLowerCase()==account.toLowerCase()){
+            secondClickFunction = this.transferStack.bind(this,counterStackData)
+            secondStackColor = "#6ac360"
+          }
+
+          let firstCol = ""
+          if(this.state && this.state.receipts && this.state.receipts[stackData.owner.toLowerCase()]){
+            firstCol = (
+              <div className="col-md-6" style={transferStackBoxStyle}>
+                  <p className="text-center" style={{padding:50}}>Stack Transferred!</p>
+                  <div className="container text-center">
+                      <a target="_blank" href={"/address/"+stackData.owner}>
+                       <Blockies
+                         seed={stackData.owner.toLowerCase()}
+                         scale={10}
+                       />
+                      </a>
+                      <SimpleStack key={"mainstack"} scale={0.7} spacing={70} height={180} {...stackData}/>
+      						</div>
+              </div>
+            )
+          }else{
+            firstCol = (
+              <div className="col-md-6" style={transferStackBoxStyle}>
+                  <p className="text-center" style={{padding:50}}>Waiting for player 1 to transfer stack to smart contract...</p>
+                  <div className="container text-center">
+                      <a target="_blank" href={"/address/"+stackData.owner}>
+                       <Blockies
+                         seed={stackData.owner.toLowerCase()}
+                         scale={10}
+                       />
+                      </a>
+                      <SimpleStack key={"mainstack"} scale={0.7} spacing={70} height={180} {...stackData}/>
+                      <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
+                        <MMButton color={firstStackColor} onClick={firstClickFunction}>Transfer to Contract</MMButton>
+                      </div>
+      						</div>
+              </div>
+            )
+          }
+
+          let secondCol = ""
+          if(this.state && this.state.receipts && this.state.receipts[stackData.owner.toLowerCase()]){
+            secondCol = (
+              <div className="col-md-6" style={transferStackBoxStyle}>
+                  <p className="text-center" style={{padding:50}}>Stack Transferred!</p>
+                  <div className="container text-center">
+                    <a target="_blank" href={"/address/"+counterStackData.owner}>
+                     <Blockies
+                       seed={counterStackData.owner.toLowerCase()}
+                       scale={10}
+                     />
+                    </a>
+                    <SimpleStack key={"mainstack"} scale={0.7} spacing={70} height={180} {...counterStackData}/>
+                  </div>
+              </div>
+            )
+          }else{
+            secondCol = (
+              <div className="col-md-6" syle={transferStackBoxStyle}>
+                  <p className="text-center" style={{padding:50}}>Waiting for player 2 to transfer stack to smart contract...</p>
+                  <div className="container text-center">
+                    <a target="_blank" href={"/address/"+counterStackData.owner}>
+                     <Blockies
+                       seed={counterStackData.owner.toLowerCase()}
+                       scale={10}
+                     />
+                    </a>
                     <SimpleStack key={"mainstack"} scale={0.7} spacing={70} height={180} {...counterStackData}/>
                     <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
-                      <MMButton color={"#6ac360"} onClick={this.transferStack.bind(this,this.state._counterStack)}>Tranfer to Contract</MMButton>
+                      <MMButton color={secondStackColor} onClick={secondClickFunction}>Transfer to Contract</MMButton>
                     </div>
-                  </p>
-                </div>
+                  </div>
               </div>
+            )
+          }
+
+
+          display = (
+            <div className="row align-items-center">
+              {firstCol}
+              {secondCol}
             </div>
-          </div>
-        )
+          )
+        }
+
+
+
 
       }else{
         let callToAction

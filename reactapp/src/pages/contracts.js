@@ -17,17 +17,19 @@ export default createClass({
 		throwAlert: PropTypes.func,
 	},
 	getInitialState(){
-		let contractList = ["Cryptogs","SlammerTime"]
+		let contractList = ["Cryptogs","SlammerTime","PizzaParlor"]
 		let mainnet = {}
 		let ropsten = {}
 		for(let c in contractList){
 	    try{
-	      mainnet[contractList[c]] = require("../contracts/"+contractList[c]+".1.address.js")
-				console.log("Loaded mainnet:",mainnet)
 				ropsten[contractList[c]] = require("../contracts/"+contractList[c]+".3.address.js")
 				console.log("Loaded ropsten:",ropsten)
+				mainnet[contractList[c]] = require("../contracts/"+contractList[c]+".1.address.js")
+				console.log("Loaded mainnet:",mainnet)
 	    }catch(e){console.log(e)}
 	  }
+
+		console.log("ROPSTEN",ropsten)
 
 		return {
 			mainnet:mainnet,
@@ -50,6 +52,7 @@ export default createClass({
 												<div className="col-md-3">
 														<div>Cryptogs.sol</div>
 														<div>SlammerTime.sol</div>
+														<div>PizzaParlor.sol</div>
 												</div>
 												<div className="col-md-9">
 													<div>
@@ -57,6 +60,9 @@ export default createClass({
 													</div>
 													<div>
 														<a href={"https://etherscan.io/address/"+this.state.mainnet.SlammerTime+"#code"}>{this.state.mainnet.SlammerTime}</a>
+													</div>
+													<div>
+														<a href={"https://etherscan.io/address/"+this.state.mainnet.PizzaParlor+"#code"}>{this.state.mainnet.PizzaParlor}</a>
 													</div>
 												</div>
 										</div>
@@ -67,6 +73,7 @@ export default createClass({
 												<div className="col-md-3">
 													<div>Cryptogs.sol</div>
 													<div>SlammerTime.sol</div>
+													<div>PizzaParlor.sol</div>
 												</div>
 												<div className="col-md-9">
 													<div>
@@ -74,6 +81,9 @@ export default createClass({
 													</div>
 													<div>
 														<a href={"https://ropsten.etherscan.io/address/"+this.state.ropsten.SlammerTime+"#code"}>{this.state.ropsten.SlammerTime}</a>
+													</div>
+													<div>
+														<a href={"https://ropsten.etherscan.io/address/"+this.state.ropsten.PizzaParlor+"#code"}>{this.state.ropsten.PizzaParlor}</a>
 													</div>
 												</div>
 										</div>
@@ -84,6 +94,7 @@ export default createClass({
 												<div className="col-md-3">
 													<div>Cryptogs.sol</div>
 													<div>SlammerTime.sol</div>
+													<div>PizzaParlor.sol</div>
 												</div>
 												<div className="col-md-9">
 													<div>
@@ -91,6 +102,9 @@ export default createClass({
 													</div>
 													<div>
 														<a href="https://github.com/austintgriffith/cryptogs/blob/master/SlammerTime/SlammerTime.sol">Source Code</a>
+													</div>
+													<div>
+														<a href="https://github.com/austintgriffith/cryptogs/blob/master/PizzaParlor/PizzaParlor.sol">Source Code</a>
 													</div>
 												</div>
 										</div>

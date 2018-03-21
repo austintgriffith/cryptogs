@@ -12,7 +12,7 @@ var cors = require('cors')
 app.use(cors())
 var SHA3 = require('sha3');
 
-const COMMIT_EXPIRE = 3600 // commit expires in an hour?
+const COMMIT_EXPIRE = 86400*3 // commit expires in an a few days?
 
 let NETWORK = 3
 let contracts;
@@ -82,6 +82,14 @@ app.get('/token/:token', (req, res) => {
     res.end(JSON.stringify(getToken(req.params.token)))
 });
 
+app.get('/reveal/:commit/:receipt1/:user1/:receipt2/:user2', (req, res) => {
+    console.log("/reveal/ ",req.params)
+
+    let receipt1 = contracts["PizzaParlor"].commitReceipt(req.params.commit,req.params.user1)
+    console.log("found receipt1",receipt1)
+
+    res.end(JSON.stringify(req.params))
+});
 
 function getToken(id){
   let tokenData = contracts["Cryptogs"].getToken(id)
