@@ -68,7 +68,7 @@ class JoinStack extends Component {
   		  .then(function (response) {
   				console.log(response)
   		    console.log("APIDATA",response.data);
-  				if(response && response.data && response.data.commit) window.location = "/play/0x"+response.data.commit
+  				if(response && response.data && response.data.commit) window.location = "/play/"+response.data.commit
   		  })
   		  .catch(function (error) {
   		    console.log(error);

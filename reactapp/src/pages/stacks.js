@@ -140,6 +140,23 @@ export default createClass({
 				LiveParser(contracts["Cryptogs"],"CancelCounterStack",blockNumber,updateCancelCounterStack)
 			},997)
 
+
+
+
+
+			let updateGenerateGame= async (update)=>{
+				console.log("updateGenerateGame",update)
+				let id = update.commit
+				if(!this.state.allStacks[id]) this.state.allStacks[id]={};
+				if(!this.state.allStacks[id].finished) this.state.allStacks[id].finished=true;
+				this.setState({allStacks:this.state.allStacks});
+			}
+			EventParser(contracts["PizzaParlor"],"GenerateGame",blockNumber-BLOCKLOOKBACK,blockNumber,updateGenerateGame);
+			setInterval(()=>{
+				LiveParser(contracts["PizzaParlor"],"GenerateGame",blockNumber,updateGenerateGame)
+			},997)
+
+
 			setInterval(()=>{
 				if(this.context.api&&this.context.api.version){
 					console.log("Connecting to API...")
@@ -149,7 +166,7 @@ export default createClass({
 							let commits = response.data
 							console.log("COMMITS BACK FROM API");
 							for(let c in commits){
-								let commitId = "0x"+commits[c].replace("commit_","")
+								let commitId = commits[c].replace("commit_","")
 								if(!this.state.allStacks[commitId]){
 									axios.get(this.context.api.host+"/commit/"+commitId)
 									.then((commitData)=>{
@@ -173,7 +190,8 @@ export default createClass({
 										}
 
 										console.log("Saving stack object",stackObject)
-										this.state.allStacks[commitId] = stackObject
+										if(!this.state.allStacks[commitId]) this.state.allStacks[commitId]={}
+										this.state.allStacks[commitId] = Object.assign(this.state.allStacks[commitId],stackObject)
 										this.setState({allStacks:this.state.allStacks})
 									})
 								}
@@ -234,6 +252,7 @@ export default createClass({
 
 			}else if(account &&
 				(!allStacksFlipped[s].canceled) &&
+				 (!allStacksFlipped[s].finished) &&
 					(
 						(allStacksFlipped[s]._sender && allStacksFlipped[s]._sender.toLowerCase() == account.toLowerCase()) ||
 						(
@@ -243,6 +262,7 @@ export default createClass({
 					)
 				){
 				//	console.log("allStacksFlipped[s].canceledSenders",allStacksFlipped[s].canceledSenders)
+				console.log("FINISHED?",allStacksFlipped[s].finished)
 				if(allStacksFlipped[s]._stack){
 					myStacks.push(
 						<Stack key={"mystack"+s} {...allStacksFlipped[s]} callToAction={

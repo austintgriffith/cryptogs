@@ -27,7 +27,7 @@ import cookie from 'react-cookies'
 import axios from 'axios'
 import {Motion, spring, presets} from 'react-motion';
 
-const OPTIONALBACKEND = "http://stage.cryptogs.io:8080"
+const OPTIONALBACKEND = "http://localhost:8001"
 
 const DEBUG = false
 const MAINNETGWEI = 5

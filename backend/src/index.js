@@ -4,7 +4,6 @@ const https = require('https');
 const helmet = require('helmet');
 const app = express();
 const Redis = require('ioredis');
-const Web3 = require('web3');
 const ContractLoader = require('./modules/contractLoader.js');
 var bodyParser = require('body-parser')
 app.use(bodyParser());
@@ -14,37 +13,37 @@ var SHA3 = require('sha3');
 
 const COMMIT_EXPIRE = 86400*3 // commit expires in an a few days?
 
-let NETWORK = 3
+// const redisHost = '172.17.0.1'
+const redisHost = 'localhost'
+
 let contracts;
 let tokens = [];
-var Web3Utils = require('web3-utils');
+
+var Web3 = require('web3');
 var web3 = new Web3();
-//web3.setProvider(new web3.providers.HttpProvider('http://172.31.41.168:8545'));
-web3.setProvider(new Web3.providers.HttpProvider("https://ropsten.infura.io/c2tvCbsyloQRTKpcSWQx"));
-if(!web3.isConnected())
-  console.log("INFURA not connected");
-else{
-  console.log("INFURA connected");
-  contracts = ContractLoader(["Cryptogs","SlammerTime","PizzaParlor"],web3,NETWORK);
-  /*let totalSupply = contracts["Cryptogs"].totalSupply().c[0]
-  console.log("Loading ",totalSupply,"tokens...")
-  for(let token=1;token<totalSupply;token++){
-    tokens[token] = contracts["Cryptogs"].getToken(token)
-    console.log(token,tokens[token])
-  }*/
-}
+
+const NETWORK = 9999
+
+web3.setProvider(new web3.providers.HttpProvider('http://localhost:8545'));
+
+console.log("LOADING CONTRACTS")
+contracts = ContractLoader(["Cryptogs","SlammerTime","PizzaParlor"],web3,NETWORK);
+
+contracts["Cryptogs"].methods.author().call({}, function(error, result){
+    console.log("AUTHOR",error,result)
+});
 
 var redis = new Redis({
   port: 57290,
-  host: '172.17.0.1',
+  host: redisHost,
 })
 var pub = new Redis({
   port: 57290,
-  host: '172.17.0.1',
+  host: redisHost,
 })
 var sub = new Redis({
   port: 57290,
-  host: '172.17.0.1',
+  host: redisHost,
 })
 
 sub.subscribe('news', 'music', function (err, count) {
@@ -69,44 +68,60 @@ app.use(helmet());
 app.get('/', (req, res) => {
   let stamp=Date.now()
   console.log("/",stamp)
-    res.end(JSON.stringify({version:1,timestamp:stamp}));
+  res.set('Content-Type', 'application/json');
+  res.end(JSON.stringify({version:1,timestamp:stamp}));
 });
 
 app.get('/hook', (req, res) => {
   console.log("HOOK",req.params,req.query)
-    res.end(JSON.stringify({timestamp:Date.now()}));
+  res.set('Content-Type', 'application/json');
+  res.end(JSON.stringify({timestamp:Date.now()}));
 });
 
-app.get('/token/:token', (req, res) => {
+app.get('/token/:token', async (req, res) => {
     console.log("/Token/ ",req.params.token)
-    res.end(JSON.stringify(getToken(req.params.token)))
+    let token = await getToken(req.params.token);
+    res.set('Content-Type', 'application/json');
+    res.end(JSON.stringify(token))
 });
 
-app.get('/reveal/:commit/:receipt1/:user1/:receipt2/:user2', (req, res) => {
+app.get('/reveal/:commit/:receipt1/:user1/:receipt2/:user2', async (req, res) => {
     console.log("/reveal/ ",req.params)
+    let receipt1 = await contracts["PizzaParlor"].methods.commitReceipt(req.params.commit,req.params.user1).call()
+    let receipt2 = await contracts["PizzaParlor"].methods.commitReceipt(req.params.commit,req.params.user2).call()
+    console.log(receipt1,receipt2)
+    if(receipt1 != "0x0000000000000000000000000000000000000000000000000000000000000000" &&
+      receipt2 != "0x0000000000000000000000000000000000000000000000000000000000000000" &&
+      receipt1==req.params.receipt1 && receipt2==req.params.receipt2 )
+    {
+      redis.get("getReveal"+req.params.commit, function (err, result) {
+        console.log("REVEAL:",result);
+        res.set('Content-Type', 'application/json');
+        res.end(JSON.stringify({"commit":req.params.commit,"reveal":result}))
+      });
+    }else{
+      res.set('Content-Type', 'application/json');
+      res.end(JSON.stringify({"error":"invalid receipts"}))
+    }
 
-    let receipt1 = contracts["PizzaParlor"].commitReceipt(req.params.commit,req.params.user1)
-    console.log("found receipt1",receipt1)
-
-    res.end(JSON.stringify(req.params))
 });
 
-function getToken(id){
-  let tokenData = contracts["Cryptogs"].getToken(id)
+async function getToken(id){
+  let tokenData = await contracts["Cryptogs"].methods.getToken(id).call()
+  let totalSupply = await contracts["Cryptogs"].methods.totalSupply().call()
   return {
     id:id,
-    owner:tokenData[0],
-    image:Web3Utils.toAscii(tokenData[1]).replace(/[^a-zA-Z\d\s.]+/g,""),
-    copies:tokenData[2].c,
-    prevalence:tokenData[2].c/contracts["Cryptogs"].totalSupply()
+    owner:tokenData.owner,
+    image:web3.utils.toAscii(tokenData.image).replace(/[^a-zA-Z\d\s.]+/g,""),
+    copies:tokenData.copies,
+    prevalence:tokenData.copies/totalSupply
   }
 }
 
 app.get('/commits', (req, res) => {
   console.log("Getting All Commits")
   var stream = redis.scanStream({
-    match: 'commit_*',
-    count: 100
+    match: 'commit_*'
   });
   var commits = [];
   stream.on('data', function (result) {
@@ -117,43 +132,40 @@ app.get('/commits', (req, res) => {
   });
   stream.on('end', function () {
     console.log('sending commits: ', commits);
+    res.set('Content-Type', 'application/json');
     res.end(JSON.stringify(commits))
   });
 
 });
 
 app.get('/commit/:commit', (req, res) => {
-  console.log("Getting Commit ",req.params.commit)
+  console.log("--Getting Commit ",req.params.commit)
   let commit = req.params.commit
-  if(commit.indexOf("0x")>=0) commit=commit.replace("0x","");
   redis.get("commit_"+commit, function (err, result) {
-    //console.log(result);
+    console.log(result);
+    res.set('Content-Type', 'application/json');
     res.end(result)
   });
 });
 
-app.post('/create', function(request, response){
-    console.log(request.body);      // your JSON
-    var d = new SHA3.SHA3Hash(224);
-    d.update(Math.random()+Date.now()+""+JSON.stringify(request.body));
-    let secret = d.digest('hex');
+app.post('/create', async function(request, response){
+    console.log("CREATE",request.body);      // your JSON
+    let secret = web3.utils.keccak256(Math.random()+Date.now()+""+JSON.stringify(request.body));
     console.log("secret",secret)
-    d.update(secret);
-    let reveal = d.digest('hex');
+    let reveal = web3.utils.keccak256(secret);
     console.log("reveal",reveal)
-    redis.set(reveal,secret,"ex",COMMIT_EXPIRE);
-    d.update(reveal);
-    let commit = d.digest('hex');
+    redis.set("getSecret"+reveal,secret,"ex",COMMIT_EXPIRE);
+    let commit = web3.utils.keccak256(reveal);
     console.log("commit",commit)
-    redis.set(commit,reveal,"ex",COMMIT_EXPIRE);
+    redis.set("getReveal"+commit,reveal,"ex",COMMIT_EXPIRE);
 
     let key = "commit_"+commit
 
-    let token1 = getToken(request.body.finalArray[0])
-    let token2 = getToken(request.body.finalArray[1])
-    let token3 = getToken(request.body.finalArray[2])
-    let token4 = getToken(request.body.finalArray[3])
-    let token5 = getToken(request.body.finalArray[4])
+    let token1 = await getToken(request.body.finalArray[0])
+    let token2 = await getToken(request.body.finalArray[1])
+    let token3 = await getToken(request.body.finalArray[2])
+    let token4 = await getToken(request.body.finalArray[3])
+    let token5 = await getToken(request.body.finalArray[4])
 
 
     let update = {
@@ -180,22 +192,22 @@ app.post('/create', function(request, response){
     let value = JSON.stringify(update)
     console.log("SETTING REDIS "+key+" TO "+value)
     redis.set(key,value,"ex",COMMIT_EXPIRE);
+    response.set('Content-Type', 'application/json');
     response.end(value)
 });
 
-app.post('/counter', function(request, response){
+app.post('/counter',  function(request, response){
   let commit = request.body.commit
-  if(commit.indexOf("0x")>=0) commit=commit.replace("0x","");
   console.log("Getting Commit ",commit)
-  redis.get("commit_"+commit, function (err, commitData) {
+  redis.get("commit_"+commit,async function (err, commitData) {
     commitData=JSON.parse(commitData)
     console.log(commitData);
 
-    let token1 = getToken(request.body.finalArray[0])
-    let token2 = getToken(request.body.finalArray[1])
-    let token3 = getToken(request.body.finalArray[2])
-    let token4 = getToken(request.body.finalArray[3])
-    let token5 = getToken(request.body.finalArray[4])
+    let token1 = await getToken(request.body.finalArray[0])
+    let token2 = await getToken(request.body.finalArray[1])
+    let token3 = await getToken(request.body.finalArray[2])
+    let token4 = await getToken(request.body.finalArray[3])
+    let token5 = await getToken(request.body.finalArray[4])
 
     var d = new SHA3.SHA3Hash(224);
     d.update(Math.random()+Date.now()+""+JSON.stringify(request.body));
@@ -223,6 +235,7 @@ app.post('/counter', function(request, response){
     let value = JSON.stringify(commitData)
     console.log("SETTING REDIS "+key+" TO "+value)
     redis.set(key,value,"ex",COMMIT_EXPIRE);
+    response.set('Content-Type', 'application/json');
     response.end(value)
 
   });
@@ -232,7 +245,6 @@ app.post('/counter', function(request, response){
 app.post('/accept', function(request, response){
     console.log(request.body);      // your JSON
     let commit = request.body.commit
-    if(commit.indexOf("0x")>=0) commit=commit.replace("0x","");
     console.log("Getting Commit ",commit)
     redis.get("commit_"+commit, function (err, commitData) {
       commitData=JSON.parse(commitData)
@@ -241,10 +253,24 @@ app.post('/accept', function(request, response){
       let value = JSON.stringify(commitData)
       console.log("SETTING REDIS "+key+" TO "+value)
       redis.set(key,value,"ex",COMMIT_EXPIRE);
+      response.set('Content-Type', 'application/json');
       response.end(value)
     })
 
 })
+
+app.post('/cancel', function(request, response){
+    console.log(request.body);      // your JSON
+    let commit = request.body.commit
+    console.log("Deleting Commit ",commit)
+    redis.del("commit_"+commit, function (err, commitData) {
+      response.set('Content-Type', 'application/json');
+      response.end(JSON.stringify({delete:"true",commit:request.body.commit}))
+    })
+
+
+})
+
 
 
 app.listen(8001);

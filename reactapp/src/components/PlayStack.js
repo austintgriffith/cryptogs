@@ -21,6 +21,9 @@ const DEBUG = false
 const SHOWDEMOSCREEN=false
 let txhash
 
+let timeoutArray = []
+let timeoutArrayTwo = []
+
 class PlayStack extends Component {
   constructor(props) {
     super(props);
@@ -52,7 +55,7 @@ class PlayStack extends Component {
     clearInterval(loadInterval)
   }
   waitForStuff(){
-    if(DEBUG) console.log("waiting of stuf....")
+    if(DEBUG) console.log("waiting of stuff....")
     let {account,contracts,web3,showLoadingScreen,blockNumber} = this.props.context
     if(account&&contracts&&blockNumber&&contracts['Cryptogs']){
       this.startEventParsers()
@@ -66,9 +69,10 @@ class PlayStack extends Component {
     if(this.props&&this.props.api&&this.props.api.version){
       console.log("FIRING UP 'centralized' EVENT PARSERS")
       let updateTransferStack = async (update)=>{
-        console.log("updateTransferStack",update)
+
         if(!this.state.receipts) this.state.receipts={};
-        if(!this.state.receipts[update._sender.toLowerCase()]) {
+        if(update._sender&& !this.state.receipts[update._sender.toLowerCase()]) {
+          console.log("updateTransferStack",update)
           this.state.receipts[update._sender.toLowerCase()] = update._receipt
           let receipts = []
           let users = []
@@ -86,20 +90,39 @@ class PlayStack extends Component {
           this.setState({receipts:this.state.receipts});
         }
       }
-      let filter = {stack: this.state.stack}
+      let filter = {_commit: this.state.stack}
+      console.log("filter:",filter)
       EventParser(contracts["PizzaParlor"],"TransferStack",contracts["Cryptogs"].blockNumber,blockNumber,updateTransferStack,filter);
       setInterval(()=>{
         LiveParser(contracts["PizzaParlor"],"TransferStack",blockNumber,updateTransferStack,filter)
+      },737)
+
+
+
+      let updateFlip = async (update)=>{
+        //console.log("updateFlip",update)
+        if(!this.state.flips) this.state.flips={};
+        if(!this.state.flips[update._token]) {
+          this.state.flips[update._token] = update
+          //console.log("FLIP",update._token,this.state.flips[update._token])
+        }
+      }
+      filter = {_commit: this.state.stack}
+      console.log("filter:",filter)
+      EventParser(contracts["PizzaParlor"],"Flip",contracts["Cryptogs"].blockNumber,blockNumber,updateFlip,filter);
+      setInterval(()=>{
+        LiveParser(contracts["PizzaParlor"],"Flip",blockNumber,updateFlip,filter)
       },737)
     }else{
       console.log("FIRING UP DECENTRALIZED EVENT PARSERS")
       let thisStack = await contracts['Cryptogs'].methods.getStack(this.state.stack).call()
       let updateThrowSlammer = async (update)=>{
+        console.log("updateThrowSlammer-------------------------------------------------------")
         let id = web3.utils.sha3(update.stack+update.blockNumber+update.whoDoneIt);
         if(!this.state.throwSlammerEvents) this.state.throwSlammerEvents={};
         if(!this.state.throwSlammerEvents[id]) {
           this.state.throwSlammerEvents[id]=update;
-          //console.log("UPDATE this.state.throwSlammerEvents",this.state.throwSlammerEvents)
+          console.log("UPDATE this.state.throwSlammerEvents",this.state.throwSlammerEvents)
           for(let t=1;t<=10;t++){
             let thisTokenId = update["token"+t+"Flipped"]
             //console.log("thisTokenId",thisTokenId)
@@ -126,13 +149,151 @@ class PlayStack extends Component {
 
 
   }
+  loadImageForTokenId(id){
+    for(let i=1;i<=5;i++){
+     if(this.state.stackData["token"+i]==id){
+       return this.state.stackData["token"+i+"Image"]
+     }
+    }
+
+    let counterstack = false
+    if(!this.state._counterStack) return false
+    for(let s in this.state.counterStacks){
+      if(this.state._counterStack == this.state.counterStacks[s]._counterStack){
+        counterstack = this.state.counterStacks[s]
+      }
+    }
+
+    if(!counterstack) return false
+    for(let i=1;i<=5;i++){
+     if(counterstack["token"+i]==id){
+       return counterstack["token"+i+"Image"]
+     }
+    }
+  }
   async loadAPIStackData(){
+    let {web3} = this.props.context
     try{
+      let possibleFlightPaths = [-150,-200,-250,-300,-350,350,300,250,200,150];
       axios.get(this.props.api.host+"/commit/"+this.state.stack)
       .then((response)=>{
-        console.log("SETSTATE",response.data)
-        this.doUpdate(response.data)
+        console.log("APIPOLL")
+        //check to see if we are ready to run and not running yet
+        let count =0
+        for(let t in this.state.flips){
+          count++
+        }
+        if(count>=10){
+          if(this.state.flipping){
+            //already flipping
+          }else{
+            let update = {flipping:true}
+
+            update.stackMode = 4;
+
+            update.flippingPogsSlideOut=false;
+            update.flippingPogsAngle=false;
+
+            update.mixedStack = []
+            for(let t in this.state.flips){
+              let someFlipTemp = this.state.flips[t]
+              let token = someFlipTemp._token
+              let image = this.loadImageForTokenId(someFlipTemp._token)
+              update.mixedStack.push({id:token,image:image})
+            }
+
+            update.lastActor = this.state.stackData.owner
+
+            this.doUpdate(update)
+
+            //console.log("updateFlip","FLIPS ARE ALL IN, DISPLAY GAME!!!",this.state.flips)
+
+            for(let round=1;round<=12;round++){
+              timeoutArray[round] = setTimeout(()=>{
+
+
+                update.stackMode = 3;
+
+                update.flippedThisRound = []
+                update.flippingPogs=false;
+                let someFlipTemp
+                let i = 0
+
+                update.mixedStack = []
+
+                let anyLeft = false
+
+                let id = web3.utils.sha3(""+round);
+                if(!this.state.throwSlammerEvents) this.state.throwSlammerEvents={};
+                if(!this.state.throwSlammerEvents[id]) this.state.throwSlammerEvents[id]={};
+
+
+                for(let t in this.state.flips){
+                  if(parseInt(this.state.flips[t]._round)==round){
+
+                    someFlipTemp = this.state.flips[t]
+                    //console.log("updateFlip","t",t,"i",i,possibleFlightPaths[i])
+                    let thisId = someFlipTemp._token
+                    let thisImage = this.loadImageForTokenId(someFlipTemp._token)
+                    let flippedTokenThisRound = {id:thisId,image:thisImage,thisFlightPath:possibleFlightPaths[i]}
+                    update.flippedThisRound.push(flippedTokenThisRound)
+                    update.flippingPogs=true;
+                    this.state.throwSlammerEvents[id]["token"+i+"Flipped"] = {
+                      id:thisId,
+                      image:thisImage,
+                    }
+                    this.state.throwSlammerEvents[id].whoDoneIt = this.state.flips[t]._flipper
+                    this.state.throwSlammerEvents[id].blockNumber = i
+                    //console.log("SETFLIPPER",id,this.state.flips[t]._flipper)
+                  }else  if(parseInt(this.state.flips[t]._round)>round){
+                      anyLeft=true
+                      someFlipTemp = this.state.flips[t]
+                      let token = someFlipTemp._token
+                      let image = this.loadImageForTokenId(someFlipTemp._token)
+                      update.mixedStack.push({id:token,image:image})
+                  }
+                  i++
+                }
+
+
+
+
+
+
+                update.throwSlammerEvents = this.state.throwSlammerEvents;
+
+                console.log("updateFlip","update.flippedThisRound",update.flippedThisRound,this.state)
+                this.doUpdate(update)
+
+                if(!anyLeft){
+                  setTimeout(()=>{
+                    while(round<=12){
+                      clearTimeout(timeoutArray[round])
+                      clearTimeout(timeoutArrayTwo[round])
+                      round++
+                    }
+                    this.doUpdate({stackMode:9})
+                  },1000)
+                }
+
+              },3000*round)
+              timeoutArrayTwo[round] = setTimeout(()=>{
+                let update = {}
+                update.stackMode = 4;
+                this.doUpdate(update)
+              },(3000*round)+2000)
+            }
+
+          }
+
+        }else{
+          this.doUpdate(response.data)
+        }
+
+      }).catch((e)=>{
+        console.log(e)
       })
+
     } catch(e) {
       console.log(e)
     }
@@ -233,7 +394,7 @@ class PlayStack extends Component {
       update.coinFlipping=false
     }
 
-      let possibleFlightPaths = [-150,-200,-250,-300,-350,350,300,250,200,150];
+
     if(update.stackMode!=this.state.stackMode){
       let mixedStackIds = await contracts['Cryptogs'].methods.getMixedStack(this.state.stack).call()
 
@@ -243,6 +404,8 @@ class PlayStack extends Component {
 
       update.mixedStack = []
       update.flippedThisRound = []
+
+      let possibleFlightPaths = [-150,-200,-250,-300,-350,350,300,250,200,150];
 
       for(let i=0;i<10;i++){
         if(DEBUG) console.log("mixedStackDebug",i,mixedStackIds[i])
@@ -418,29 +581,46 @@ class PlayStack extends Component {
   cancelStack(stack){
     console.log("CANCEL STACK")
     let {contracts,account,showLoadingScreen} = this.props.context
-    //acceptCounterStack(address _slammerTime, bytes32 _stack, bytes32 _counterStack)
-    contracts["Cryptogs"].methods.cancelStack(stack).send({
-      from: account,
-      gas:250000,
-      gasPrice:this.props.GWEI * 1000000000
-    },(error,hash)=>{
-      console.log("CALLBACK!",error,hash)
-      showLoadingScreen(hash,"/stacks")
-      txhash=hash
-    }).on('error',(a,b)=>{
-
-      if(txhash){
-        //howLoadingScreen(false)
-        console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+    if(this.props&&this.props.api&&this.props.api.version){
+      try{
+        axios.post(this.props.api.host+'/cancel', {
+          commit: this.state.stack,
+  		  })
+  		  .then(function (response) {
+  				window.location = "/stacks/"
+  		  })
+  		  .catch(function (error) {
+  		    console.log(error);
+  		  });
+      } catch(e) {
+        console.log(e)
       }
 
-    }).then((receipt)=>{
-      console.log("RESULT:",receipt)
-      window.location = "/stacks"
-      showLoadingScreen(false)
-    }).catch(e=> {
-        console.error('caught error', e);
-    })
+    }else{
+      //acceptCounterStack(address _slammerTime, bytes32 _stack, bytes32 _counterStack)
+      contracts["Cryptogs"].methods.cancelStack(stack).send({
+        from: account,
+        gas:250000,
+        gasPrice:this.props.GWEI * 1000000000
+      },(error,hash)=>{
+        console.log("CALLBACK!",error,hash)
+        showLoadingScreen(hash,"/stacks")
+        txhash=hash
+      }).on('error',(a,b)=>{
+
+        if(txhash){
+          //howLoadingScreen(false)
+          console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+        }
+
+      }).then((receipt)=>{
+        console.log("RESULT:",receipt)
+        window.location = "/stacks"
+        showLoadingScreen(false)
+      }).catch(e=> {
+          console.error('caught error', e);
+      })
+    }
 
   }
   cancelCounterStack(stack,counterstack){
@@ -673,9 +853,10 @@ class PlayStack extends Component {
     console.log("TRANSFER STACK",stackData,"pizzaParlorAddress",pizzaParlorAddress)
     //cryptogs contract call but you need to know pizza parlor address :
     //function transferStackAndCall(address _to, uint _token1, uint _token2, uint _token3, uint _token4, uint _token5, bytes32 _data) public returns (bool) {
-    contracts["Cryptogs"].methods.transferStackAndCall(pizzaParlorAddress,stackData.token1,stackData.token2,stackData.token3,stackData.token4,stackData.token5,"0x"+stackData.commit).send({
+    console.log(pizzaParlorAddress,stackData.token1,stackData.token2,stackData.token3,stackData.token4,stackData.token5,stackData.commit)
+    contracts["Cryptogs"].methods.transferStackAndCall(pizzaParlorAddress,stackData.token1,stackData.token2,stackData.token3,stackData.token4,stackData.token5,stackData.commit).send({
       from: account,
-      gas:300000,
+      gas:400000,
       gasPrice:this.props.GWEI * 1000000000
     },(error,hash)=>{
       console.log("CALLBACK!",error,hash)
@@ -695,14 +876,44 @@ class PlayStack extends Component {
 
 
   }
-  generateGame(stackData){
+  generateGame(playerToGenerate,playerStack,otherStack){
     let {account,blockNumber,contracts,etherscan,showLoadingScreen} = this.props.context
 
+    console.log("GENERATE GAME",playerToGenerate,playerStack,otherStack,this.state.reveal)
+
     //generateGame(bytes32 _commit,bytes32 _reveal,address _opponent,uint _token1, uint _token2, uint _token3, uint _token4, uint _token5,uint _token6, uint _token7, uint _token8, uint _token9, uint _token10){
-/*
-    contracts["PizzaParlor"].methods.transferStackAndCall(pizzaParlorAddress,stackData.token1,stackData.token2,stackData.token3,stackData.token4,stackData.token5,"0x"+stackData.commit).send({
+
+    console.log(this.state.reveal.commit,
+    this.state.reveal.reveal,
+    otherStack.owner,
+    playerStack.token1,
+    playerStack.token2,
+    playerStack.token3,
+    playerStack.token4,
+    playerStack.token5,
+    otherStack.token1,
+    otherStack.token2,
+    otherStack.token3,
+    otherStack.token4,
+    otherStack.token5)
+
+    contracts["PizzaParlor"].methods.generateGame(
+      this.state.reveal.commit,
+      this.state.reveal.reveal,
+      otherStack.owner,
+      playerStack.token1,
+      playerStack.token2,
+      playerStack.token3,
+      playerStack.token4,
+      playerStack.token5,
+      otherStack.token1,
+      otherStack.token2,
+      otherStack.token3,
+      otherStack.token4,
+      otherStack.token5,
+    ).send({
       from: account,
-      gas:300000,
+      gas:400000,
       gasPrice:this.props.GWEI * 1000000000
     },(error,hash)=>{
       console.log("CALLBACK!",error,hash)
@@ -719,7 +930,7 @@ class PlayStack extends Component {
     }).catch(e=> {
         console.error('caught error', e);
     })
-*/
+
 
   }
   render(){
@@ -849,15 +1060,15 @@ class PlayStack extends Component {
 
     if(throwSlammerEventArray && throwSlammerEventArray.length>0){
       flipDisplay = throwSlammerEventArray.map((throwSlammerEvent)=>{
-        if(throwSlammerEvent.otherPlayer!="0x0000000000000000000000000000000000000000"){
+        if(throwSlammerEvent.otherPlayer!="0x0000000000000000000000000000000000000000"&&throwSlammerEvent.whoDoneIt){
           let flipped = []
           let count = 0
-          for(let i=1;i<=10;i++){
+          for(let i=0;i<=9;i++){
 
               if(parseInt(throwSlammerEvent['token'+i+'Flipped'])!=0&&throwSlammerEvent['token'+i+'Flipped']){
-                //console.log("throwSlammerEvent['token'+i+'Flipped']",throwSlammerEvent['token'+i+'Flipped'])
+                let key = "flipped"+i+throwSlammerEvent['token'+i+'Flipped'].id
                 flipped.push(
-                  <div key={"flipped"+i} style={{position:'absolute',left:20+((count++)*20),top:-40,zIndex:1}}>
+                  <div key={key} style={{position:'absolute',left:20+((count++)*20),top:-40,zIndex:1}}>
                     <Cryptog angle={25} scale={0.4} id={throwSlammerEvent['token'+i+'Flipped'].id} image={throwSlammerEvent['token'+i+'Flipped'].image}/>
                   </div>
                 )
@@ -899,6 +1110,7 @@ class PlayStack extends Component {
      }
    }
 
+   let possibleFlightPaths = [-150,-200,-250,-300,-350,350,300,250,200,150];
 
 
    let flightStack = []
@@ -955,28 +1167,46 @@ class PlayStack extends Component {
 
 
 
-        console.log("this.state.receipts",this.state.receipts)
+        //console.log("this.state.receipts",this.state.receipts)
 
         if(this.state && this.state.receipts && this.state.receipts[stackData.owner.toLowerCase()] && this.state.receipts[counterStackData.owner.toLowerCase()])
         {
+          let owner1 = stackData.owner.toLowerCase()
+          let hash1 = this.state.receipts[owner1].substr(2,12)
+          let player1hashSize = parseInt(hash1,16)
 
-          let player1hashSize = parseInt(this.state.receipts[stackData.owner.toLowerCase()].substr(2,12),16);
-          let player2hashSize = parseInt(this.state.receipts[counterStackData.owner.toLowerCase()].substr(2,12),16);
+          let owner2 = counterStackData.owner.toLowerCase()
+          let hash2 = this.state.receipts[owner2].substr(2,12)
+          let player2hashSize = parseInt(hash2,16);
 
-          console.log(player1hashSize,player2hashSize)
+          //console.log(player1hashSize,player2hashSize)
 
 
-          let playerToGenerate;
-          let playerNumber;
+          let playerToGenerate
+          let playerNumber
+          let playerStack
+          let otherStack
+          let fullstack = {}
+          for(let i=1;i<=5;i++){
+            fullstack["_token"+i] = stackData["token"+i]
+            fullstack["_token"+i+"Image"] = stackData["token"+i+"Image"]
+            fullstack["_token"+(i+5)] = counterStackData["token"+i]
+            fullstack["_token"+(i+5)+"Image"] = counterStackData["token"+i+"Image"]
+          }
+
 
           if( player1hashSize < player2hashSize ){
             playerNumber = 1
             playerToGenerate = stackData.owner.toLowerCase()
+            playerStack = stackData
+            otherStack = counterStackData
           }else{
             playerNumber = 2
             playerToGenerate = counterStackData.owner.toLowerCase()
+            playerStack = counterStackData
+            otherStack = stackData
           }
-          console.log("playerToGenerate",playerToGenerate)
+          //console.log("playerToGenerate",playerToGenerate)
 
           let buttonColor = "#AAAAAA"
           let clickFunction = ()=>{}
@@ -987,24 +1217,51 @@ class PlayStack extends Component {
           }
 
           display = (
-            <div className="row align-items-center">
+            <div>
+              <div className="row align-items-center">
 
-              <div className="container text-center">
+                <div className="container text-center">
 
-                <p className="text-center" style={{padding:50}}>Player {playerNumber} has the lower receipt hash and is chosen to generate the on-chain randomness...</p>
+                  <p className="text-center" style={{padding:50}}>Player {playerNumber} has the lower receipt hash and is chosen to generate the on-chain randomness...</p>
 
-                  <a target="_blank" href={"/address/"+stackData.owner}>
-                   <Blockies
-                     seed={playerToGenerate}
-                     scale={10}
-                   />
-                  </a>
-                  <SimpleStack key={"mainstack"} scale={0.7} spacing={70} height={180} {...stackData}/>
-                  <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
-                    <MMButton color={buttonColor} onClick={clickFunction}>Generate Game</MMButton>
-                  </div>
+                    <a target="_blank" href={"/address/"+playerToGenerate}>
+                     <Blockies
+                       seed={playerToGenerate}
+                       scale={10}
+                     />
+                    </a>
+                    <SimpleStack count={10} scale={0.7} spacing={40} height={180} {...fullstack}/>
+                    <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
+                      <MMButton color={buttonColor} onClick={clickFunction.bind(this,playerToGenerate,playerStack,otherStack)}>Generate Game</MMButton>
+                    </div>
+                </div>
+
               </div>
+              <div className="row align-items-center" style={{opacity:0.7,maginTop:40}}>
+                <div className="col-md-6" style={transferStackBoxStyle}>
+                    <div className="container text-center">
+                      <a target="_blank" href={"/address/"+owner1}>
+                       <Blockies
+                         seed={owner1}
+                         scale={4}
+                       />
+                      </a>
+                      <div>{"0x"+hash1} = {player1hashSize}</div>
 
+                    </div>
+                </div>
+                <div className="col-md-6" style={transferStackBoxStyle}>
+                    <div className="container text-center">
+                      <a target="_blank" href={"/address/"+owner2}>
+                       <Blockies
+                         seed={owner2}
+                         scale={4}
+                       />
+                      </a>
+                      <div>{"0x"+hash2} = {player2hashSize}</div>
+                    </div>
+                </div>
+              </div>
             </div>
           )
         }else{
@@ -1013,15 +1270,21 @@ class PlayStack extends Component {
           let secondStackColor = "#AAAAAA"
           let firstClickFunction = ()=>{}
           let secondClickFunction = ()=>{}
-
+          let firstPlayerName = "Player 1"
+          let secondPlayerName = "Player 2"
 
           if(account.toLowerCase()==stackData.owner.toLowerCase()){
             firstClickFunction = this.transferStack.bind(this,this.state.stackData)
+          //  console.log("FIRST CLICK FUNCTION DATA ",this.state.stackData)
             firstStackColor = "#6ac360"
+            firstPlayerName = "you"
           }else if(counterStackData.owner.toLowerCase()==account.toLowerCase()){
             secondClickFunction = this.transferStack.bind(this,counterStackData)
             secondStackColor = "#6ac360"
+            secondPlayerName = "you"
           }
+
+          console.log("this.state.receipts",this.state.receipts)
 
           let firstCol = ""
           if(this.state && this.state.receipts && this.state.receipts[stackData.owner.toLowerCase()]){
@@ -1042,7 +1305,7 @@ class PlayStack extends Component {
           }else{
             firstCol = (
               <div className="col-md-6" style={transferStackBoxStyle}>
-                  <p className="text-center" style={{padding:50}}>Waiting for player 1 to transfer stack to smart contract...</p>
+                  <p className="text-center" style={{padding:50}}>Waiting for {firstPlayerName} to transfer stack to smart contract...</p>
                   <div className="container text-center">
                       <a target="_blank" href={"/address/"+stackData.owner}>
                        <Blockies
@@ -1060,7 +1323,7 @@ class PlayStack extends Component {
           }
 
           let secondCol = ""
-          if(this.state && this.state.receipts && this.state.receipts[stackData.owner.toLowerCase()]){
+          if(this.state && this.state.receipts && this.state.receipts[counterStackData.owner.toLowerCase()]){
             secondCol = (
               <div className="col-md-6" style={transferStackBoxStyle}>
                   <p className="text-center" style={{padding:50}}>Stack Transferred!</p>
@@ -1077,8 +1340,8 @@ class PlayStack extends Component {
             )
           }else{
             secondCol = (
-              <div className="col-md-6" syle={transferStackBoxStyle}>
-                  <p className="text-center" style={{padding:50}}>Waiting for player 2 to transfer stack to smart contract...</p>
+              <div className="col-md-6" style={transferStackBoxStyle}>
+                  <p className="text-center" style={{padding:50}}>Waiting for {secondPlayerName} to transfer stack to smart contract...</p>
                   <div className="container text-center">
                     <a target="_blank" href={"/address/"+counterStackData.owner}>
                      <Blockies
@@ -1095,13 +1358,22 @@ class PlayStack extends Component {
             )
           }
 
+          if(counterStackData.owner.toLowerCase()==account.toLowerCase()){
+            display = (
+              <div className="row align-items-center">
+                {secondCol}
+                {firstCol}
+              </div>
+            )
+          }else{
+            display = (
+              <div className="row align-items-center">
+                {firstCol}
+                {secondCol}
+              </div>
+            )
+          }
 
-          display = (
-            <div className="row align-items-center">
-              {firstCol}
-              {secondCol}
-            </div>
-          )
         }
 
 
@@ -1284,7 +1556,7 @@ class PlayStack extends Component {
 
     let slammerOpacity = 0.7
 
-
+    if(this.props&&this.props.api&&this.props.api.version) slammerOpacity=1
 
 
     let timerDisplay = ""
