@@ -68,9 +68,9 @@ contract PizzaParlor {
     commitBlock[_commit][_sender] = uint32(block.number);
 
     //fire an event for the frontend
-    TransferStack(_commit,_sender,receipt,_token1,_token2,_token3,_token4,_token5);
+    TransferStack(_commit,_sender,receipt,now,_token1,_token2,_token3,_token4,_token5);
   }
-  event TransferStack(bytes32 indexed _commit,address indexed _sender,bytes32 indexed _receipt,uint256 _token1,uint256 _token2,uint256 _token3,uint256 _token4,uint256 _token5);
+  event TransferStack(bytes32 indexed _commit,address indexed _sender,bytes32 indexed _receipt,uint _timestamp,uint256 _token1,uint256 _token2,uint256 _token3,uint256 _token4,uint256 _token5);
 
   //tx3: either player, knowing the reveal, can generate the game
   //this tx calculates random, generates game events, and transfers
@@ -129,8 +129,8 @@ contract PizzaParlor {
 
     GenerateGame(_commit,msg.sender);
   }
-  event CoinFlip(bytes32 indexed commit,bool result);
-  event GenerateGame(bytes32 indexed commit,address indexed sender);
+  event CoinFlip(bytes32 indexed _commit,bool _result);
+  event GenerateGame(bytes32 indexed _commit,address indexed _sender);
 
   function _getRandom(bytes32[4] pseudoRandoms,uint8 randIndex) internal returns (uint8 rand){
     if(randIndex<32){
@@ -230,11 +230,14 @@ contract PizzaParlor {
     cryptogsContract.transfer(msg.sender,_token4);
     cryptogsContract.transfer(msg.sender,_token5);
 
+
+    bytes32 previousReceipt = commitReceipt[_commit][msg.sender];
+
     delete commitReceipt[_commit][msg.sender];
     //fire an event for the frontend
-    RevokeStack(_commit,msg.sender,_token1,_token2,_token3,_token4,_token5);
+    RevokeStack(_commit,msg.sender,now,_token1,_token2,_token3,_token4,_token5,previousReceipt);
   }
-  event RevokeStack(bytes32 indexed _commit,address indexed _sender,uint256 _token1,uint256 _token2,uint256 _token3,uint256 _token4,uint256 _token5);
+  event RevokeStack(bytes32 indexed _commit,address indexed _sender,uint _timestamp,uint256 _token1,uint256 _token2,uint256 _token3,uint256 _token4,uint256 _token5,bytes32 _receipt);
 
 }
 

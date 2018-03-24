@@ -29,8 +29,6 @@ export default createClass({
 	componentDidMount(){
 		this.loadStackData()
 		loadInterval = setInterval(this.loadStackData,101)
-
-
 	},
 	componentWillUnmount(){
 		clearInterval(loadInterval)
@@ -146,7 +144,8 @@ export default createClass({
 
 			let updateGenerateGame= async (update)=>{
 				console.log("updateGenerateGame",update)
-				let id = update.commit
+				let id = update._commit
+				console.log("checking current value ",id,this.state.allStacks[id],this.state.allStacks[id]==true)
 				if(!this.state.allStacks[id]) this.state.allStacks[id]={};
 				if(!this.state.allStacks[id].finished) this.state.allStacks[id].finished=true;
 				this.setState({allStacks:this.state.allStacks});
@@ -167,10 +166,12 @@ export default createClass({
 							console.log("COMMITS BACK FROM API");
 							for(let c in commits){
 								let commitId = commits[c].replace("commit_","")
-								if(!this.state.allStacks[commitId]){
+								console.log("CHECKING",this.state.allStacks[commitId])
+								if(!this.state.allStacks[commitId]||!this.state.allStacks[commitId]._sender||!this.state.allStacks[commitId].otherPlayer){
+									console.log("DOING GET")
 									axios.get(this.context.api.host+"/commit/"+commitId)
 									.then((commitData)=>{
-										console.log("commitData for "+commitId,commitData.data.stackData)
+										console.log("commitData for "+commitId,commitData.data)
 										let stackObject = {
 											_public: true,
 											_sender: commitData.data.stackData.owner,
@@ -186,7 +187,20 @@ export default createClass({
 											_token5: commitData.data.stackData.token5,
 											_token5Image: commitData.data.stackData.token5Image,
 											_blockNumber: commitData.data.stackData.block,
-											timestamp: Date.now()
+											timestamp: Date.now(),
+											senders: [],
+										}
+										for(let c in commitData.data.counterStacks){
+											stackObject.senders.push(commitData.data.counterStacks[c].owner)
+										}
+										stackObject.canceledSenders = commitData.data.canceledSenders
+
+										if(commitData.data._counterStack){
+											for(let c in commitData.data.counterStacks){
+												if(commitData.data._counterStack==commitData.data.counterStacks[c]._counterStack){
+													stackObject.otherPlayer = commitData.data.counterStacks[c].owner
+												}
+											}
 										}
 
 										console.log("Saving stack object",stackObject)
@@ -231,8 +245,8 @@ export default createClass({
         return a.timestamp<b.timestamp
     });
 		for(let s in allStacksFlipped){
-			if(allStacksFlipped[s].finished&&allStacksFlipped[s]._sender){
-				if(finishedStacks.length<5){
+			if(allStacksFlipped[s].finished){
+				if(allStacksFlipped[s]._sender && finishedStacks.length<5){
 					finishedStacks.push(
 						<Stack key={"mystack"+s} {...allStacksFlipped[s]} callToAction={
 
@@ -261,7 +275,7 @@ export default createClass({
 						)
 					)
 				){
-				//	console.log("allStacksFlipped[s].canceledSenders",allStacksFlipped[s].canceledSenders)
+					console.log("allStacksFlipped[s]",allStacksFlipped[s])
 				console.log("FINISHED?",allStacksFlipped[s].finished)
 				if(allStacksFlipped[s]._stack){
 					myStacks.push(
@@ -279,7 +293,7 @@ export default createClass({
 					)
 				}
 
-			}else if(account && allStacksFlipped[s].otherPlayer && !allStacksFlipped[s].canceled &&
+			}else if(account && allStacksFlipped[s].otherPlayer && !allStacksFlipped[s].canceled&& !allStacksFlipped[s].canceled &&
 					(
 						!allStacksFlipped[s].canceledSenders ||
 						allStacksFlipped[s].canceledSenders.indexOf(account.toLowerCase()) < 0

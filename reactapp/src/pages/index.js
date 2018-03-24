@@ -284,7 +284,8 @@ export default createClass({
 										<h2 className="h4 mb-3">Original Artwork</h2>
 										<p>
 											{"Calling all artists! We are looking for original artwork. Players, traders, and gamers can see the artist of each pog. Jump in the #design channel of our "}
-											<a href="https://join.slack.com/t/cryptopogs/shared_invite/enQtMzIyNTI4Njc5MDMwLTkyZTczMTgwYzU2YTZhNmFiMDg5YTFkOGQzYmNlMGZhYmRmNmQ4ZTM2MGRkMjEyYmRmYWZiNzIzMDVhNDA3NDk">Slack</a>.
+											<a target="_blank" href="https://join.slack.com/t/cryptopogs/shared_invite/enQtMzIyNTI4Njc5MDMwLTkyZTczMTgwYzU2YTZhNmFiMDg5YTFkOGQzYmNlMGZhYmRmNmQ4ZTM2MGRkMjEyYmRmYWZiNzIzMDVhNDA3NDk">Slack</a> or
+											 <a target="_blank" href="https://discord.gg/RhqxSj7">Discord</a>.
 										</p>
 									</div>
 								</div>
@@ -306,21 +307,7 @@ export default createClass({
 									</div>
 								</div>
 
-								<hr className="my-5" />
 
-								<div className="row align-items-center">
-									<div className="col-md-5">
-										<p>
-											<img className="img-fluid" src={"/ethbytecode.png"} />
-										</p>
-									</div>
-									<div className="col-md-7">
-										<h2 className="h4 mb-3">Bounties</h2>
-										<p>
-											There is <a href="https://etherscan.io/address/0xfde139e04963094650baad2686ca65a0cf04373c">plenty of Eth</a> still to be paid out in bouties for contract and other vulnerabilities. Please <a href="https://join.slack.com/t/cryptopogs/shared_invite/enQtMzIyNTI4Njc5MDMwLTkyZTczMTgwYzU2YTZhNmFiMDg5YTFkOGQzYmNlMGZhYmRmNmQ4ZTM2MGRkMjEyYmRmYWZiNzIzMDVhNDA3NDk">let us know</a> what you find.
-										</p>
-									</div>
-								</div>
 							</div>
 						</div>
 					</section>

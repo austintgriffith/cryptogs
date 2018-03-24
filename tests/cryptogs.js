@@ -164,6 +164,25 @@ module.exports = {
       });
     });
   },
+  mintBatchTo:(accountindex,image,toAddress)=>{
+    describe('#testMint() ', function() {
+      it('should mint a batch of cryptogs', async function() {
+        this.timeout(120000)
+        const accounts = await clevis("accounts")
+        assert(image,"No Image!?")
+        let bytes32Image = web3.utils.fromAscii(image);
+        const result = await clevis("contract","mintBatch","Cryptogs",accountindex,bytes32Image,bytes32Image,bytes32Image,bytes32Image,bytes32Image,toAddress)
+        printTxResult(result)
+        const tokensOfOwner = await clevis("contract","tokensOfOwner","Cryptogs",toAddress)
+        const lastToken = tokensOfOwner[tokensOfOwner.length-1]
+        const token = await clevis("contract","getToken","Cryptogs",lastToken)
+        assert(token.owner==toAddress,"This should never be wrong!?!")
+        const cleanImage = web3.utils.toAscii(token.image).replace(/[^a-zA-Z\d\s.]+/g,"")
+        assert(cleanImage==image,"Image of minted token doesn't equal image we meant to mint.. hah.")
+        console.log(tab,accounts[accountindex].blue+" minted 5 Cryptogs "+lastToken.magenta+" to account "+toAddress.cyan+" with image "+cleanImage.white)
+      });
+    });
+  },
 
   airdrop:(accountindex,image,toAddress)=>{
     describe('#testMint() ', function() {
@@ -720,6 +739,20 @@ module.exports = {
         this.timeout(6000000)
         const result = await clevis("test","throwSlammer")
         assert(result==0,"throwSlammer ERRORS")
+      });
+    });
+    describe(bigHeader('TEST MINTING'), function() {
+      it('should mint, please work first try!', async function() {
+        this.timeout(6000000)
+        const result = await clevis("test","mint")
+        assert(result==0,"mint ERRORS")
+      });
+    });
+    describe(bigHeader('CENTRALIZED GAME'), function() {
+      it('should mint packs', async function() {
+        this.timeout(6000000)
+        const result = await clevis("test","transferStacksAndGenerateGame")
+        assert(result==0,"transferStacksAndGenerateGame ERRORS")
       });
     });
 

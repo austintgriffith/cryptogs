@@ -228,6 +228,7 @@ app.post('/counter',  function(request, response){
       token3Image: token3.image,
       token4Image: token4.image,
       token5Image: token5.image,
+      canceled: false
     }
 
     commitData.counterStacks.push(counterStack)
@@ -260,16 +261,47 @@ app.post('/accept', function(request, response){
 })
 
 app.post('/cancel', function(request, response){
-    console.log(request.body);      // your JSON
+    console.log("CANCEL",request.body);      // your JSON
     let commit = request.body.commit
     console.log("Deleting Commit ",commit)
     redis.del("commit_"+commit, function (err, commitData) {
       response.set('Content-Type', 'application/json');
       response.end(JSON.stringify({delete:"true",commit:request.body.commit}))
     })
-
-
 })
+
+app.post('/cancelcounter', function(request, response){
+    console.log("CANCELCOUNTER",request.body);      // your JSON
+    let commit = request.body.commit
+    let counter = request.body.counter
+    redis.get("commit_"+commit, function (err, result) {
+
+      let commitData=JSON.parse(result)
+
+      console.log("CURRENT DATA TO CANCEL",commitData)
+
+      let canceledSender=false;
+      for(let c in commitData.counterStacks){
+        if(commitData.counterStacks[c]._counterStack==counter){
+          canceledSender = commitData.counterStacks[c].owner.toLowerCase()
+          commitData.counterStacks[c].canceled = true;
+        }
+      }
+      if(canceledSender){
+        if(!commitData.canceledSenders) commitData.canceledSenders=[]
+        commitData.canceledSenders.push(canceledSender)
+      }
+
+      let key = "commit_"+commit
+      let value = JSON.stringify(commitData)
+      console.log("SETTING REDIS "+key+" TO "+value)
+      redis.set(key,value,"ex",COMMIT_EXPIRE);
+      response.set('Content-Type', 'application/json');
+      response.end(value)
+
+    });
+})
+
 
 
 
