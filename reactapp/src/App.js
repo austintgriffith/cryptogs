@@ -25,6 +25,7 @@ import GasSlider from './components/GasSlider.js'
 import MMButton from './components/MMButton.js'
 import cookie from 'react-cookies'
 import axios from 'axios'
+import PogAnimation from './components/PogAnimation'
 import {Motion, spring, presets} from 'react-motion';
 
 const OPTIONALBACKEND = "http://localhost:8001"
@@ -103,6 +104,7 @@ export default createClass({
 			network:0,
 			api:{},
 			apiHint:-600,
+			reloadRouter:false,
 		};
 	},
 	componentDidMount(){
@@ -185,18 +187,25 @@ export default createClass({
 		cookie.save('apiinfo', 0, { path: '/', maxAge:1800 })
 		if(this.state.api&&this.state.api.version){
 			console.log("clear api and go dencentralized")
-			this.setState({api:false,apiHint:-100})
+			this.setState({api:false,apiHint:-100,reloadRouter:true})
+			setTimeout(()=>{
+				this.setState({reloadRouter:false})
+			},2000)
 			cookie.save('api', -1, { path: '/', maxAge:1800 })
 			setTimeout(()=>{
 				this.setState({apiHint:-600})
 			},4000)
 		}else{
+
 			console.log("Give me just a little centralization for less transactions")
 			cookie.save('api', 1, { path: '/', maxAge:1800 })
 		  setTimeout(()=>{
 				this.setupApi()
 			},500)
-
+			this.setState({reloadRouter:true})
+			setTimeout(()=>{
+				this.setState({reloadRouter:false})
+			},2000)
 
 		}
 	},
@@ -246,6 +255,33 @@ export default createClass({
 			)
 		}
 
+		let router
+
+		if(this.state.reloadRouter){
+				router = (
+						<div style={{opacity:0.3}}><PogAnimation loader={true} image={'unicorn.png'} /></div>
+				)
+		}else{
+			router = (
+	 			<Router>
+	 				<Switch>
+	 						 <Route exact path="/" component={IndexPage} />
+	 						 <Route path={`/stacks`} component={StacksPage} />
+	 						 <Route path={`/create`} component={CreatePage} />
+	 						 <Route path={`/buy`} component={BuyPage} />
+	 						 <Route path={`/address/:address`} component={AddressPage} />
+	 						 <Route path={`/play/:stack`} component={PlayPage} />
+	 						 <Route path={`/join/:stack`} component={JoinPage} />
+	 						 <Route path={`/cryptog/:cryptog`} component={CryptogPage} />
+	 						 <Route path={`/contracts`} component={ContractsPage} />
+	 						 <Redirect to='/' />
+	 				</Switch>
+	 			</Router>
+	 		)
+		}
+
+
+
 		return (
 			<div style={{backgroundColor:"#FFFFFF"}}>
 
@@ -282,20 +318,7 @@ export default createClass({
 				</Motion>
 
 				<div>
-          <Router>
-            <Switch>
-  					     <Route exact path="/" component={IndexPage} />
-                 <Route path={`/stacks`} component={StacksPage} />
-                 <Route path={`/create`} component={CreatePage} />
-								 <Route path={`/buy`} component={BuyPage} />
-                 <Route path={`/address/:address`} component={AddressPage} />
-                 <Route path={`/play/:stack`} component={PlayPage} />
-                 <Route path={`/join/:stack`} component={JoinPage} />
-								 <Route path={`/cryptog/:cryptog`} component={CryptogPage} />
-								 <Route path={`/contracts`} component={ContractsPage} />
-								 <Redirect to='/' />
-            </Switch>
-          </Router>
+          {router}
 				</div>
 				{loader}
 				<Slack />
