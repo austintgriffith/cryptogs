@@ -19,6 +19,7 @@ let waitInterval
 let slammerTimeout
 const DEBUG = false
 const SHOWDEMOSCREEN=false
+const BLOCKTIMEOUT = 20
 let txhash
 
 let timeoutArray = []
@@ -36,7 +37,8 @@ class PlayStack extends Component {
       slammerSpinning:false,
       slammerAngle:15,
       slammerTop:-200,
-      slammerLeft:-200
+      slammerLeft:-200,
+      blockNumber:0
     }
 
     this.waitForStuff()
@@ -117,6 +119,9 @@ class PlayStack extends Component {
         if(this.state.receipts[s][update._receipt].indexOf(update._timestamp)<0){
           console.log("updateTransferStack",update)
           this.state.receipts[s][update._receipt].push(update._timestamp)
+          if(update.blockNumber>this.state.blockNumber){
+            this.setState({blockNumber:update.blockNumber})
+          }
           this.setState({receipts:this.state.receipts},this.decideOnReveal);
         }
       }
@@ -987,6 +992,86 @@ class PlayStack extends Component {
 
 
   }
+  drainGame(playerToGenerate,playerStack,otherStack){
+
+    let activeReceipts = this.getActiveReceipts()
+    let users = []
+    let receipts = []
+    for(let user in activeReceipts){
+      if(activeReceipts[user]){
+        users.push(user)
+        receipts.push(activeReceipts[user])
+      }
+    }
+
+    let get = this.props.api.host+"/secret/"+this.state.stack+"/"+receipts[0]+"/"+users[0]+"/"+receipts[1]+"/"+users[1]
+    console.log("DECIDE ON GET SECRET get",get)
+     axios.get(get)
+     .then((response)=>{
+       console.log("DECIDE ON GET SECRET response",response)
+       console.log("THE SECRET:::::",response.data.secret)
+
+       let {account,blockNumber,contracts,etherscan,showLoadingScreen} = this.props.context
+
+       console.log("DRAIN GAME",playerToGenerate,playerStack,otherStack,this.state.reveal)
+
+       //generateGame(bytes32 _commit,bytes32 _reveal,address _opponent,uint _token1, uint _token2, uint _token3, uint _token4, uint _token5,uint _token6, uint _token7, uint _token8, uint _token9, uint _token10){
+
+       console.log(this.state.stack,
+       response.data.secret,
+       otherStack.owner,
+       playerStack.token1,
+       playerStack.token2,
+       playerStack.token3,
+       playerStack.token4,
+       playerStack.token5,
+       otherStack.token1,
+       otherStack.token2,
+       otherStack.token3,
+       otherStack.token4,
+       otherStack.token5)
+
+       //function drainGame(bytes32 _commit,bytes32 _secret,address _opponent,uint _token1, uint _token2, uint _token3, uint _token4, uint _token5,uint _token6, uint _token7, uint _token8, uint _token9, uint _token10){
+
+       contracts["PizzaParlor"].methods.drainGame(
+         this.state.stack,
+         response.data.secret,
+         otherStack.owner,
+         playerStack.token1,
+         playerStack.token2,
+         playerStack.token3,
+         playerStack.token4,
+         playerStack.token5,
+         otherStack.token1,
+         otherStack.token2,
+         otherStack.token3,
+         otherStack.token4,
+         otherStack.token5,
+       ).send({
+         from: account,
+         gas:400000,
+         gasPrice:this.props.GWEI * 1000000000
+       },(error,hash)=>{
+         console.log("CALLBACK!",error,hash)
+         showLoadingScreen(hash)
+         txhash=hash
+       }).on('error',(a,b)=>{
+         if(txhash){
+           //howLoadingScreen(false)
+           console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+         }
+       }).then((receipt)=>{
+         console.log("RESULT:",receipt)
+         showLoadingScreen(false)
+       }).catch(e=> {
+           console.error('caught error', e);
+       })
+
+    })
+
+
+
+  }
   generateGame(playerToGenerate,playerStack,otherStack){
     let {account,blockNumber,contracts,etherscan,showLoadingScreen} = this.props.context
 
@@ -1045,7 +1130,10 @@ class PlayStack extends Component {
 
   }
   render(){
+
+          console.log(" DISPLAY")
     let {account,blockNumber,contracts,etherscan} = this.props.context
+
     let {coinFlipResult,stackMode,stackData,counterStacks,lastBlock,lastActor,TIMEOUTBLOCKS,flipEvents,throwSlammerEvents,player1,player2,spectator} = this.state;
     if(!stackData){
       return (
@@ -1131,7 +1219,7 @@ class PlayStack extends Component {
 
     let currentlyThrowing = this.state.currentlyThrowing
 
-
+console.log("test1 DISPLAY")
     console.log("coinFlipResult",coinFlipResult)
     if(typeof coinFlipResult != "undefined"){
       console.log("coinFlipResult.result",coinFlipResult.result)
@@ -1189,7 +1277,7 @@ class PlayStack extends Component {
 
 
 
-
+console.log("test2 DISPLAY")
 
     let flipDisplay = ""
     let throwSlammerEventArray = []
@@ -1251,6 +1339,7 @@ class PlayStack extends Component {
 
    let possibleFlightPaths = [-150,-200,-250,-300,-350,350,300,250,200,150];
 
+console.log("test3 DISPLAY")
 
    let flightStack = []
    if(stackMode==3||stackMode==8){
@@ -1281,12 +1370,13 @@ class PlayStack extends Component {
      }
    }
 
-
+console.log("test4 DISPLAY",stackMode)
     let display = ""
     if(stackMode==0){
 
+      console.log("checking DISPLAY")
       if(this.props&&this.props.api&&this.props.api.version&&this.state._counterStack){
-
+        console.log("shouldn't DISPLAY")
 
 
 
@@ -1325,7 +1415,7 @@ class PlayStack extends Component {
 
           //console.log(player1hashSize,player2hashSize)
 
-
+          let playerToDrain
           let playerToGenerate
           let playerNumber
           let playerStack
@@ -1342,11 +1432,13 @@ class PlayStack extends Component {
           if( player1hashSize < player2hashSize ){
             playerNumber = 1
             playerToGenerate = stackData.owner.toLowerCase()
+            playerToDrain = counterStackData.owner.toLowerCase()
             playerStack = stackData
             otherStack = counterStackData
           }else{
             playerNumber = 2
             playerToGenerate = counterStackData.owner.toLowerCase()
+            playerToDrain = stackData.owner.toLowerCase()
             playerStack = counterStackData
             otherStack = stackData
           }
@@ -1358,6 +1450,22 @@ class PlayStack extends Component {
           if(playerToGenerate == account.toLowerCase()){
             buttonColor = "#6ac360"
             clickFunction = this.generateGame
+          }
+
+          let blocksToTimeout = (this.state.blockNumber+BLOCKTIMEOUT)-blockNumber
+
+          let drain = (
+            <div style={{fontSize:10,opacity:0.5,marginTop:5}}>
+              {"("+blocksToTimeout+" blocks to timeout)"}
+            </div>
+          )
+          console.log("this.state.blockNumber",this.state.blockNumber,"BLOCKTIMEOUT",BLOCKTIMEOUT,"blockNumber",blockNumber)
+          if(blocksToTimeout<=0 && playerToDrain==account.toLowerCase()){
+            drain = (
+              <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
+                <MMButton color={"#fe2311"} onClick={this.drainGame.bind(this,playerToDrain,otherStack,playerStack)}>Drain</MMButton>
+              </div>
+            )
           }
 
           display = (
@@ -1378,6 +1486,7 @@ class PlayStack extends Component {
                     <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
                       <MMButton color={buttonColor} onClick={clickFunction.bind(this,playerToGenerate,playerStack,otherStack)}>Generate Game</MMButton>
                     </div>
+                    {drain}
                 </div>
 
               </div>
@@ -1652,8 +1761,11 @@ class PlayStack extends Component {
       }
 
 
-    }else if(stackMode==1){
-      if(!this.props.api&&!this.props.api.version){
+    }
+    else if(stackMode==1){
+      console.log("SM1 1")
+      if(!this.props.api||!this.props.api.version){
+            console.log("SM1 2")
         if(account.toLowerCase()==stackData.owner.toLowerCase()){
           display = (
             <div className={"actionable"}>
@@ -1669,7 +1781,7 @@ class PlayStack extends Component {
         }
       }
     }else if(stackMode==2){
-      if(!this.props.api&&!this.props.api.version){
+      if(!this.props.api||!this.props.api.version){
         if(account.toLowerCase()==stackData.owner.toLowerCase()){
           display = (
             <div className={"actionable"}>
@@ -1685,7 +1797,7 @@ class PlayStack extends Component {
         }
       }
     }else if(stackMode==3){
-      if(!this.props.api&&!this.props.api.version){
+      if(!this.props.api||!this.props.api.version){
         if(!spectator){
           if(account.toLowerCase()==lastActor.toLowerCase()){
             display = (
@@ -1703,7 +1815,7 @@ class PlayStack extends Component {
         }
       }
     }else if(stackMode==4){
-      if(!this.props.api&&!this.props.api.version){
+      if(!this.props.api||!this.props.api.version){
         if(!spectator){
           if(account.toLowerCase()==lastActor.toLowerCase()){
             display = (
@@ -1770,7 +1882,7 @@ class PlayStack extends Component {
 
 
     let timerDisplay = ""
-    if(lastBlock&&lastActor){
+    if(lastBlock&&lastActor || (this.props&&this.props.api&&this.props.api.version&&this.state.stackMode>0)){
 
       let turn
       if(spectator){
@@ -1792,7 +1904,7 @@ class PlayStack extends Component {
 
 
       let drainDisplay = ""
-      if( blockNumber-lastBlock >= TIMEOUTBLOCKS && !spectator){
+      if(blockNumber-lastBlock >= TIMEOUTBLOCKS && !spectator){
         drainDisplay = (
           <MMButton color={"#fe2311"} onClick={this.drainStack.bind(this)}>drain</MMButton>
         )

@@ -311,12 +311,6 @@ export default createClass({
 							</div>
 						</div>
 					</section>
-
-					<section className="section text-center" style={{ paddingTop: 140, paddingBottom: 130 }}>
-						<div className="container text-center">
-							<a href="">Privacy Policy</a> - <a href="">Terms of Use</a>
-						</div>
-					</section>
 				</main>
 			</div>
 

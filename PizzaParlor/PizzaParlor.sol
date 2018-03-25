@@ -15,7 +15,7 @@ contract PizzaParlor {
   uint8 public constant FLIPPINESS = 64;
   uint8 public constant FLIPPINESSROUNDBONUS = 16;
   uint8 public constant MAXROUNDS = 12; //must be greater than (255-FLIPPINESS)/FLIPPINESSROUNDBONUS
-  uint32 public constant BLOCKTIMEOUT = 720;// a few hours?
+  uint32 public constant BLOCKTIMEOUT = 20;// a few hours?
 
   address public cryptogsAddress;
   function PizzaParlor(address _cryptogsAddress) public {
@@ -207,9 +207,22 @@ contract PizzaParlor {
     cryptogsContract.transfer(msg.sender,_tokens[8]);
     cryptogsContract.transfer(msg.sender,_tokens[9]);
 
+    Flip(_commit,1,msg.sender,_tokens[0]);
+    Flip(_commit,1,msg.sender,_tokens[1]);
+    Flip(_commit,1,msg.sender,_tokens[2]);
+    Flip(_commit,1,msg.sender,_tokens[3]);
+    Flip(_commit,1,msg.sender,_tokens[4]);
+    Flip(_commit,1,msg.sender,_tokens[5]);
+    Flip(_commit,1,msg.sender,_tokens[6]);
+    Flip(_commit,1,msg.sender,_tokens[7]);
+    Flip(_commit,1,msg.sender,_tokens[8]);
+    Flip(_commit,1,msg.sender,_tokens[9]);
+
     delete commitReceipt[_commit][msg.sender];
     delete commitReceipt[_commit][_opponent];
+    DrainGame(_commit,msg.sender);
   }
+  event DrainGame(bytes32 indexed _commit,address indexed _sender);
 
   //if only one player ever ends up submitting a stack, they need to be able
   //to pull thier tokens back

@@ -155,6 +155,13 @@ export default createClass({
 				LiveParser(contracts["PizzaParlor"],"GenerateGame",blockNumber,updateGenerateGame)
 			},997)
 
+			EventParser(contracts["PizzaParlor"],"DrainGame",blockNumber-BLOCKLOOKBACK,blockNumber,updateGenerateGame);
+			setInterval(()=>{
+				LiveParser(contracts["PizzaParlor"],"DrainGame",blockNumber,updateGenerateGame)
+			},997)
+
+
+
 
 			setInterval(()=>{
 				if(this.context.api&&this.context.api.version){

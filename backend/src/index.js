@@ -106,6 +106,30 @@ app.get('/reveal/:commit/:receipt1/:user1/:receipt2/:user2', async (req, res) =>
 
 });
 
+app.get('/secret/:commit/:receipt1/:user1/:receipt2/:user2', async (req, res) => {
+    console.log("/reveal/ ",req.params)
+    let receipt1 = await contracts["PizzaParlor"].methods.commitReceipt(req.params.commit,req.params.user1).call()
+    let receipt2 = await contracts["PizzaParlor"].methods.commitReceipt(req.params.commit,req.params.user2).call()
+    console.log(receipt1,receipt2)
+    if(receipt1 != "0x0000000000000000000000000000000000000000000000000000000000000000" &&
+      receipt2 != "0x0000000000000000000000000000000000000000000000000000000000000000" &&
+      receipt1==req.params.receipt1 && receipt2==req.params.receipt2 )
+    {
+      redis.get("getReveal"+req.params.commit, function (err, result) {
+        console.log("REVEAL:",result);
+        redis.get("getSecret"+result, function (err, result) {
+          console.log("SECRET:",result);
+          res.set('Content-Type', 'application/json');
+          res.end(JSON.stringify({"commit":req.params.commit,"secret":result}))
+        });
+      });
+    }else{
+      res.set('Content-Type', 'application/json');
+      res.end(JSON.stringify({"error":"invalid receipts"}))
+    }
+
+});
+
 async function getToken(id){
   let tokenData = await contracts["Cryptogs"].methods.getToken(id).call()
   let totalSupply = await contracts["Cryptogs"].methods.totalSupply().call()

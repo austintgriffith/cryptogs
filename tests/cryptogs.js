@@ -556,6 +556,7 @@ module.exports = {
         await clevis("sendTo","0.1","0","0xF11b9dCa0972e95b292891b027F5d8102e2cB8a5")
         await clevis("sendTo","0.1","0","0x2a906694d15df38f59e76ed3a5735f8aabcce9cb")
         await clevis("sendTo","0.1","0","0x55fFbCD5F80a7e22660A3B564447a0c1D5396A5C")
+        await clevis("sendTo","0.1","0","0x34aA3F359A9D614239015126635CE7732c18fDF3")
 
 
       });
