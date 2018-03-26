@@ -25,6 +25,11 @@ let txhash
 let timeoutArray = []
 let timeoutArrayTwo = []
 
+const preStyle={
+ margin:10
+}
+
+
 class PlayStack extends Component {
   constructor(props) {
     super(props);
@@ -38,23 +43,31 @@ class PlayStack extends Component {
       slammerAngle:15,
       slammerTop:-200,
       slammerLeft:-200,
-      blockNumber:0
+      blockNumber:0,
+      debugString:"con",
     }
 
     this.waitForStuff()
     waitInterval = setInterval(this.waitForStuff.bind(this),171)
 
-    if(props&&props.api&&props.api.version){
-      this.loadAPIStackData()
-      loadInterval = setInterval(this.loadAPIStackData.bind(this),3000)
-    }else{
-      this.loadStackData()
-      loadInterval = setInterval(this.loadStackData.bind(this),707)
-    }
-
   }
   componentWillUnmount(){
     clearInterval(loadInterval)
+  }
+  componentDidMount(){
+    this.setState({debugString:"mount"})
+    setTimeout(()=>{
+      if(this.props&&this.props.api&&this.props.api.host){
+        this.setState({debugString:"api"})
+        this.loadAPIStackData()
+        loadInterval = setInterval(this.loadAPIStackData.bind(this),3000)
+      }else{
+        this.setState({debugString:"decent"})
+        this.loadStackData()
+        loadInterval = setInterval(this.loadStackData.bind(this),707)
+      }
+    },1000)
+
   }
   waitForStuff(){
     if(DEBUG) console.log("waiting of stuff....")
@@ -1146,7 +1159,7 @@ class PlayStack extends Component {
       let stackspread = 9
       return (
         <div style={{position:'relative',width:1000,height:900,background:'url("/static/media/halftone.d3864fe4.png")'}}>
-          <div style={{position:'absolute',left:400,top:400}}>
+          <div style={{position:'absolute',left:400,top:250}}>
           <div style={{position:'absolute',left:-300,top:-200,zIndex:1}}>
            <Cryptog angle={-45} scale={0.9} id={1} image={"awpurepoison.jpg"}/>
           </div>
@@ -1225,11 +1238,11 @@ console.log("test1 DISPLAY")
       console.log("coinFlipResult.result",coinFlipResult.result)
       if(coinFlipResult.result){
         coinFlipResult={whosTurn:player1}
-        if(!currentlyThrowing) currentlyThrowing=player2.toLowerCase()
+        if(!currentlyThrowing&&player2) currentlyThrowing=player2.toLowerCase()
         console.log("set to player 1",coinFlipResult)
       }else{
         coinFlipResult={whosTurn:player2}
-        if(!currentlyThrowing) currentlyThrowing=player1.toLowerCase()
+        if(!currentlyThrowing&&player1) currentlyThrowing=player1.toLowerCase()
         console.log("set to player 2",coinFlipResult)
       }
     }
@@ -1454,11 +1467,16 @@ console.log("test4 DISPLAY",stackMode)
 
           let blocksToTimeout = (this.state.blockNumber+BLOCKTIMEOUT)-blockNumber
 
-          let drain = (
-            <div style={{fontSize:10,opacity:0.5,marginTop:5}}>
-              {"("+blocksToTimeout+" blocks to timeout)"}
-            </div>
-          )
+          let drain = ""
+
+          if(!this.state||!this.state.api||!this.state.api.version){
+            drain = (
+              <div style={{fontSize:10,opacity:0.5,marginTop:5}}>
+                {"("+blocksToTimeout+" blocks to timeout)"}
+              </div>
+            )
+          }
+
           console.log("this.state.blockNumber",this.state.blockNumber,"BLOCKTIMEOUT",BLOCKTIMEOUT,"blockNumber",blockNumber)
           if(blocksToTimeout<=0 && playerToDrain==account.toLowerCase()){
             drain = (
@@ -1657,9 +1675,16 @@ console.log("test4 DISPLAY",stackMode)
           )
         }
 
+
         let stackDisplay = (
-          <Stack key={"mainstack"} {...stackData} callToAction={callToAction}/>
+          <div style={{position:"relative"}}>
+            <SimpleStack key={"mainstack"} showBlockie={true} padding={350} scale={0.95} spacing={130} height={180}  {...stackData} 	/>
+            <div style={{position:"absolute",right:0,top:50}}>
+              {callToAction}
+            </div>
+          </div>
         )
+        //<Stack key={"mainstack"} {...stackData} callToAction={callToAction}/>
 
 
         let drawCounterStacks = counterStacks.map((counterstack)=>{
@@ -1679,8 +1704,14 @@ console.log("test4 DISPLAY",stackMode)
               )
             }
             return (
-                <Stack key={"counterstack"+counterstack._counterStack} {...counterstack} callToAction={callToAction}/>
+              <div style={{position:"relative"}}>
+                <SimpleStack key={"counterstack"+counterstack._counterStack} showBlockie={true} padding={350} scale={0.95} spacing={130} height={180}  {...counterstack} 	/>
+                <div style={{position:"absolute",right:0,top:50}}>
+                  {callToAction}
+                </div>
+              </div>
             )
+            //<Stack key={"counterstack"+counterstack._counterStack} {...counterstack} callToAction={callToAction}/>
           }
         })
 
@@ -1695,13 +1726,16 @@ console.log("test4 DISPLAY",stackMode)
           if(drawCounterStacks[c]) counterStackCount++
         }
 
+
         if(account.toLowerCase()==stackData.owner.toLowerCase()){
           if(counterStackCount>0){
             message = ""
             message = (
               <div>
                 <div style={{padding:10,paddingTop:20}}>Share game url:</div>
-                <pre id="url" style={{fontSize:14}} onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
+                <div style={preStyle}>
+                  <pre id="url" style={{fontSize:14}} onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
+                </div>
                 <div style={{padding:10,paddingTop:20}} className={"actionable"}>{"Accept an opponent's stack:"}</div>
               </div>
             )
@@ -1713,8 +1747,9 @@ console.log("test4 DISPLAY",stackMode)
                   <div className={"centercontainer"}>
                     <div style={{padding:40,marginTop:60}}>
                     <div style={{padding:10,paddingTop:20}}>Waiting for other players, share game url to challenge your friends:</div>
-                    <pre id="url" style={{fontSize:14}} onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
-
+                    <div style={preStyle}>
+                      <pre id="url" style={{fontSize:14}} onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
+                    </div>
                     </div>
                   </div>
 
@@ -1725,8 +1760,9 @@ console.log("test4 DISPLAY",stackMode)
               message = (
                 <div>
                   <div style={{padding:10,paddingTop:20}}>Waiting for other players, share game url to challenge your friends:</div>
+                  <div style={preStyle}>
                   <pre id="url" style={{fontSize:14}} onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
-
+                  </div>
                   <div className={"centercontainer"}>
                     <div style={{padding:40,marginTop:60}}>
                       <MMButton color={"#6081c3"} onClick={()=>{
@@ -1763,9 +1799,7 @@ console.log("test4 DISPLAY",stackMode)
 
     }
     else if(stackMode==1){
-      console.log("SM1 1")
       if(!this.props.api||!this.props.api.version){
-            console.log("SM1 2")
         if(account.toLowerCase()==stackData.owner.toLowerCase()){
           display = (
             <div className={"actionable"}>
@@ -1859,7 +1893,7 @@ console.log("test4 DISPLAY",stackMode)
       //flipDisplay=""
         display = (
           <div>
-            <div style={{opacity:0.3,marginTop:100,fontWeight:'bold',padding:50,fontSize:99,letterSpacing:-2}}>
+            <div style={{opacity:0.3,marginTop:0,fontWeight:'bold',padding:50,fontSize:99,letterSpacing:-2}}>
               Game Over
             </div>
             <div className={"centercontainer"}>
@@ -1953,6 +1987,7 @@ console.log("test4 DISPLAY",stackMode)
     let left=0
     let top=0
     if(stackMode>0 && window.innerWidth < width){
+      console.log("SHRINK TO SCREEN FOR STACKMODE",stackMode)
       scale = ((window.innerWidth-100)/(width))
       mainStyle.transform =  "scale("+scale+")"
       mainStyle.marginLeft=-240*(1-(scale-.39))+100
@@ -1960,7 +1995,7 @@ console.log("test4 DISPLAY",stackMode)
       left = 0
       top = 350
     }else{
-      mainStyle.width = window.innerWidth-100
+      mainStyle.width = window.innerWidth-40
       left=(window.innerWidth/4)
       top=550
     }

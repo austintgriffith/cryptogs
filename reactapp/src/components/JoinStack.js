@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Stack from '../components/Stack.js'
+import SimpleStack from '../components/SimpleStack.js'
 import StackSelect from '../components/StackSelect.js'
 import MMButton from '../components/MMButton.js'
 import PogAnimation from '../components/PogAnimation'
@@ -14,11 +14,16 @@ class JoinStack extends Component {
     this.state = {
       stack:this.props.match.params.stack
     }
-    this.loadStackData()
+  }
+  componentDidMount(){
+    setTimeout(()=>{
+      this.loadStackData()
+    },1000)
+
   }
   async loadStackData(){
     let stack
-    if(this.props.api && this.props.api.version){
+    if(this.props.api&&this.props.api.host){
       try{
         console.log("Loading commit data from api...")
         axios.get(this.props.api.host+"/commit/"+this.state.stack)
@@ -107,9 +112,7 @@ class JoinStack extends Component {
     }
     return (
       <div>
-        <div style={{opacity:0.7}}>
-          <Stack {...this.state.stackData}/>
-        </div>
+        <SimpleStack showBlockie={true} count={5} scale={0.8} padding={200} spacing={70} height={180} {...this.state.stackData}/>
         <StackSelect message={"Select five of your pogs to join existing game:"} myTokens={this.props.context.myTokens} goFn={this.joinStack.bind(this)} />
       </div>
     )

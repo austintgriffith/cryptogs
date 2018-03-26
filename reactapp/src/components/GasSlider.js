@@ -51,7 +51,7 @@ export default createClass({
             position:"absolute",top:this.state.startingPixels,
             opacity:0.6
           }}>
-            <div style={{opacity:this.state.gweiOpacity,position:'absolute',left:43,fontSize:14,width:150}} >
+            <div style={{opacity:this.state.gweiOpacity,position:'absolute',left:43,fontSize:14,width:50}} >
               {this.props.GWEI}<span style={{fontSize:9}}>gwei</span>
             </div>
           </div>

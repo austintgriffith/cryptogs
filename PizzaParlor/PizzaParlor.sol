@@ -15,7 +15,7 @@ contract PizzaParlor {
   uint8 public constant FLIPPINESS = 64;
   uint8 public constant FLIPPINESSROUNDBONUS = 16;
   uint8 public constant MAXROUNDS = 12; //must be greater than (255-FLIPPINESS)/FLIPPINESSROUNDBONUS
-  uint32 public constant BLOCKTIMEOUT = 20;// a few hours?
+  uint32 public constant BLOCKTIMEOUT = 40;// a few hours?
 
   address public cryptogsAddress;
   function PizzaParlor(address _cryptogsAddress) public {

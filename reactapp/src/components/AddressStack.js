@@ -38,25 +38,23 @@ class AddressStack extends Component {
     let {hasLoadedFirst,tokenData,hovers} = this.state
     if(!tokenData){
       return (
-        <div style={{opacity:0.3}}><PogAnimation loader={true} image={"unicorn.png"}/></div>
+        <div style={{opacity:0.3}}><PogAnimation loader={true} image={"ad8ball.png"}/></div>
       )
     }
     if(!hasLoadedFirst){
       return (
-        <div style={{opacity:0.3}}><PogAnimation loader={true} image={"unicorn.png"}/></div>
+        <div style={{opacity:0.3}}><PogAnimation loader={true} image={"ad8ball.png"}/></div>
       )
     }
 
-    let cryptogScale = Math.min(0.8, 0.8 * (window.innerWidth/700))
-    //console.log("cryptogScale",cryptogScale)
-    let stackWidth = cryptogScale*115
+    let stackWidth = 85
 
 		let tokenDisplay = tokenData.map((token)=>{
 			return (
         <Spinner key={"cryptog"+token.id} guts={
           (spinning)=>{
             return (
-              <Cryptog  id={token.id} scale={1} slowrolling={spinning} image={token.image} zIndex={1}/>
+              <Cryptog  id={token.id} scale={0.6} slowrolling={spinning} image={token.image} zIndex={1}/>
             )
           }
         } click={()=>{
@@ -96,23 +94,24 @@ class AddressStack extends Component {
 //transform:"scale("+cryptogScale+"),
     return (
       <div>
+      <div style={{float:'left',marginTop:44}}>
+        <span style={{verticalAlign:'middle'}}>
+        <Blockies
+          seed={this.props.match.params.address.toLowerCase()}
+          scale={3}
+        />
+        </span>
+        <span style={{fontSize:16,paddingLeft:5}}><a target="_blank" href={this.props.etherscan+"address/"+this.props.match.params.address}>{this.props.match.params.address.substr(0,16)}</a></span>
+      </div>
+      <div style={{float:'right',marginTop:-140,opacity:0.4}}>({tokenData.length})</div>
+
 
         {callToAction}
 
-        <div style={{float:'left',marginTop:-40}}>
-          <span style={{verticalAlign:'middle'}}>
-          <Blockies
-            seed={this.props.match.params.address.toLowerCase()}
-            scale={3}
-          />
-          </span>
-          <span style={{fontSize:20,paddingLeft:5}}><a target="_blank" href={this.props.etherscan+"address/"+this.props.match.params.address}>{this.props.match.params.address}</a></span>
-        </div>
-        <div style={{float:'right',marginTop:-140,opacity:0.4}}>({tokenData.length})</div>
 
           <StackGrid
             style={{marginTop:20}}
-            columnWidth={115}
+            columnWidth={85}
           >
              {tokenDisplay}
           </StackGrid>

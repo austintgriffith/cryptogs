@@ -3,6 +3,7 @@ import Cryptog from '../components/Cryptog.js'
 import StackGrid from 'react-stack-grid'
 import MMButton from '../components/MMButton.js'
 import PogAnimation from '../components/PogAnimation.js'
+import SimpleStack from '../components/SimpleStack.js'
 
 class StackSelect extends Component {
   constructor(props) {
@@ -20,6 +21,9 @@ class StackSelect extends Component {
 				if(this.state.selectedTokens[id]){count++}
 			}
 			if(count<5) this.state.selectedTokens[id]=true;
+      if(count>=4){
+        window.scrollTo(0,0);
+      }
 		}
 		this.setState({selectedTokens:this.state.selectedTokens})
 	}
@@ -39,7 +43,7 @@ class StackSelect extends Component {
       tokenCount++
       return (
         <div style={style} onClick={this.tokenClick.bind(this,token.id)} key={"cryptog"+token.id} id={token.id} >
-          <Cryptog scale={1} image={token.image}/>
+          <Cryptog scale={0.7} image={token.image}/>
         </div>
       )
     })
@@ -48,7 +52,7 @@ class StackSelect extends Component {
       if(this.state.selectedTokens[id]){
         selectedTokens.push(
           <div style={{cursor:"pointer"}} onClick={this.tokenClick.bind(this,id,true)} key={"selectedcryptog"+id} id={"selected"+id} >
-            <Cryptog scale={1} image={images[id]}/>
+            <Cryptog scale={0.7} image={images[id]}/>
           </div>
         )
       }
@@ -81,17 +85,17 @@ class StackSelect extends Component {
 
     return (
       <div>
-        <StackGrid style={{marginTop:50}} columnWidth={120}>
-          {selectedTokens}
-          <div key="gobutton">
+        <SimpleStack scale={0.7} spacing={80} height={190} tokens={this.state.selectedTokens} images={images} click={this.tokenClick.bind(this)}/>
+        <div style={{width:"100%"}}>
+          <div style={{position:"relative",display:"table",margin:"0 auto"}}>
             {gobutton}
           </div>
-        </StackGrid>
+        </div>
         <div className={"actionable"}>
           {this.props.message}
         </div>
         <div style={{float:'right',opacity:0.3}}>({tokenDisplay.length})</div>
-        <StackGrid style={{maringRight:0,marginTop:50}} columnWidth={120}>
+        <StackGrid columnWidth={70}>
           {tokenDisplay}
         </StackGrid>
         {extraTokenDisplay}

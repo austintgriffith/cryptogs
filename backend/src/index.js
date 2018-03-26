@@ -3,6 +3,7 @@ const express = require('express');
 const https = require('https');
 const helmet = require('helmet');
 const app = express();
+const fs = require('fs');
 const Redis = require('ioredis');
 const ContractLoader = require('./modules/contractLoader.js');
 var bodyParser = require('body-parser')
@@ -13,8 +14,8 @@ var SHA3 = require('sha3');
 
 const COMMIT_EXPIRE = 86400*3 // commit expires in an a few days?
 
-// const redisHost = '172.17.0.1'
-const redisHost = 'localhost'
+// const redisHost = 'localhost'
+const redisHost = 'stage.cryptogs.io'
 
 let contracts;
 let tokens = [];
@@ -22,9 +23,14 @@ let tokens = [];
 var Web3 = require('web3');
 var web3 = new Web3();
 
-const NETWORK = 9999
+const NETWORK = fs.readFileSync("../../deploy.network").toString().trim()
+if(!NETWORK){
+  console.log("No deploy.network found exiting...")
+  process.exit()
+}
+console.log("NETWORK:",NETWORK)
 
-web3.setProvider(new web3.providers.HttpProvider('http://localhost:8545'));
+web3.setProvider(new web3.providers.HttpProvider('http://0.0.0.0:8545'));
 
 console.log("LOADING CONTRACTS")
 contracts = ContractLoader(["Cryptogs","SlammerTime","PizzaParlor"],web3,NETWORK);

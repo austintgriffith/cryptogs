@@ -28,7 +28,7 @@ import axios from 'axios'
 import PogAnimation from './components/PogAnimation'
 import {Motion, spring, presets} from 'react-motion';
 
-const OPTIONALBACKEND = "http://localhost:8001"
+const OPTIONALBACKEND = "http://stage.cryptogs.io:8001"
 
 const DEBUG = false
 const MAINNETGWEI = 5

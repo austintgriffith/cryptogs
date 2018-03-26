@@ -2,11 +2,12 @@ import React from 'react'
 import createClass from 'create-react-class'
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import PropTypes from 'prop-types'
-import Stack from '../components/Stack.js'
 import EventParser from '../modules/eventParser.js';
 import LiveParser from '../modules/liveParser.js';
 import MMButton from '../components/MMButton.js'
+import SimpleStack from '../components/SimpleStack.js'
 import PogAnimation from '../components/PogAnimation'
+
 import axios from 'axios'
 
 const DEBUG = false;
@@ -66,20 +67,20 @@ export default createClass({
 
 
 				setInterval(()=>{
-						console.log("Connecting to API...")
+						//console.log("Connecting to API...")
 						try{
 							axios.get(this.context.api.host+"/commits/")
 							.then((response)=>{
 								let commits = response.data
-								console.log("COMMITS BACK FROM API");
+								//console.log("COMMITS BACK FROM API");
 								for(let c in commits){
 									let commitId = commits[c].replace("commit_","")
-									console.log("CHECKING",this.state.allStacks[commitId])
+									//console.log("CHECKING",this.state.allStacks[commitId])
 									if(!this.state.allStacks[commitId]||!this.state.allStacks[commitId]._sender||!this.state.allStacks[commitId].otherPlayer){
-										console.log("DOING GET")
+										//console.log("DOING GET")
 										axios.get(this.context.api.host+"/commit/"+commitId)
 										.then((commitData)=>{
-											console.log("commitData for "+commitId,commitData.data)
+											//console.log("commitData for "+commitId,commitData.data)
 											let stackObject = {
 												_public: true,
 												_sender: commitData.data.stackData.owner,
@@ -111,10 +112,18 @@ export default createClass({
 												}
 											}
 
-											console.log("Saving stack object",stackObject)
-											if(!this.state.allStacks[commitId]) this.state.allStacks[commitId]={}
-											this.state.allStacks[commitId] = Object.assign(this.state.allStacks[commitId],stackObject)
-											this.setState({allStacks:this.state.allStacks})
+											if(this.state.allStacks[commitId] && this.state.allStacks[commitId]._sender && !stackObject.otherPlayer){
+												//skip update?
+											}else{
+												console.log("Saving stack object",stackObject)
+												if(!this.state.allStacks[commitId]) this.state.allStacks[commitId]={}
+
+												this.state.allStacks[commitId] = Object.assign(this.state.allStacks[commitId],stackObject)
+												this.setState({allStacks:this.state.allStacks})
+											}
+
+
+
 										})
 									}
 								}
@@ -239,7 +248,7 @@ export default createClass({
 		}
 		const {allStacks} = this.state
 
-		console.log("allStacks",allStacks)
+		//console.log("allStacks",allStacks)
 
 		let myStacks = []
 		let stacks = []
@@ -247,6 +256,7 @@ export default createClass({
 		let finishedStacks = []
 
 		let simpleArray = []
+		let count = 0
 		for(let s in allStacks){
 			simpleArray.push(allStacks[s])
 		}
@@ -256,11 +266,14 @@ export default createClass({
 		for(let s in allStacksFlipped){
 			if(allStacksFlipped[s].finished){
 				if(allStacksFlipped[s]._sender && finishedStacks.length<5){
+					count++
 					finishedStacks.push(
-						<Stack key={"mystack"+s} {...allStacksFlipped[s]} callToAction={
+						<div style={{position:"relative"}}>
 
-							<div  style={{marginTop:20,marginLeft:30}}>
-								<MMButton color={"#6081c3"} onClick={()=>{
+							<SimpleStack key={"mystack"+s} showBlockie={true} padding={300} scale={0.95} spacing={130} height={180}  {...allStacksFlipped[s]} 	/>
+
+							<div style={{position:"absolute",right:0,top:50}}>
+								<MMButton color={"#f7861c"} onClick={()=>{
 									if(account){
 										window.location="/play/"+allStacksFlipped[s]._stack
 									}else{
@@ -269,7 +282,7 @@ export default createClass({
 								}}>view</MMButton>
 							</div>
 
-						}/>
+						</div>
 					)
 				}
 
@@ -284,13 +297,17 @@ export default createClass({
 						)
 					)
 				){
-					console.log("allStacksFlipped[s]",allStacksFlipped[s])
-				console.log("FINISHED?",allStacksFlipped[s].finished)
+				//	console.log("allStacksFlipped[s]",allStacksFlipped[s])
+				//console.log("FINISHED?",allStacksFlipped[s].finished)
 				if(allStacksFlipped[s]._stack){
+					count++
 					myStacks.push(
-						<Stack key={"mystack"+s} {...allStacksFlipped[s]} callToAction={
-							<div  style={{marginTop:20,marginLeft:30}}>
-								<MMButton color={"#6081c3"} onClick={()=>{
+						<div style={{position:"relative"}}>
+
+							<SimpleStack key={"mystack"+s} showBlockie={true} padding={350} scale={0.95} spacing={130} height={180}  {...allStacksFlipped[s]} 	/>
+
+							<div style={{position:"absolute",right:0,top:50}}>
+								<MMButton color={"#6ac360"} onClick={()=>{
 									if(account){
 										window.location="/play/"+allStacksFlipped[s]._stack
 									}else{
@@ -298,7 +315,8 @@ export default createClass({
 									}
 								}}>view</MMButton>
 							</div>
-						}/>
+
+						</div>
 					)
 				}
 
@@ -310,52 +328,83 @@ export default createClass({
 				){
 				if(allStacksFlipped[s].otherPlayer.toLowerCase() == account.toLowerCase()){
 					console.log("allStacksFlipped[s].canceledSenders",allStacksFlipped[s].canceledSenders)
+					count++
 					myStacks.push(
-						<Stack key={"mystack"+s} {...allStacksFlipped[s]} callToAction={
-							<div style={{marginTop:20,marginLeft:30}}>
-								<MMButton color={"#6081c3"} onClick={()=>{
-									if(account){
-										window.location="/play/"+allStacksFlipped[s]._stack
-									}else{
-										metaMaskHintFn()
-									}
-								}}>play</MMButton>
-							</div>
-						}/>
-					)
-				}else{
-					liveStacks.push(
-						<Stack key={"mystack"+s} {...allStacksFlipped[s]} callToAction={
-							<div  style={{marginTop:20,marginLeft:20}}>
-								<MMButton color={"#6081c3"} onClick={()=>{
-									if(account){
-										window.location="/play/"+allStacksFlipped[s]._stack
-									}else{
-										metaMaskHintFn()
-									}
-								}}>view</MMButton>
-							</div>
-						}/>
-					)
-				}
-			}else if(allStacksFlipped[s].timestamp && (!allStacksFlipped[s].canceled) ){
-				stacks.push(
-					<Stack key={"stack"+s} {...allStacksFlipped[s]} callToAction={
-						<div style={{marginTop:16,marginLeft:30}}>
-							<MMButton color={"#6081c3"} onClick={()=>{
+						<div style={{position:"relative"}}>
+							<SimpleStack key={"mystack"+s} showBlockie={true} padding={350} scale={0.95} spacing={130} height={180}  {...allStacksFlipped[s]} 	/>
+							<div style={{position:"absolute",right:0,top:50}}>
+							<MMButton color={"#6ac360"} onClick={()=>{
 								if(account){
-									window.location="/join/"+allStacksFlipped[s]._stack
+									window.location="/play/"+allStacksFlipped[s]._stack
 								}else{
 									metaMaskHintFn()
 								}
-							}}>Join</MMButton>
+							}}>play</MMButton>
+							</div>
+
 						</div>
-					}/>
+					)
+				}else{
+					count++
+					liveStacks.push(
+						<div style={{position:"relative"}}>
+							<SimpleStack key={"mystack"+s} showBlockie={true} padding={350} scale={0.95} spacing={130} height={180}  {...allStacksFlipped[s]} 	/>
+							<div style={{position:"absolute",right:0,top:50}}>
+							<MMButton color={"#f7861c"} onClick={()=>{
+								if(account){
+									window.location="/play/"+allStacksFlipped[s]._stack
+								}else{
+									metaMaskHintFn()
+								}
+							}}>view</MMButton>
+							</div>
+
+						</div>
+					)
+				}
+			}else if(allStacksFlipped[s].timestamp && (!allStacksFlipped[s].canceled) ){
+				count++
+				stacks.push(
+					<div style={{position:"relative"}}>
+						<SimpleStack key={"mystack"+s} showBlockie={true} padding={350} scale={0.95} spacing={130} height={180}  {...allStacksFlipped[s]} 	/>
+						<div style={{position:"absolute",right:0,top:50}}>
+						<MMButton color={"#6081c3"} onClick={()=>{
+							if(account){
+								window.location="/join/"+allStacksFlipped[s]._stack
+							}else{
+								metaMaskHintFn()
+							}
+						}}>Join</MMButton>
+						</div>
+					</div>
 				)
 			}
 		}
 
 		let sectionStyle = {borderTop:'1px solid #dddddd',padding:10,marginTop:40,opacity:0.4}
+
+		count++
+		let bottomRender = (
+			<div>
+				<div style={{opacity:0.3}}><PogAnimation loader={true} image={'dragon.png'} /></div>
+			</div>
+		)
+		if(count>1){
+			bottomRender = (
+				<div>
+				<div style={sectionStyle}>Your Games:</div>
+				<div>{myStacks}</div>
+				<div style={sectionStyle}>Open Games:</div>
+				<div>{stacks}</div>
+				<div style={sectionStyle}>Live Games:</div>
+				<div>{liveStacks}</div>
+				<div style={sectionStyle}>Finished Games:</div>
+				<div>{finishedStacks}</div>
+				</div>
+			)
+		}
+
+
 
 		return (
       <div style={{margin: '0 auto',maxWidth: 960,padding: '0px 1.0875rem 1.45rem',paddingTop: 0}}>
@@ -370,17 +419,9 @@ export default createClass({
 					}}>Create Game</MMButton>
 				</div>
 				<div style={{float:'left',padding:30,paddingRLeft:100}}>
-				Games within the last {BLOCKLOOKBACK} blocks:
 				</div>
 				<div style={{ clear:"both"}}></div>
-				<div style={sectionStyle}>Your Games:</div>
-				<div>{myStacks}</div>
-				<div style={sectionStyle}>Open Games:</div>
-				<div>{stacks}</div>
-				<div style={sectionStyle}>Live Games:</div>
-				<div>{liveStacks}</div>
-				<div style={sectionStyle}>Finished Games:</div>
-				<div>{finishedStacks}</div>
+				{bottomRender}
       </div>
     )
 	}
