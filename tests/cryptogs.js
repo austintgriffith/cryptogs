@@ -22,7 +22,7 @@ function rand(min, max) {
   return Math.floor( Math.random() * (max - min) + min );
 }
 const contractsDir = "reactapp/src/contracts/"
-const contractsDirBackend = "backend/src/contracts/"
+const contractsDirBackend = "backend/contracts/"
 function loadAbi(contract,deployNetwork){
   let abi = fs.readFileSync(contract+"/"+contract+".abi").toString().trim()
   console.log(tab,contract.cyan,"ABI:",(""+abi.length).yellow)

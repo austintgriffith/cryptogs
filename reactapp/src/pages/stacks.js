@@ -13,6 +13,8 @@ import axios from 'axios'
 const DEBUG = false;
 const BLOCKLOOKBACK = 240*8; //show the last 8 hours
 
+let mountTime = Date.now()
+
 let loadInterval
 export default createClass({
 	displayName: 'StacksPage',
@@ -28,8 +30,8 @@ export default createClass({
 		return {allStacks:[]}
 	},
 	componentDidMount(){
-		this.loadStackData()
-		loadInterval = setInterval(this.loadStackData,101)
+		mountTime = Date.now()
+		loadInterval = setInterval(this.loadStackData,303)
 	},
 	componentWillUnmount(){
 		clearInterval(loadInterval)
@@ -46,9 +48,9 @@ export default createClass({
 
 
 				let updateGenerateGame= async (update)=>{
-					console.log("updateGenerateGame",update)
+					//console.log("updateGenerateGame",update)
 					let id = update._commit
-					console.log("checking current value ",id,this.state.allStacks[id],this.state.allStacks[id]==true)
+					//console.log("checking current value ",id,this.state.allStacks[id],this.state.allStacks[id]==true)
 					if(!this.state.allStacks[id]) this.state.allStacks[id]={};
 					if(!this.state.allStacks[id].finished) this.state.allStacks[id].finished=true;
 					this.setState({allStacks:this.state.allStacks});
@@ -389,7 +391,7 @@ export default createClass({
 				<div style={{opacity:0.3}}><PogAnimation loader={true} image={'dragon.png'} /></div>
 			</div>
 		)
-		if(count>1){
+		if(count>1 || mountTime<Date.now()-3000){
 			bottomRender = (
 				<div>
 				<div style={sectionStyle}>Your Games:</div>

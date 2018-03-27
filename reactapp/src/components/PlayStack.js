@@ -13,6 +13,7 @@ import PogAnimation from '../components/PogAnimation'
 import Blockies from 'react-blockies'
 import cookie from 'react-cookies'
 import axios from 'axios'
+var QRCode = require('qrcode-react');
 
 let loadInterval
 let waitInterval
@@ -1143,6 +1144,27 @@ class PlayStack extends Component {
 
   }
   render(){
+    let qrcode
+    let width = 700
+    let mainStyle = {backgroundColor:"#FFFFFF",width:width,height:800}
+    let scale = ((window.innerWidth-100)/(width))
+    let leftOffset = 0
+    let topOffset = 0
+    let left=0
+    let top=0
+    if(stackMode>0 && window.innerWidth < width){
+      console.log("SHRINK TO SCREEN FOR STACKMODE",stackMode)
+      mainStyle.transform =  "scale("+scale+")"
+      mainStyle.marginLeft=-240*(1-(scale-.39))+100
+      mainStyle.marginTop=-270*(1-(scale-.39))+70
+      left = 0
+      top = 350
+    }else{
+      mainStyle.width = window.innerWidth-40
+      left=(window.innerWidth/4)
+      top=550
+    }
+
 
           console.log(" DISPLAY")
     let {account,blockNumber,contracts,etherscan} = this.props.context
@@ -1678,7 +1700,7 @@ console.log("test4 DISPLAY",stackMode)
 
         let stackDisplay = (
           <div style={{position:"relative"}}>
-            <SimpleStack key={"mainstack"} showBlockie={true} padding={350} scale={0.95} spacing={130} height={180}  {...stackData} 	/>
+            <SimpleStack key={"mainstack"} showBlockie={true} padding={350} scale={0.95} spacing={130} height={60}  {...stackData} 	/>
             <div style={{position:"absolute",right:0,top:50}}>
               {callToAction}
             </div>
@@ -1716,6 +1738,7 @@ console.log("test4 DISPLAY",stackMode)
         })
 
         let message
+
         let portInfo = ""
         if(window.location.port && window.location.port!="80"){
           portInfo=":"+window.location.port
@@ -1729,18 +1752,20 @@ console.log("test4 DISPLAY",stackMode)
 
         if(account.toLowerCase()==stackData.owner.toLowerCase()){
           if(counterStackCount>0){
+            qrcode = window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack
             message = ""
             message = (
               <div>
                 <div style={{padding:10,paddingTop:20}}>Share game url:</div>
                 <div style={preStyle}>
-                  <pre id="url" style={{fontSize:14}} onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
+                  <pre id="url" style={{fontSize:14}} onClick={selectText}>{}</pre>
                 </div>
                 <div style={{padding:10,paddingTop:20}} className={"actionable"}>{"Accept an opponent's stack:"}</div>
               </div>
             )
           }else{
             if(this.props.api&&this.props.api.version){
+              qrcode = window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack
               message = (
                 <div>
 
@@ -1748,20 +1773,22 @@ console.log("test4 DISPLAY",stackMode)
                     <div style={{padding:40,marginTop:60}}>
                     <div style={{padding:10,paddingTop:20}}>Waiting for other players, share game url to challenge your friends:</div>
                     <div style={preStyle}>
-                      <pre id="url" style={{fontSize:14}} onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
+                      <pre id="url" style={{fontSize:14}} onClick={selectText}>{qrcode}</pre>
                     </div>
                     </div>
+
                   </div>
 
 
                 </div>
               )
             }else{
+              qrcode=window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack
               message = (
                 <div>
                   <div style={{padding:10,paddingTop:20}}>Waiting for other players, share game url to challenge your friends:</div>
                   <div style={preStyle}>
-                  <pre id="url" style={{fontSize:14}} onClick={selectText}>{window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack}</pre>
+                  <pre id="url" style={{fontSize:14}} onClick={selectText}>{qrcode}</pre>
                   </div>
                   <div className={"centercontainer"}>
                     <div style={{padding:40,marginTop:60}}>
@@ -1770,8 +1797,6 @@ console.log("test4 DISPLAY",stackMode)
                       }}>Watch Contract Transactions</MMButton>
                     </div>
                   </div>
-
-
                 </div>
               )
             }
@@ -1787,11 +1812,26 @@ console.log("test4 DISPLAY",stackMode)
 
         }
 
+        let messageScale = 1
+        if(scale<1){
+          messageScale = scale*1.5
+        }
+
+        console.log("shrkinkgngk",scale)
         display = (
           <div>
             {stackDisplay}
-            <div>{message}</div>
+            <div className="text-center" style={{transform:"scale("+messageScale+")"}}>
+              <p>
+                {message}
+              </p>
+            </div>
             {drawCounterStacks}
+            <div>
+              <div className={"centercontainer"}>
+                <QRCode value={qrcode} size={320}/>
+              </div>
+            </div>
           </div>
         )
       }
@@ -1979,26 +2019,6 @@ console.log("test4 DISPLAY",stackMode)
       slammerCursor = 'pointer'
     }
 
-    let width = 700
-    let mainStyle = {backgroundColor:"#FFFFFF",width:width,height:800}
-    let scale
-    let leftOffset = 0
-    let topOffset = 0
-    let left=0
-    let top=0
-    if(stackMode>0 && window.innerWidth < width){
-      console.log("SHRINK TO SCREEN FOR STACKMODE",stackMode)
-      scale = ((window.innerWidth-100)/(width))
-      mainStyle.transform =  "scale("+scale+")"
-      mainStyle.marginLeft=-240*(1-(scale-.39))+100
-      mainStyle.marginTop=-270*(1-(scale-.39))+70
-      left = 0
-      top = 350
-    }else{
-      mainStyle.width = window.innerWidth-40
-      left=(window.innerWidth/4)
-      top=550
-    }
 
     //console.log(mainStyle)
 

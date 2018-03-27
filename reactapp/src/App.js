@@ -28,7 +28,7 @@ import axios from 'axios'
 import PogAnimation from './components/PogAnimation'
 import {Motion, spring, presets} from 'react-motion';
 
-const OPTIONALBACKEND = "http://stage.cryptogs.io:8001"
+let OPTIONALBACKENDPORT = "8001"
 
 const DEBUG = false
 const MAINNETGWEI = 5
@@ -103,11 +103,12 @@ export default createClass({
 			alert: "",
 			network:0,
 			api:{},
-			apiHint:-600,
+			apiHint:-100,
 			reloadRouter:false,
 		};
 	},
 	componentDidMount(){
+		cookie.save('apiinfo', 1, { path: '/', maxAge:1800 })
 		try{
 			web3 = new Web3(window.web3.currentProvider)
 			web3.eth.net.getId().then((network)=>{
@@ -128,28 +129,35 @@ export default createClass({
 		}
 		this.waitForContracts()
 		//check to see if we can talk to the api
-		this.setupApi()
+		setTimeout(()=>{
+			this.setupApi()
+		},500)
+
 	},
 	setupApi(){
+		let currentLocation = window.location
+		console.log("currentLocation",currentLocation)
+		let backend = currentLocation.protocol+"//"+currentLocation.hostname+":"+OPTIONALBACKENDPORT
+		console.log("backend",backend)
 		let apiCookie = parseInt(cookie.load('api'))
 		if(apiCookie==-1){
 			console.log("don't even try centralized, they have turned it off")
 		}else{
 			try{
-				console.log("Looking for a backend @ ",OPTIONALBACKEND)
-				axios.get(OPTIONALBACKEND)
+				console.log("Looking for a backend @ ",backend)
+				axios.get(backend)
 				.then((response)=>{
-					let update = {host:OPTIONALBACKEND,...response.data}
+					let update = {host:backend,...response.data}
 					console.log("API!!!!",response,update);
 					cookie.save('api', 1, { path: '/', maxAge:1800 })
 					this.setState({api:update})
 					let apiinfo =  parseInt(cookie.load('apiinfo'))
 					if(!apiinfo){
 						setTimeout(()=>{
-							this.setState({apiHint:-100})
+							this.setState({apiHint:20})
 						},1500)
 						setTimeout(()=>{
-							this.setState({apiHint:-600})
+							this.setState({apiHint:-100})
 						},4500)
 						cookie.save('apiinfo', 1, { path: '/', maxAge:1800 })
 					}
@@ -187,13 +195,13 @@ export default createClass({
 		cookie.save('apiinfo', 0, { path: '/', maxAge:1800 })
 		if(this.state.api&&this.state.api.version){
 			console.log("clear api and go dencentralized")
-			this.setState({api:false,apiHint:-100,reloadRouter:true})
+			this.setState({api:false,apiHint:20,reloadRouter:true})
 			setTimeout(()=>{
 				this.setState({reloadRouter:false})
 			},2000)
 			cookie.save('api', -1, { path: '/', maxAge:1800 })
 			setTimeout(()=>{
-				this.setState({apiHint:-600})
+				this.setState({apiHint:-100})
 			},4000)
 		}else{
 
@@ -302,15 +310,15 @@ export default createClass({
 
 				<Motion
 				defaultStyle={{
-					right:-600,
+					top:-100,
 				}}
 				style={{
-					right:spring(this.state.apiHint,{ stiffness: 100, damping: 12 })
+					top:spring(this.state.apiHint,{ stiffness: 100, damping: 12 })
 				}}
 				>
 					{currentStyles => {
 						return (
-							<div style={{width:550,padding:20,fontSize:14,backgroundColor:"#FFFFFF",cursor:"pointer",position:"absolute",right:currentStyles.right,top:97,zIndex:90}}>
+							<div style={{width:450,padding:20,fontSize:11,backgroundColor:"#FFFFFF",cursor:"pointer",position:"absolute",top:currentStyles.top,right:-100,zIndex:1000}}>
 								{apiHintContent}
 							</div>
 						)

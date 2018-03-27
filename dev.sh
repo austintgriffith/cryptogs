@@ -21,6 +21,17 @@ delay 1
 end tell
 end tell
 end tell'
+osascript -e 'tell application "iTerm"
+activate
+create window with profile "Default"
+tell the current window
+tell the current session
+delay 1
+write text "cd ~/cryptogs;atom .;cd backend/;nodemon index.js"
+delay 1
+end tell
+end tell
+end tell'
 osascript -e 'tell application "Firefox" to activate
 tell application "Firefox"
 	open location "http://localhost:8000"

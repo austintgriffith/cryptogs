@@ -18,7 +18,8 @@ let loadDownTheChain = async (contract,eventName,updateFn,filter)=>{
   }
 }
 let doSync = async (contract,eventName,updateFn,from,to,filter)=>{
-  if(DEBUG) console.log("EVENT:",eventName,"FROM",from,"to",to,contract)
+  from = Math.max(0,from)
+  console.log("EVENT:",eventName,"FROM",from,"to",to,contract)
   let events
   try{
     if(filter){
