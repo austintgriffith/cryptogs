@@ -224,7 +224,7 @@ export default createClass({
 				mintedPackRender = (
 					<div style={{padding:80}}>
 						<div>All packs have sold out.</div>
-						<div style={{marginTop:40}}>Please wait for more to be minted or look to secondary ERC721 markets.</div>
+						<div style={{marginTop:40}}>Please wait for more to be minted or look to secondary ERC-721 markets.</div>
 						<div style={{marginTop:40}}>Thanks!</div>
 					</div>
 				)

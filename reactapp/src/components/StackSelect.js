@@ -66,7 +66,7 @@ class StackSelect extends Component {
       //take out the margin right but figure out how to get zinex right
       //normally I'm unable to click it!!! POS
       gobutton = (
-        <div style={{marginTop:60,marginLeft:40}}>
+        <div style={{marginTop:20,marginLeft:40}}>
           <MMButton color={"#6ac360"} onClick={this.props.goFn.bind(this,this.state.selectedTokens)}>submit</MMButton>
         </div>
       )
@@ -85,7 +85,7 @@ class StackSelect extends Component {
 
     return (
       <div>
-        <SimpleStack scale={0.7} spacing={80} height={190} tokens={this.state.selectedTokens} images={images} click={this.tokenClick.bind(this)}/>
+        <SimpleStack scale={0.9} spacing={80} height={150} tokens={this.state.selectedTokens} images={images} click={this.tokenClick.bind(this)}/>
         <div style={{width:"100%"}}>
           <div style={{position:"relative",display:"table",margin:"0 auto"}}>
             {gobutton}

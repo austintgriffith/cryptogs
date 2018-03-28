@@ -20,7 +20,7 @@ let waitInterval
 let slammerTimeout
 const DEBUG = false
 const SHOWDEMOSCREEN=false
-const BLOCKTIMEOUT = 20
+const BLOCKTIMEOUT = 40
 let txhash
 
 let timeoutArray = []
@@ -175,7 +175,7 @@ class PlayStack extends Component {
         }
       }
       filter = {_commit: this.state.stack}
-      console.log("filter:",filter)
+      //console.log("filter:",filter)
       EventParser(contracts["PizzaParlor"],"Flip",contracts["Cryptogs"].blockNumber,blockNumber,updateFlip,filter);
       setInterval(()=>{
         LiveParser(contracts["PizzaParlor"],"Flip",blockNumber,updateFlip,filter)
@@ -184,11 +184,11 @@ class PlayStack extends Component {
       let updateCoinFlip = async (update)=>{
         console.log("updateCoinFlip",update)
         if(!this.state.coinFlipResult) {
-          this.state.coinFlipResult = {result:update._result}
+          this.state.coinFlipResult = {winner:update._winner.toLowerCase()}
         }
       }
       filter = {_commit: this.state.stack}
-      console.log("filter:",filter)
+      //console.log("filter:",filter)
       EventParser(contracts["PizzaParlor"],"CoinFlip",contracts["Cryptogs"].blockNumber,blockNumber,updateCoinFlip,filter);
       setInterval(()=>{
         LiveParser(contracts["PizzaParlor"],"CoinFlip",blockNumber,updateCoinFlip,filter)
@@ -234,25 +234,29 @@ class PlayStack extends Component {
 
   }
   loadImageForTokenId(id){
-    for(let i=1;i<=5;i++){
-     if(this.state.stackData["token"+i]==id){
-       return this.state.stackData["token"+i+"Image"]
-     }
-    }
-
-    let counterstack = false
-    if(!this.state._counterStack) return false
-    for(let s in this.state.counterStacks){
-      if(this.state._counterStack == this.state.counterStacks[s]._counterStack){
-        counterstack = this.state.counterStacks[s]
+    if(this.state&&this.state.stackData){
+      for(let i=1;i<=5;i++){
+       if(this.state.stackData["token"+i]==id){
+         return this.state.stackData["token"+i+"Image"]
+       }
       }
     }
 
-    if(!counterstack) return false
-    for(let i=1;i<=5;i++){
-     if(counterstack["token"+i]==id){
-       return counterstack["token"+i+"Image"]
-     }
+    if(this.state&&this.state._counterStack&&this.state.counterStacks){
+      let counterstack = false
+      if(!this.state._counterStack) return false
+      for(let s in this.state.counterStacks){
+        if(this.state._counterStack == this.state.counterStacks[s]._counterStack){
+          counterstack = this.state.counterStacks[s]
+        }
+      }
+
+      if(!counterstack) return false
+      for(let i=1;i<=5;i++){
+       if(counterstack["token"+i]==id){
+         return counterstack["token"+i+"Image"]
+       }
+      }
     }
   }
   async loadAPIStackData(){
@@ -261,7 +265,10 @@ class PlayStack extends Component {
       let possibleFlightPaths = [-150,-200,-250,-300,-350,350,300,250,200,150];
       axios.get(this.props.api.host+"/commit/"+this.state.stack)
       .then((response)=>{
-        console.log("APIPOLL")
+        console.log("APIPOLL...",response)
+        if(!this.state.stackData){
+          this.doUpdate(response.data)
+        }
         //check to see if we are ready to run and not running yet
         let count =0
         for(let t in this.state.flips){
@@ -286,7 +293,9 @@ class PlayStack extends Component {
               update.mixedStack.push({id:token,image:image})
             }
 
-            update.lastActor = this.state.stackData.owner
+            if(this.state && this.state.stackData && this.state.stackData.owner){
+              update.lastActor = this.state.stackData.owner
+            }
 
             this.doUpdate(update)
 
@@ -340,11 +349,7 @@ class PlayStack extends Component {
                   i++
                 }
 
-
-
-
-
-
+                update.round = round
                 update.throwSlammerEvents = this.state.throwSlammerEvents;
 
                 console.log("updateFlip","update.flippedThisRound",update.flippedThisRound,this.state)
@@ -848,21 +853,6 @@ class PlayStack extends Component {
     //if reveal isn't saved in the state, send 0's to start over with the coin flip
     if(!reveal) reveal = cookie.load('commit')
     if(!reveal) reveal = "0x0000000000000000000000000000000000000000000000000000000000000000"
-
-/*
-.on('error', function(error){ ... })
-.on('transactionHash', function(transactionHash){ ... })
-.on('receipt', function(receipt){
-   console.log(receipt.contractAddress) // contains the new contract address
-})
-.on('confirmation', function(confirmationNumber, receipt){ ... })
-.then(function(newContractInstance){
-    console.log(newContractInstance.options.address) // instance with the new contract address
-});
-
- */
-
-    //raiseSlammer(bytes32 _stack, bytes32 _counterStack, bytes32 _commit)
     contracts["Cryptogs"].methods.throwSlammer(this.state.stack,this.state.counterStack,reveal).send({
         from: account,
         gas:500000,
@@ -873,22 +863,6 @@ class PlayStack extends Component {
         txhash=hash
       }).on('error',(a,b)=>{
         console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-        /*
-          if(txhash){
-            showLoadingScreen(false)
-            console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-    				this.props.throwAlert(
-    					<div>
-    						<span>Warning: Your transation is not yet mined into the blockchain. Increase your gas price and try again or </span>
-    						<a href={this.context.etherscan+"tx/"+txhash} target='_blank'>{"wait for it to finish"}</a>.
-    						<div style={{position:"absolute",left:20,bottom:20}}>
-    							<MMButton color={"#f7861c"} onClick={()=>{
-    								this.props.throwAlert(false);
-    							}}>close and try again</MMButton>
-    						</div>
-    					</div>
-    				)
-          }*/
       }).on('transactionHash', function(transactionHash){
          console.log("XEVENT transactionHash",transactionHash)
       })
@@ -1152,11 +1126,10 @@ class PlayStack extends Component {
     let topOffset = 0
     let left=0
     let top=0
-    if(stackMode>0 && window.innerWidth < width){
-      console.log("SHRINK TO SCREEN FOR STACKMODE",stackMode)
+    if(this.state.stackMode>0 && window.innerWidth < width){
       mainStyle.transform =  "scale("+scale+")"
       mainStyle.marginLeft=-240*(1-(scale-.39))+100
-      mainStyle.marginTop=-270*(1-(scale-.39))+70
+      mainStyle.marginTop=-270*(1-(scale-.39))+30
       left = 0
       top = 350
     }else{
@@ -1166,7 +1139,7 @@ class PlayStack extends Component {
     }
 
 
-          console.log(" DISPLAY")
+    //console.log(" DISPLAY")
     let {account,blockNumber,contracts,etherscan} = this.props.context
 
     let {coinFlipResult,stackMode,stackData,counterStacks,lastBlock,lastActor,TIMEOUTBLOCKS,flipEvents,throwSlammerEvents,player1,player2,spectator} = this.state;
@@ -1254,21 +1227,45 @@ class PlayStack extends Component {
 
     let currentlyThrowing = this.state.currentlyThrowing
 
-console.log("test1 DISPLAY")
-    console.log("coinFlipResult",coinFlipResult)
+
+    //console.log("coinFlipResult",coinFlipResult)
     if(typeof coinFlipResult != "undefined"){
-      console.log("coinFlipResult.result",coinFlipResult.result)
+      if(coinFlipResult.winner){
+        if(coinFlipResult.winner.toLowerCase()==player1.toLowerCase()){
+          coinFlipResult.result=true
+        }else{
+          coinFlipResult.result=false
+        }
+      }
+
       if(coinFlipResult.result){
         coinFlipResult={whosTurn:player1}
         if(!currentlyThrowing&&player2) currentlyThrowing=player2.toLowerCase()
-        console.log("set to player 1",coinFlipResult)
+      //  console.log("set to player 1",coinFlipResult)
       }else{
         coinFlipResult={whosTurn:player2}
         if(!currentlyThrowing&&player1) currentlyThrowing=player1.toLowerCase()
-        console.log("set to player 2",coinFlipResult)
+      //  console.log("set to player 2",coinFlipResult)
       }
+
+
     }
 
+    if(this.state&&this.state.coinFlipResult&&this.state.coinFlipResult.winner&&this.state.round&&this.state.round>=1){
+      if(this.state.round%2==0){
+        if(this.state.coinFlipResult.winner.toLowerCase()==player1.toLowerCase()){
+          currentlyThrowing=player2
+        }else{
+          currentlyThrowing=player1
+        }
+      }else{
+        if(this.state.coinFlipResult.winner.toLowerCase()==player1.toLowerCase()){
+          currentlyThrowing=player1
+        }else{
+          currentlyThrowing=player2
+        }
+      }
+    }
 
     let coinFlipResultDisplay = ""
 
@@ -1310,9 +1307,6 @@ console.log("test1 DISPLAY")
 
     }
 
-
-
-console.log("test2 DISPLAY")
 
     let flipDisplay = ""
     let throwSlammerEventArray = []
@@ -1374,7 +1368,6 @@ console.log("test2 DISPLAY")
 
    let possibleFlightPaths = [-150,-200,-250,-300,-350,350,300,250,200,150];
 
-console.log("test3 DISPLAY")
 
    let flightStack = []
    if(stackMode==3||stackMode==8){
@@ -1405,7 +1398,6 @@ console.log("test3 DISPLAY")
      }
    }
 
-console.log("test4 DISPLAY",stackMode)
     let display = ""
     if(stackMode==0){
 
@@ -1418,8 +1410,12 @@ console.log("test4 DISPLAY",stackMode)
         //  console.log("this.state",this.state)
 
         let transferStackBoxStyle = {
-          marginTop:80,
+          marginTop:40*scale,
           fontSize:16
+        }
+
+        if(scale<0.5){
+          transferStackBoxStyle.fontSize=12
         }
 
 
@@ -1508,21 +1504,19 @@ console.log("test4 DISPLAY",stackMode)
             )
           }
 
+          let playerWords = "Player "+playerNumber+" has the lower receipt hash and is chosen to generate the on-chain randomness..."
+          if(playerToGenerate.toLowerCase()==account.toLowerCase()){
+            playerWords = "You have the lower receipt hash, please press the 'Generate Game' button below:"
+          }
+
           display = (
             <div>
               <div className="row align-items-center">
 
                 <div className="container text-center">
 
-                  <p className="text-center" style={{padding:50}}>Player {playerNumber} has the lower receipt hash and is chosen to generate the on-chain randomness...</p>
-
-                    <a target="_blank" href={"/address/"+playerToGenerate}>
-                     <Blockies
-                       seed={playerToGenerate}
-                       scale={10}
-                     />
-                    </a>
-                    <SimpleStack count={10} scale={0.7} spacing={40} height={180} {...fullstack}/>
+                  <p className="text-center" style={{padding:20*scale}}>{playerWords}</p>
+                    <SimpleStack count={10} scale={0.7} spacing={40} height={160} {...fullstack}/>
                     <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
                       <MMButton color={buttonColor} onClick={clickFunction.bind(this,playerToGenerate,playerStack,otherStack)}>Generate Game</MMButton>
                     </div>
@@ -1587,19 +1581,15 @@ console.log("test4 DISPLAY",stackMode)
 
           console.log("activeReceipts",activeReceipts)
 
+          let messagePadding = 20*scale
+
           let firstCol = ""
           if(activeReceipts && activeReceipts[stackData.owner.toLowerCase()]){
             firstCol = (
               <div className="col-md-6" style={transferStackBoxStyle}>
-                  <p className="text-center" style={{padding:50}}>Stack Transferred!</p>
+                  <p className="text-center" style={{padding:messagePadding}}>Stack Transferred!</p>
                   <div className="container text-center">
-                      <a target="_blank" href={"/address/"+stackData.owner}>
-                       <Blockies
-                         seed={stackData.owner.toLowerCase()}
-                         scale={10}
-                       />
-                      </a>
-                      <SimpleStack key={"mainstack"} scale={0.7} spacing={70} height={180} {...stackData}/>
+                      <SimpleStack showBlockie={true} padding={200} scale={0.9} spacing={70} height={180} {...stackData}/>
                       <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
                         <MMButton color={firstRevokeColor} onClick={firstRevokeFunction}>Revoke Stack</MMButton>
                       </div>
@@ -1609,15 +1599,9 @@ console.log("test4 DISPLAY",stackMode)
           }else{
             firstCol = (
               <div className="col-md-6" style={transferStackBoxStyle}>
-                  <p className="text-center" style={{padding:50}}>Waiting for {firstPlayerName} to transfer stack to smart contract...</p>
+                  <p className="text-center" style={{padding:messagePadding}}>Waiting for {firstPlayerName} to transfer stack to smart contract...</p>
                   <div className="container text-center">
-                      <a target="_blank" href={"/address/"+stackData.owner}>
-                       <Blockies
-                         seed={stackData.owner.toLowerCase()}
-                         scale={10}
-                       />
-                      </a>
-                      <SimpleStack key={"mainstack"} scale={0.7} spacing={70} height={180} {...stackData}/>
+                      <SimpleStack showBlockie={true} padding={200} scale={0.9} spacing={70} height={180} {...stackData}/>
                       <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
                         <MMButton color={firstStackColor} onClick={firstClickFunction}>Transfer to Contract</MMButton>
                       </div>
@@ -1630,15 +1614,9 @@ console.log("test4 DISPLAY",stackMode)
           if(activeReceipts && activeReceipts[counterStackData.owner.toLowerCase()]){
             secondCol = (
               <div className="col-md-6" style={transferStackBoxStyle}>
-                  <p className="text-center" style={{padding:50}}>Stack Transferred!</p>
+                  <p className="text-center" style={{padding:messagePadding}}>Stack Transferred!</p>
                   <div className="container text-center">
-                    <a target="_blank" href={"/address/"+counterStackData.owner}>
-                     <Blockies
-                       seed={counterStackData.owner.toLowerCase()}
-                       scale={10}
-                     />
-                    </a>
-                    <SimpleStack key={"mainstack"} scale={0.7} spacing={70} height={180} {...counterStackData}/>
+                    <SimpleStack showBlockie={true} padding={200} scale={0.9} spacing={70} height={180}{...counterStackData}/>
                     <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
                       <MMButton color={secondRevokeColor} onClick={secondRevokeFunction}>Revoke Stack</MMButton>
                     </div>
@@ -1648,15 +1626,9 @@ console.log("test4 DISPLAY",stackMode)
           }else{
             secondCol = (
               <div className="col-md-6" style={transferStackBoxStyle}>
-                  <p className="text-center" style={{padding:50}}>Waiting for {secondPlayerName} to transfer stack to smart contract...</p>
+                  <p className="text-center" style={{padding:messagePadding}}>Waiting for {secondPlayerName} to transfer stack to smart contract...</p>
                   <div className="container text-center">
-                    <a target="_blank" href={"/address/"+counterStackData.owner}>
-                     <Blockies
-                       seed={counterStackData.owner.toLowerCase()}
-                       scale={10}
-                     />
-                    </a>
-                    <SimpleStack key={"mainstack"} scale={0.7} spacing={70} height={180} {...counterStackData}/>
+                    <SimpleStack showBlockie={true} padding={200} scale={0.9} spacing={70} height={180} {...counterStackData}/>
                     <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
                       <MMButton color={secondStackColor} onClick={secondClickFunction}>Transfer to Contract</MMButton>
                     </div>
@@ -1700,8 +1672,8 @@ console.log("test4 DISPLAY",stackMode)
 
         let stackDisplay = (
           <div style={{position:"relative"}}>
-            <SimpleStack key={"mainstack"} showBlockie={true} padding={350} scale={0.95} spacing={130} height={60}  {...stackData} 	/>
-            <div style={{position:"absolute",right:0,top:50}}>
+            <SimpleStack key={"mainstack"} showBlockie={true} padding={350} scale={0.95} spacing={130} height={150}  {...stackData} 	/>
+            <div style={{position:"absolute",right:(0.6-scale)*-100,top:30,zIndex:99}}>
               {callToAction}
             </div>
           </div>
@@ -1714,7 +1686,7 @@ console.log("test4 DISPLAY",stackMode)
             let callToAction
             if(account.toLowerCase()==stackData.owner.toLowerCase()){
               callToAction=(
-                <div key={"counterstackbutton"+counterstack._counterStack} style={{marginTop:16,marginLeft:16}}>
+                <div key={"counterstackbutton"+counterstack._counterStack} style={{marginTop:20*scale,marginLeft:16}}>
                   <MMButton color={"#6ac360"} onClick={this.acceptStack.bind(this,counterstack._counterStack)}>accept</MMButton>
                 </div>
               )
@@ -1728,7 +1700,7 @@ console.log("test4 DISPLAY",stackMode)
             return (
               <div style={{position:"relative"}}>
                 <SimpleStack key={"counterstack"+counterstack._counterStack} showBlockie={true} padding={350} scale={0.95} spacing={130} height={180}  {...counterstack} 	/>
-                <div style={{position:"absolute",right:0,top:50}}>
+                <div style={{position:"absolute",right:(0.6-scale)*-100,top:30,zIndex:99}}>
                   {callToAction}
                 </div>
               </div>
@@ -1758,7 +1730,7 @@ console.log("test4 DISPLAY",stackMode)
               <div>
                 <div style={{padding:10,paddingTop:20}}>Share game url:</div>
                 <div style={preStyle}>
-                  <pre id="url" style={{fontSize:14}} onClick={selectText}>{}</pre>
+                  <pre id="url" style={{fontSize:14}} onClick={selectText}>{qrcode}</pre>
                 </div>
                 <div style={{padding:10,paddingTop:20}} className={"actionable"}>{"Accept an opponent's stack:"}</div>
               </div>
@@ -1813,24 +1785,33 @@ console.log("test4 DISPLAY",stackMode)
         }
 
         let messageScale = 1
+        let heightScale = 1
         if(scale<1){
           messageScale = scale*1.5
+          heightScale = scale*1.7
+        }
+
+        let qrcodedisplay = ""
+        if(qrcode){
+          qrcodedisplay = (
+            <div className={"centercontainer"} style={{marginTop:50}}>
+              <QRCode value={qrcode} size={320}/>
+            </div>
+          )
         }
 
         console.log("shrkinkgngk",scale)
         display = (
           <div>
             {stackDisplay}
-            <div className="text-center" style={{transform:"scale("+messageScale+")"}}>
+            <div className="text-center" style={{transform:"scale("+messageScale+")",height:160*heightScale}}>
               <p>
                 {message}
               </p>
             </div>
             {drawCounterStacks}
             <div>
-              <div className={"centercontainer"}>
-                <QRCode value={qrcode} size={320}/>
-              </div>
+              {qrcodedisplay}
             </div>
           </div>
         )
@@ -1908,11 +1889,13 @@ console.log("test4 DISPLAY",stackMode)
         }
       }else if(currentlyThrowing){
           let currentPlayer
+
           if(currentlyThrowing==player1.toLowerCase()){
             currentPlayer=player2.toLowerCase()
-          }else{
+          }else if(currentlyThrowing==player2.toLowerCase()){
             currentPlayer=player1.toLowerCase()
           }
+          console.log("currentlyThrowing",currentlyThrowing,"currentPlayer",currentPlayer)
           //if(player1.toLowerCase()==){
           //  currentPlayer = player2.toLowerCase()
           //}
@@ -1960,14 +1943,14 @@ console.log("test4 DISPLAY",stackMode)
 
       let turn
       if(spectator){
-        if(player1.toLowerCase()==lastActor.toLowerCase()){
+        if(player1 &&lastActor&& player1.toLowerCase()==lastActor.toLowerCase()){
           turn = "Player 2's Turn"
         }else{
           turn = "Player 1's Turn"
           slammerOpacity=1
         }
       }else{
-        if(account.toLowerCase()==lastActor.toLowerCase()){
+        if(account && lastActor && account.toLowerCase()==lastActor.toLowerCase()){
           turn = "Their Turn"
         }else{
           turn = "Your Turn"
@@ -1989,14 +1972,16 @@ console.log("test4 DISPLAY",stackMode)
       if(drainDisplay) turnHeight+=50
 
       if(stackMode<9){
-        timerDisplay = (
-          <div style={{height:turnHeight}}>
-            <div style={{fontSize:30}}>{turn}</div>
-            <div style={{fontSize:12,opacity:0.2}}>{blockNumber-lastBlock}/{TIMEOUTBLOCKS} blocks to timeout</div>
-            <div>{drainDisplay}</div>
-
-          </div>
-        )
+        timerDisplay = ""
+        if(lastBlock>0){
+          timerDisplay = (
+            <div style={{height:turnHeight}}>
+              <div style={{fontSize:30}}>{turn}</div>
+              <div style={{fontSize:12,opacity:0.2}}>{blockNumber-lastBlock}/{TIMEOUTBLOCKS} blocks to timeout</div>
+              <div>{drainDisplay}</div>
+            </div>
+          )
+        }
       }
 
     }
@@ -2023,7 +2008,7 @@ console.log("test4 DISPLAY",stackMode)
     //console.log(mainStyle)
 
     return (
-      <div  style={mainStyle}>
+      <div style={mainStyle}>
       {flipDisplyContent}
       {display}
       <div style={{position:'absolute',left:left,top:top}}>

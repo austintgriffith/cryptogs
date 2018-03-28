@@ -91,10 +91,14 @@ class CryptogStack extends Component {
     return (
       <div>
 
+      <div style={{paddingLeft:50,paddingTop:10}}>
+        <MMButton color={"#6ac360"} onClick={()=>{window.location="/stacks"}}>{"Play 'Togs!"}</MMButton>
+      </div>
+
         <div style={{float:'right',marginTop:30}}><
           Blockies
             seed={this.state.tokenData.owner.toLowerCase()}
-            scale={10}
+            scale={8}
           />
         </div>
         <div style={{padding:50}}>

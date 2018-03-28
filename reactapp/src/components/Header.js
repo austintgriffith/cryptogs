@@ -20,10 +20,10 @@ export default createClass({
 			<header className="site-header">
 
 			<div className="container-fluid">
-					<div style={{position:'absolute',right:0,top:0,cursor:"pointer",zIndex:999}} onClick={this.props.apiClick}>
-						<img style={{width:60,margin:20}} src={apiImage} />
-					</div>
 					<div className="row align-items-center">
+							<div style={{position:'absolute',right:0,top:0,cursor:"pointer",zIndex:999}} onClick={this.props.apiClick}>
+								<img style={{width:60,margin:20}} src={apiImage} />
+							</div>
 							<div className="col-md-4">
 
 									<Motion
@@ -43,7 +43,7 @@ export default createClass({
 							<div className="col-md-4 text-center">
 								<a href="/"><img style={{maxHeight:60}}src="/logo.png"/></a>
 							</div>
-							<div className="col-md-4" style={{paddingRight:100}}>
+							<div className="col-md-3">
 									<nav className="site-nav">
 											<ul>
 													<li>
@@ -69,6 +69,9 @@ export default createClass({
 													</li>
 											</ul>
 									</nav>
+							</div>
+							<div className="col-md-1">
+
 							</div>
 					</div>
 			</div>

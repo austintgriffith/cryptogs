@@ -105,7 +105,7 @@ contract PizzaParlor {
     bytes32[4] memory pseudoRandoms = _generateRandom(_reveal,commitBlock[_commit][msg.sender],commitBlock[_commit][_opponent]);
 
     bool whosTurn = uint8(pseudoRandoms[0][0])%2==0;
-    CoinFlip(_commit,whosTurn);
+    CoinFlip(_commit,whosTurn,whosTurn ? msg.sender : _opponent);
     for(uint8 round=1;round<=MAXROUNDS;round++){
       for(uint8 i=1;i<=10;i++){
         //first check and see if this token has flipped yet
@@ -129,7 +129,7 @@ contract PizzaParlor {
 
     GenerateGame(_commit,msg.sender);
   }
-  event CoinFlip(bytes32 indexed _commit,bool _result);
+  event CoinFlip(bytes32 indexed _commit,bool _result,address _winner);
   event GenerateGame(bytes32 indexed _commit,address indexed _sender);
 
   function _getRandom(bytes32[4] pseudoRandoms,uint8 randIndex) internal returns (uint8 rand){

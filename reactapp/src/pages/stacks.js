@@ -270,9 +270,9 @@ export default createClass({
 				if(allStacksFlipped[s]._sender && finishedStacks.length<5){
 					count++
 					finishedStacks.push(
-						<div style={{position:"relative"}}>
+						<div key={"mystack4"+s} style={{position:"relative"}}>
 
-							<SimpleStack key={"mystack"+s} showBlockie={true} padding={300} scale={0.95} spacing={130} height={180}  {...allStacksFlipped[s]} 	/>
+							<SimpleStack showBlockie={true} padding={300} scale={0.95} spacing={130} height={180}  {...allStacksFlipped[s]} 	/>
 
 							<div style={{position:"absolute",right:0,top:50}}>
 								<MMButton color={"#f7861c"} onClick={()=>{
@@ -304,9 +304,9 @@ export default createClass({
 				if(allStacksFlipped[s]._stack){
 					count++
 					myStacks.push(
-						<div style={{position:"relative"}}>
+						<div key={"mystack"+s} style={{position:"relative"}}>
 
-							<SimpleStack key={"mystack"+s} showBlockie={true} padding={350} scale={0.95} spacing={130} height={180}  {...allStacksFlipped[s]} 	/>
+							<SimpleStack  showBlockie={true} padding={350} scale={0.95} spacing={130} height={180}  {...allStacksFlipped[s]} 	/>
 
 							<div style={{position:"absolute",right:0,top:50}}>
 								<MMButton color={"#6ac360"} onClick={()=>{
@@ -332,8 +332,8 @@ export default createClass({
 					console.log("allStacksFlipped[s].canceledSenders",allStacksFlipped[s].canceledSenders)
 					count++
 					myStacks.push(
-						<div style={{position:"relative"}}>
-							<SimpleStack key={"mystack"+s} showBlockie={true} padding={350} scale={0.95} spacing={130} height={180}  {...allStacksFlipped[s]} 	/>
+						<div key={"mystack2"+s} style={{position:"relative"}}>
+							<SimpleStack showBlockie={true} padding={350} scale={0.95} spacing={130} height={180}  {...allStacksFlipped[s]} 	/>
 							<div style={{position:"absolute",right:0,top:50}}>
 							<MMButton color={"#6ac360"} onClick={()=>{
 								if(account){
@@ -349,8 +349,8 @@ export default createClass({
 				}else{
 					count++
 					liveStacks.push(
-						<div style={{position:"relative"}}>
-							<SimpleStack key={"mystack"+s} showBlockie={true} padding={350} scale={0.95} spacing={130} height={180}  {...allStacksFlipped[s]} 	/>
+						<div key={"mystack1"+s} style={{position:"relative"}}>
+							<SimpleStack showBlockie={true} padding={350} scale={0.95} spacing={130} height={180}  {...allStacksFlipped[s]} 	/>
 							<div style={{position:"absolute",right:0,top:50}}>
 							<MMButton color={"#f7861c"} onClick={()=>{
 								if(account){
@@ -367,8 +367,8 @@ export default createClass({
 			}else if(allStacksFlipped[s].timestamp && (!allStacksFlipped[s].canceled) ){
 				count++
 				stacks.push(
-					<div style={{position:"relative"}}>
-						<SimpleStack key={"mystack"+s} showBlockie={true} padding={350} scale={0.95} spacing={130} height={180}  {...allStacksFlipped[s]} 	/>
+					<div key={"mystack3"+s} style={{position:"relative"}}>
+						<SimpleStack showBlockie={true} padding={350} scale={0.95} spacing={130} height={180}  {...allStacksFlipped[s]} 	/>
 						<div style={{position:"absolute",right:0,top:50}}>
 						<MMButton color={"#6081c3"} onClick={()=>{
 							if(account){
@@ -406,11 +406,27 @@ export default createClass({
 			)
 		}
 
-
+		let qrdisplay = ""
+		if(window.web3 && window.web3.currentProvider && window.web3.currentProvider.scanQRCode){
+			qrdisplay = (
+				<img src="/qr.png" style={{width:40,height:40}} onClick={()=>{
+					window.web3.currentProvider.scanQRCode()
+				  .then(data => {
+				    console.log('QR Scanned:', data)
+						window.location = data
+				  })
+				  .catch(err => {
+				    console.log('Error:', err)
+				  })
+				}}/>
+			)
+		}
 
 		return (
       <div style={{margin: '0 auto',maxWidth: 960,padding: '0px 1.0875rem 1.45rem',paddingTop: 0}}>
-
+				<div style={{position:'absolute',right:10,top:246}}>
+					{qrdisplay}
+				</div>
 				<div style={{float:'right',padding:30,paddingRight:100}}>
 					<MMButton color={"#6ac360"} onClick={()=>{
 						if(account){

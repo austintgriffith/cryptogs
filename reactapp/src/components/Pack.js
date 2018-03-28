@@ -19,7 +19,7 @@ export default createClass({
       return (
         <div style={{position:'relative'}}>
           <div className="col-md-10">
-            <SimpleStack count={10} scale={0.5} spacing={40} height={160} {...this.props}/>
+            <SimpleStack click={this.props.PackClick.bind(this,this.props.id)} count={10} scale={0.5} spacing={40} height={160} {...this.props}/>
           </div>
           <div className="mt-3 mb-3" onClick={this.props.PackClick.bind(this,this.props.id)}>
             {button}
@@ -30,7 +30,7 @@ export default createClass({
       return (
         <div className="row align-items-center" style={{marginBottom:20}}>
           <div className="col-md-10">
-            <SimpleStack count={10} scale={0.8} spacing={70} height={180} {...this.props}/>
+            <SimpleStack click={this.props.PackClick.bind(this,this.props.id)} count={10} scale={0.8} spacing={70} height={180} {...this.props}/>
           </div>
           <div className="col-md-2" style={{marginBottom:30}}>
             <div>

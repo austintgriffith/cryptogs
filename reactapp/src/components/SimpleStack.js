@@ -43,12 +43,17 @@ export default createClass({
     //console.log("count",count,"scale",scale,"transform",transform)
 
 
+
     if(tokens&&tokens.length>0){
       for(let t=0;t<tokens.length;t++){
-        cryptogs.push(
-          <div key={"cryptog"+tokens[t].id} style={{position:"absolute",left:(t)*this.props.spacing,top:0,cursor:"pointer"}} onClick={()=>{
+        let clickFunction = ()=>{}
+        if(typeof this.props.click == "function"){
+          clickFunction = ()=>{
             this.props.click(tokens[t].id)
-          }}>
+          }
+        }
+        cryptogs.push(
+          <div key={"cryptog"+tokens[t].id} style={{position:"absolute",left:(t)*this.props.spacing,top:0,cursor:"pointer"}} onClick={clickFunction}>
            <Cryptog scale={this.props.scale} id={tokens[t].id} image={tokens[t].image} zIndex={1}/>
           </div>
         )
@@ -108,8 +113,7 @@ export default createClass({
     }
 
     return (
-      <div style={{transform:transform,width:"100%",height:this.props.height*this.props.scale}}>
-
+      <div style={{transform:transform,width:"100%",height:this.props.height*scale}}>
           <div style={{position:"relative",display:"table",margin:"0 auto",left:-(this.props.spacing*(count/2))-30}}>
             {blockie}
             {cryptogs}
