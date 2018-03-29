@@ -27,8 +27,8 @@ if(!NETWORK){
 }
 console.log("NETWORK:",NETWORK)
 
-const redisHost = 'localhost'
-const redisPort = 57290
+let redisHost = 'localhost'
+let redisPort = 57290
 if(NETWORK==3){
   redisHost = 'stagecryptogs.048tmy.0001.use2.cache.amazonaws.com'
   redisPort = 6379
@@ -321,6 +321,42 @@ app.post('/cancelcounter', function(request, response){
       response.end(value)
     });
 })
+
+
+app.post('/transfer', async function(request, response){
+    console.log("TRANSFER",request.body);
+    redis.set("transfer_"+request.body.stack.commit+"_"+request.body.stack.owner,request.body.txhash,"ex",COMMIT_EXPIRE);
+
+    //if you wanted to you could mark tokens as used here too
+    console.log("usedtoken_"+request.body.stack.token1)
+
+    response.set('Content-Type', 'application/json');
+    response.end(JSON.stringify({thanks:true}))
+});
+app.get('/transfer/:commit/:user', (req, res) => {
+  console.log("--Getting Transfer Tx ",req.params.commit)
+  redis.get("transfer_"+req.params.commit+"_"+req.params.user, function (err, result) {
+    console.log(result);
+    res.set('Content-Type', 'application/json');
+    res.end(JSON.stringify({txhash:result}))
+  });
+});
+
+
+app.post('/generate', async function(request, response){
+    console.log("GENERATE",request.body);
+    redis.set("generate_"+request.body.stack.commit,request.body.txhash,"ex",COMMIT_EXPIRE);
+    response.set('Content-Type', 'application/json');
+    response.end(JSON.stringify({thanks:true}))
+});
+app.get('/generate/:commit', (req, res) => {
+  console.log("--Getting Generate Tx ",req.params.commit)
+  redis.get("generate_"+req.params.commit, function (err, result) {
+    console.log(result);
+    res.set('Content-Type', 'application/json');
+    res.end(JSON.stringify({txhash:result}))
+  });
+});
 
 app.listen(8001);
 console.log(`Cryptogs backend listening on 8001`);

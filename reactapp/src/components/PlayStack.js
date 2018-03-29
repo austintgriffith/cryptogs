@@ -61,7 +61,7 @@ class PlayStack extends Component {
       if(this.props&&this.props.api&&this.props.api.host){
         this.setState({debugString:"api"})
         this.loadAPIStackData()
-        loadInterval = setInterval(this.loadAPIStackData.bind(this),3000)
+        loadInterval = setInterval(this.loadAPIStackData.bind(this),1507)
       }else{
         this.setState({debugString:"decent"})
         this.loadStackData()
@@ -183,7 +183,7 @@ class PlayStack extends Component {
 
       let updateCoinFlip = async (update)=>{
         console.log("updateCoinFlip",update)
-        if(!this.state.coinFlipResult) {
+        if(this.state && !this.state.coinFlipResult && update._winner) {
           this.state.coinFlipResult = {winner:update._winner.toLowerCase()}
         }
       }
@@ -387,6 +387,77 @@ class PlayStack extends Component {
     } catch(e) {
       console.log(e)
     }
+
+    if(this.state&&this.state.stack&&this.state.stackData&&this.state.stackData.owner&&this.state._counterStack){
+
+      if(!this.state.transfer1){
+        let owner1 = this.state.stackData.owner
+        console.log("Check on transfer 1 ",this.state.stack,owner1)
+        try{
+          axios.get(this.props.api.host+"/transfer/"+this.state.stack+"/"+owner1)
+          .then((response)=>{
+            console.log("XFER1--- ",response.data.txhash)
+            if(response.data.txhash){
+              this.setState({transfer1:response.data.txhash})
+            }
+          })
+        } catch(e) {
+          console.log(e)
+        }
+      }
+
+
+      if(!this.state.transfer2){
+        let owner2
+        for(let c in this.state.counterStacks){
+          if(this.state.counterStacks[c]._counterStack==this.state._counterStack){
+            owner2 = this.state.counterStacks[c].owner
+          }
+        }
+        if(owner2){
+          console.log("Check on transfer 2 ",this.state.stack,owner2)
+          try{
+            axios.get(this.props.api.host+"/transfer/"+this.state.stack+"/"+owner2)
+            .then((response)=>{
+              console.log("XFER2--- ",response.data.txhash)
+              if(response.data.txhash){
+                this.setState({transfer2:response.data.txhash})
+              }
+            })
+          } catch(e) {
+            console.log(e)
+          }
+        }
+      }
+
+      if(!this.state.generate){
+        console.log("Check on generate ",this.state.stack)
+        try{
+          axios.get(this.props.api.host+"/generate/"+this.state.stack)
+          .then((response)=>{
+            console.log("GENERATE--- ",response.data.txhash)
+            if(response.data.txhash){
+              this.setState({generate:response.data.txhash})
+            }
+          })
+        } catch(e) {
+          console.log(e)
+        }
+
+      }
+
+      /*
+      try{
+        let possibleFlightPaths = [-150,-200,-250,-300,-350,350,300,250,200,150];
+        axios.get(this.props.api.host+"/commit/"+this.state.stack)
+        .then((response)=>{
+
+        })
+      } catch(e) {
+        console.log(e)
+      }*/
+    }
+
 
     //event TransferStack(bytes32 indexed _commit,address indexed _sender,bytes32 indexed _receipt,uint256 _token1,uint256 _token2,uint256 _token3,uint256 _token4,uint256 _token5);
     //
@@ -966,6 +1037,21 @@ class PlayStack extends Component {
       console.log("CALLBACK!",error,hash)
       showLoadingScreen(hash)
       txhash=hash
+      try{
+        axios.post(this.props.api.host+'/transfer', {
+  				account: account,
+          stack: stackData,
+          txhash: hash
+  		  })
+  		  .then(function (response) {
+  				console.log(response)
+  		  })
+  		  .catch(function (error) {
+  		    console.log(error);
+  		  });
+      } catch(e) {
+        console.log(e)
+      }
     }).on('error',(a,b)=>{
       if(txhash){
         //howLoadingScreen(false)
@@ -1103,6 +1189,24 @@ class PlayStack extends Component {
       console.log("CALLBACK!",error,hash)
       showLoadingScreen(hash)
       txhash=hash
+
+
+      try{
+        axios.post(this.props.api.host+'/generate', {
+          account: account,
+          stack: this.state.stackData,
+          txhash: hash
+        })
+        .then(function (response) {
+          console.log(response)
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      } catch(e) {
+        console.log(e)
+      }
+
     }).on('error',(a,b)=>{
       if(txhash){
         //howLoadingScreen(false)
@@ -1520,6 +1624,7 @@ class PlayStack extends Component {
                     <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
                       <MMButton color={buttonColor} onClick={clickFunction.bind(this,playerToGenerate,playerStack,otherStack)}>Generate Game</MMButton>
                     </div>
+                    {this.state.generate}
                     {drain}
                 </div>
 
@@ -1605,6 +1710,7 @@ class PlayStack extends Component {
                       <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
                         <MMButton color={firstStackColor} onClick={firstClickFunction}>Transfer to Contract</MMButton>
                       </div>
+                      {this.state.transfer1}
       						</div>
               </div>
             )
@@ -1632,6 +1738,7 @@ class PlayStack extends Component {
                     <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
                       <MMButton color={secondStackColor} onClick={secondClickFunction}>Transfer to Contract</MMButton>
                     </div>
+                    {this.state.transfer3}
                   </div>
               </div>
             )
@@ -1794,8 +1901,9 @@ class PlayStack extends Component {
         let qrcodedisplay = ""
         if(qrcode){
           qrcodedisplay = (
-            <div className={"centercontainer"} style={{marginTop:50}}>
+            <div className={"centercontainer"} style={{marginTop:150}}>
               <QRCode value={qrcode} size={320}/>
+              <div style={{opacity:0.2,fontSize:10}}>{qrcode}</div>
             </div>
           )
         }

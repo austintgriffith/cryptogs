@@ -161,6 +161,12 @@ export default createClass({
 						},4500)
 						cookie.save('apiinfo', 1, { path: '/', maxAge:1800 })
 					}
+					/*
+					console.log("Asking for sig")
+					web3.eth.sign("https://cryptogs.io",this.state.account, function (err, result) {
+				    if (err) return console.error(err)
+				    console.log('SIGNED:' + result)
+				  })*/
 				})
 			} catch(e) {
 				console.log(e)
