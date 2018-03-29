@@ -27,13 +27,14 @@ if(!NETWORK){
 }
 console.log("NETWORK:",NETWORK)
 
-const redisHost = 'localhost'
-const redisPort = 57290
+let redisHost = 'localhost'
+let redisPort = 57290
 if(NETWORK==3){
   redisHost = 'stagecryptogs.048tmy.0001.use2.cache.amazonaws.com'
   redisPort = 6379
 }else if(NETWORK==1){
-  redisHost = 'stage.cryptogs.io'
+  redisHost = 'cryptogs.048tmy.0001.use2.cache.amazonaws.com'
+  redisPort = 6379
 }
 
 web3.setProvider(new web3.providers.HttpProvider('http://0.0.0.0:8545'));
@@ -86,6 +87,19 @@ app.get('/', (req, res) => {
   res.set('Content-Type', 'application/json');
   res.end(JSON.stringify({version:1,timestamp:stamp}));
 });
+
+app.get('/author', (req, res) => {
+  contracts["Cryptogs"].methods.author().call({}, function(error, result){
+      console.log("AUTHOR",error,result)
+      let stamp=Date.now()
+      console.log("/",stamp)
+      res.set('Content-Type', 'application/json');
+      res.end(JSON.stringify({version:1,timestamp:stamp,author:result}));
+  });
+
+});
+
+
 
 app.get('/hook', (req, res) => {
   console.log("HOOK",req.params,req.query)
