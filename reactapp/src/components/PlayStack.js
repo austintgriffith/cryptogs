@@ -24,7 +24,7 @@ const SHOWDEMOSCREEN=false
 const BLOCKTIMEOUT = 40
 let txhash
 
-const THROWROUNDTIME = 4000
+const THROWROUNDTIME = 8000
 
 let timeoutArray = []
 let timeoutArrayTwo = []
