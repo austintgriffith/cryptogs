@@ -113,15 +113,14 @@ export default createClass({
 		cookie.save('apiinfo', 1, { path: '/', maxAge:1800 })
 		//web3 will com back from the metamask component so wait for that
 		this.waitForContracts()
-		//check to see if we can talk to the api
-		setTimeout(()=>{
-			this.setupApi()
-		},500)
 	},
 	setupApi(){
 		let currentLocation = window.location
 		console.log("currentLocation",currentLocation)
 		let backend = currentLocation.protocol+"//"+currentLocation.hostname+":"+OPTIONALBACKENDPORT
+		if(this.state.network=="1"){
+			backend = "https://api.cryptogs.io"
+		}
 		console.log("backend",backend)
 		let apiCookie = parseInt(cookie.load('api'))
 		if(apiCookie==-1){
@@ -177,6 +176,10 @@ export default createClass({
 			}
 		}
 		this.setState(update)
+		//check to see if we can talk to the api
+		setTimeout(()=>{
+			this.setupApi()
+		},250)
 	},
 	waitForContracts(){
 		if(this.state && this.state.contractsLoaded){
