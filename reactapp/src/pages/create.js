@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import PropTypes from 'prop-types'
 import StackSelect from '../components/StackSelect.js'
 import MMButton from '../components/MMButton.js'
+import SigLoader from '../modules/sigLoader.js'
+
 import axios from 'axios'
 
 let txhash
@@ -27,10 +29,10 @@ export default createClass({
 			loading:false
 		}
 	},
-	submitStack(tokens){
+	async submitStack(tokens){
 		console.log("GO tokens",tokens)
 
-		const { account,contracts,showLoadingScreen,api } = this.context
+		const { account,contracts,showLoadingScreen,api,web3 } = this.context
 		let finalArray = []
 		for(let id in tokens){
 			if(tokens[id]){
@@ -40,19 +42,25 @@ export default createClass({
 
 		console.log("GO",finalArray)
 		if(api&&api.version){
-			console.log("USING API")
-			axios.post(api.host+'/create', {
-				account: account,
-		    finalArray: finalArray
-		  })
-		  .then(function (response) {
-				console.log(response)
-		    console.log("APIDATA",response.data);
-				if(response && response.data && response.data.commit) window.location = "/play/"+response.data.commit
-		  })
-		  .catch(function (error) {
-		    console.log(error);
-		  });
+			//let sig = await SigLoader(account,web3)
+			//if(!sig) alert("Failed to sign. Please try again.")
+			//else{
+				console.log("USING API")//,sig)
+				axios.post(api.host+'/create', {
+					account: account,
+			    finalArray: finalArray,
+					//sig: sig
+			  })
+			  .then(function (response) {
+					console.log(response)
+			    console.log("APIDATA",response.data);
+					if(response && response.data && response.data.commit) window.location = "/play/"+response.data.commit
+			  })
+			  .catch(function (error) {
+			    console.log(error);
+			  });
+			//}
+
 
 		}else{
 			console.log("USING CONTRACT")

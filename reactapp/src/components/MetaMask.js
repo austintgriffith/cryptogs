@@ -38,6 +38,7 @@ class MetaMask extends Component {
       if(DEBUG) console.log("Found web3...")
       web3js.eth.net.getId().then((network)=>{
         if(DEBUG) console.log("Network:",network)
+        if(network>9999) network=9999
         let networkNumber = network
         web3js.eth.getAccounts().then((accounts)=>{
           if(DEBUG) console.log("Accounts:",accounts)

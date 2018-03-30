@@ -20,7 +20,7 @@ export default createClass({
 		const { contracts } = this.context
 		if( !contracts.Cryptogs){
 			return (
-				<div style={{opacity:0.3}}><PogAnimation loader={true} image={'unicorn.png'} /></div>
+				<div style={{opacity:0.3}}><PogAnimation loader={true} image={'ad8ball.png'} /></div>
 			)
 		}
 		return (

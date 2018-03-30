@@ -28,11 +28,19 @@ export default createClass({
 		api: PropTypes.object,
 	},
 	getInitialState(){
-		return {allStacks:[]}
+		return {allStacks:[],extraMessage:""}
 	},
 	componentDidMount(){
 		mountTime = Date.now()
-		loadInterval = setInterval(this.loadStackData,303)
+		loadInterval = setInterval(this.loadStackData,1003)
+		setTimeout(()=>{
+			console.log("Checking for connection...")
+			let {contracts,web3,blockNumber,account,network} = this.context
+			if(!account || !network || !contracts || !contracts["Cryptogs"] || !blockNumber){
+				console.log("No connection, throw metamask message up...")
+				this.setState({extraMessage:"Unlock MetaMask to play."})
+			}
+		},5000)
 	},
 	componentWillUnmount(){
 		clearInterval(loadInterval)
@@ -42,7 +50,10 @@ export default createClass({
 		if(!account || !network || !contracts || !contracts["Cryptogs"] || !blockNumber){
 			console.log("WAITING",account,network,blockNumber)
 			return (
-				<div style={{opacity:0.3}}><PogAnimation loader={true} image={'unicorn.png'} /></div>
+				<div>
+					<div style={{opacity:0.3}}><PogAnimation loader={true} image={'dragon.png'} /></div>
+					<div style={{fontSize:20,width:"100%",textAlign:"center"}}>{this.state.extraMessage}</div>
+				</div>
 			)
 		}else{
 
@@ -247,7 +258,10 @@ export default createClass({
 		const { contracts,account,metaMaskHintFn } = this.context
 		if(!contracts.Cryptogs){
 			return (
-				<div style={{opacity:0.3}}><PogAnimation loader={true} image={'unicorn.png'} /></div>
+				<div>
+					<div style={{opacity:0.3}}><PogAnimation loader={true} image={'dragon.png'} /></div>
+					<div style={{fontSize:20,width:"100%",textAlign:"center"}}>{this.state.extraMessage}</div>
+				</div>
 			)
 		}
 		const {allStacks} = this.state
@@ -391,6 +405,7 @@ export default createClass({
 		let bottomRender = (
 			<div>
 				<div style={{opacity:0.3}}><PogAnimation loader={true} image={'dragon.png'} /></div>
+				<div style={{fontSize:20,width:"100%",textAlign:"center"}}>{this.state.extraMessage}</div>
 			</div>
 		)
 		if(count>1 || mountTime<Date.now()-3000){
@@ -412,7 +427,7 @@ export default createClass({
 		if(window.web3 && window.web3.currentProvider && window.web3.currentProvider.scanQRCode){
 			qrdisplay = (
 				<img src="/qr.png" style={{width:40,height:40}} onClick={()=>{
-					window.web3.currentProvider.scanQRCode((/^http:.+$/))
+					window.web3.currentProvider.scanQRCode((/^http.+$/))
 				  .then(data => {
 				    console.log('QR Scanned:', data)
 						window.location = data

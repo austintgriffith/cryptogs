@@ -52,7 +52,7 @@ class PlayStack extends Component {
     }
 
     this.waitForStuff()
-    waitInterval = setInterval(this.waitForStuff.bind(this),171)
+    waitInterval = setInterval(this.waitForStuff.bind(this),1337)
 
   }
   componentWillUnmount(){
@@ -187,6 +187,7 @@ class PlayStack extends Component {
       let updateCoinFlip = async (update)=>{
         console.log("updateCoinFlip",update)
         if(this.state && !this.state.coinFlipResult && update._winner) {
+          window.scrollTo(0, 0);
           this.state.coinFlipResult = {winner:update._winner.toLowerCase()}
         }
       }
@@ -496,6 +497,7 @@ class PlayStack extends Component {
       });
       if(DEBUG) console.log("COIN FLIP RESULT",coinFlipSuccessEvents)
       if(coinFlipSuccessEvents&&coinFlipSuccessEvents[0]&&coinFlipSuccessEvents[0].returnValues){
+        window.scrollTo(0, 0);
         this.state.coinFlipResult = coinFlipSuccessEvents[0].returnValues
         if(DEBUG) console.log("this.state.coinFlipResult",this.state.coinFlipResult)
       }
@@ -1671,8 +1673,8 @@ class PlayStack extends Component {
                 <div className="container text-center">
 
                   <p className="text-center" style={{padding:20*scale}}>{playerWords}</p>
-                    <SimpleStack count={10} scale={0.7} spacing={40} height={160} {...fullstack}/>
-                    <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
+                    <SimpleStack count={10} scale={0.7} spacing={40} height={180} {...fullstack}/>
+                    <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:36,marginLeft:16}}>
                       <MMButton color={buttonColor} onClick={clickFunction.bind(this,playerToGenerate,playerStack,otherStack)}>Generate Game</MMButton>
                     </div>
                     {generateTx}
@@ -2084,9 +2086,9 @@ class PlayStack extends Component {
       }else if(currentlyThrowing){
           let currentPlayer
 
-          if(currentlyThrowing==player1.toLowerCase()){
+          if(currentlyThrowing.toLowerCase()==player1.toLowerCase()){
             currentPlayer=player2.toLowerCase()
-          }else if(currentlyThrowing==player2.toLowerCase()){
+          }else if(currentlyThrowing.toLowerCase()==player2.toLowerCase()){
             currentPlayer=player1.toLowerCase()
           }
           console.log("currentlyThrowing",currentlyThrowing,"currentPlayer",currentPlayer)

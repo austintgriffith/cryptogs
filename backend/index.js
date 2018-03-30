@@ -377,16 +377,22 @@ app.get('/generate/:commit', (req, res) => {
   });
 });
 
-app.listen(8001);
-console.log(`Cryptogs backend listening on 8001`);
+try{
+  var sslOptions = {
+    key: fs.readFileSync('../reactapp/privkey.pem'),
+    cert: fs.readFileSync('../reactapp/fullchain.pem')
+  }
 
+  https.createServer(sslOptions, app).listen(8001)
+  console.log(`Cryptogs api https webserver listening on 443`);
+}catch(e){
+  console.log(e)
 
-var sslOptions = {
-  key: fs.readFileSync('../reactapp/privkey.pem'),
-  cert: fs.readFileSync('../reactapp/fullchain.pem')
+  app.listen(8001);
+  console.log(`Cryptogs backend listening on 8001`);
+
 }
-https.createServer(sslOptions, app).listen(8002)
-console.log(`Cryptogs api https webserver listening on 443`);
+
 
 async function syncTokens() {
   console.log("Syncing Tokens....",contracts["Cryptogs"].methods)

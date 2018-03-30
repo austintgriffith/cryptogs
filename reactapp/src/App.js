@@ -29,7 +29,9 @@ import axios from 'axios'
 import PogAnimation from './components/PogAnimation'
 import {Motion, spring, presets} from 'react-motion';
 
-let OPTIONALBACKENDPORT = "8002"
+
+
+let OPTIONALBACKENDPORT = "8001"
 
 const DEBUG = false
 const MAINNETGWEI = 5
@@ -146,6 +148,7 @@ export default createClass({
 						},4500)
 						cookie.save('apiinfo', 1, { path: '/', maxAge:1800 })
 					}
+
 					/*
 					console.log("Asking for sig")
 					web3.eth.sign("https://cryptogs.io",this.state.account, function (err, result) {
