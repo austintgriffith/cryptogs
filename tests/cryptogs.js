@@ -583,69 +583,72 @@ module.exports = {
   tokenReportMint:(accountindex)=>{
     describe('#tokenReportMint() ', function() {
       it('should work through token report minting (migration)', async function() {
-        this.timeout(6000000)
+        this.timeout(600000000)
         let tokenReport = fs.readFileSync("token.report").toString().split("\n");
-        //console.log(tokenReport)
-        let tokensToMint = {}
-        for(let t=0;t<tokenReport.length;t++){
-          let parts = tokenReport[t].split(",")
-          if(parts && parts[1] && parts[1]!="0x0000000000000000000000000000000000000000" && !isOurAddress(parts[1])){
-            if(!tokensToMint[parts[1]]) tokensToMint[parts[1]]=[]
-            tokensToMint[parts[1]].push(parts[2])
+        while(tokenReport.length>0){
+          console.log("============ "+tokenReport.length+" left to mint...")
+          let tokensToMint = {}
+          for(let t=0;t<tokenReport.length;t++){
+            let parts = tokenReport[t].split(",")
+            if(parts && parts[1] && parts[1]!="0x0000000000000000000000000000000000000000" && !isOurAddress(parts[1])){
+              if(!tokensToMint[parts[1]]) tokensToMint[parts[1]]=[]
+              tokensToMint[parts[1]].push(parts[2])
+            }
           }
-        }
-        console.log("tokensToMint",tokensToMint)
-        for(let user in tokensToMint)
-        {
-            const tokensOfOwner1 = await clevis("contract","tokensOfOwner","Cryptogs",user)
-            console.log(tab,"USER",user.cyan,"has tokens:",tokensOfOwner1)
-            if(tokensToMint[user].length>=5){
-              console.log("minting tokens to ",user,"From",tokensToMint[user][0],"to",tokensToMint[user][4])
-              const result = await clevis("contract","mintBatch","Cryptogs",accountindex,tokensToMint[user][0],tokensToMint[user][1],tokensToMint[user][2],tokensToMint[user][3],tokensToMint[user][4],user)
-              let tokensOfOwner2 = await clevis("contract","tokensOfOwner","Cryptogs",user)
-              if(tokensOfOwner2.length<=0){
-                console.log("didn't get list back, trying again")
-                tokensOfOwner2 = await clevis("contract","tokensOfOwner","Cryptogs",user)
+          //console.log("tokensToMint",tokensToMint)
+          for(let user in tokensToMint)
+          {
+              const tokensOfOwner1 = await clevis("contract","tokensOfOwner","Cryptogs",user)
+              console.log(tab,"USER",user.cyan,"has tokens:",tokensOfOwner1)
+              if(tokensToMint[user].length>=5){
+                console.log("minting tokens to ",user,"From",tokensToMint[user][0],"to",tokensToMint[user][4])
+                const result = await clevis("contract","mintBatch","Cryptogs",accountindex,tokensToMint[user][0],tokensToMint[user][1],tokensToMint[user][2],tokensToMint[user][3],tokensToMint[user][4],user)
+                let tokensOfOwner2 = await clevis("contract","tokensOfOwner","Cryptogs",user)
                 if(tokensOfOwner2.length<=0){
                   console.log("didn't get list back, trying again")
                   tokensOfOwner2 = await clevis("contract","tokensOfOwner","Cryptogs",user)
                   if(tokensOfOwner2.length<=0){
                     console.log("didn't get list back, trying again")
                     tokensOfOwner2 = await clevis("contract","tokensOfOwner","Cryptogs",user)
+                    if(tokensOfOwner2.length<=0){
+                      console.log("didn't get list back, trying again")
+                      tokensOfOwner2 = await clevis("contract","tokensOfOwner","Cryptogs",user)
+                    }
                   }
                 }
+                console.log(tab,"USER",user.cyan,"now has tokens:".green,tokensOfOwner2)
+                assert(tokensOfOwner1.length<=tokensOfOwner2.length-5,"MAYBE THE TOKEN DIDNT MINT?!?")
+                tokensToMint[user][0]=false
+                tokensToMint[user][1]=false
+                tokensToMint[user][2]=false
+                tokensToMint[user][3]=false
+                tokensToMint[user][4]=false
+              }else{
+                console.log("minting simgle token to ",user,tokensToMint[user][0])
+                try{
+                  const result = await clevis("contract","mint","Cryptogs",accountindex,tokensToMint[user][0],user)
+                }catch(e){console.log(tab,"Caught".yellow,e)}
+                const tokensOfOwner2 = await clevis("contract","tokensOfOwner","Cryptogs",user)
+                console.log(tab,"USER",user.cyan,"now has tokens:".green,tokensOfOwner2)
+                assert(tokensOfOwner1.length<tokensOfOwner2.length,"MAYBE THE TOKEN DIDNT MINT?!?")
+                tokensToMint[user][0]=false;
               }
-              console.log(tab,"USER",user.cyan,"now has tokens:".green,tokensOfOwner2)
-              assert(tokensOfOwner1.length<=tokensOfOwner2.length-5,"MAYBE THE TOKEN DIDNT MINT?!?")
-              tokensToMint[user][0]=false
-              tokensToMint[user][1]=false
-              tokensToMint[user][2]=false
-              tokensToMint[user][3]=false
-              tokensToMint[user][4]=false
-            }else{
-              console.log("minting simgle token to ",user,tokensToMint[user][0])
-              try{
-                const result = await clevis("contract","mint","Cryptogs",accountindex,tokensToMint[user][0],user)
-              }catch(e){console.log(tab,"Caught".yellow,e)}
-              const tokensOfOwner2 = await clevis("contract","tokensOfOwner","Cryptogs",user)
-              console.log(tab,"USER",user.cyan,"now has tokens:".green,tokensOfOwner2)
-              assert(tokensOfOwner1.length<tokensOfOwner2.length,"MAYBE THE TOKEN DIDNT MINT?!?")
-              tokensToMint[user][0]=false;
-            }
-            break
-        }
-        //WRITE tokensToMint BACK out
-        let reportOutput = ""
-        for(let user in tokensToMint)
-        {
-          for(let t in tokensToMint[user]){
-            if(tokensToMint[user][t]) reportOutput += "0,"+user+","+tokensToMint[user][t]+"\n";
+              break
           }
+          //WRITE tokensToMint BACK out
+          let reportOutput = ""
+          for(let user in tokensToMint)
+          {
+            for(let t in tokensToMint[user]){
+              if(tokensToMint[user][t]) reportOutput += "0,"+user+","+tokensToMint[user][t]+"\n";
+            }
+          }
+          console.log(tab,reportOutput)
+          fs.writeFileSync("token.report",reportOutput);
+          tokenReport = fs.readFileSync("token.report").toString().split("\n");
+          console.log(tab,"DONE WITH PART")
         }
-        console.log(tab,reportOutput)
-        fs.writeFileSync("token.report",reportOutput);
 
-        console.log(tab,"DONE WITH PART")
       });
     });
   },
