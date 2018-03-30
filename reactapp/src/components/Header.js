@@ -22,7 +22,7 @@ export default createClass({
 			<div className="container-fluid">
 					<div className="row align-items-center">
 							<div style={{position:'absolute',right:0,top:0,cursor:"pointer",zIndex:999}} onClick={this.props.apiClick}>
-								<img style={{width:60,margin:20}} src={apiImage} />
+								<img style={{width:60,marginRight:5,marginTop:20}} src={apiImage} />
 							</div>
 							<div className="col-md-4">
 

@@ -107,7 +107,7 @@ class CryptogStack extends Component {
             Artist: {Artist(this.state.tokenData.imageAscii)}
           </div>
           <div style={{marginTop:10}}>
-            Copies: {this.state.tokenData.copies} <div>(Prevalence: {this.state.tokenData.copies/this.state.totalSupply})</div>
+            Prevalence: {Math.round(10000*this.state.tokenData.copies/this.state.totalSupply)/10000}
           </div>
         </div>
 

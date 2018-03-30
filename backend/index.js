@@ -74,10 +74,7 @@ redis.get('foo', function (err, result) {
 });
 */
 
-var sslOptions = {
-  //key: fs.readFileSync('privkey.pem'),
-  //cert: fs.readFileSync('fullchain.pem')
-}
+
 
 app.use(helmet());
 
@@ -198,6 +195,8 @@ app.get('/commit/:commit', (req, res) => {
     res.end(result)
   });
 });
+
+
 
 app.post('/create', async function(request, response){
     console.log("CREATE",request.body);      // your JSON
@@ -356,6 +355,12 @@ app.get('/transfer/:commit/:user', (req, res) => {
   });
 });
 
+app.post('/revoke', async function(request, response){
+    redis.set("transfer_"+request.body.stack.commit+"_"+request.body.stack.owner,"0","ex",1);
+    response.set('Content-Type', 'application/json');
+    response.end(value)
+});
+
 
 app.post('/generate', async function(request, response){
     console.log("GENERATE",request.body);
@@ -375,8 +380,13 @@ app.get('/generate/:commit', (req, res) => {
 app.listen(8001);
 console.log(`Cryptogs backend listening on 8001`);
 
-//https.createServer(sslOptions, app).listen(443)
-//console.log(`Cryptogs api https webserver listening on 443`);
+
+var sslOptions = {
+  key: fs.readFileSync('../reactapp/privkey.pem'),
+  cert: fs.readFileSync('../reactapp/fullchain.pem')
+}
+https.createServer(sslOptions, app).listen(8002)
+console.log(`Cryptogs api https webserver listening on 443`);
 
 async function syncTokens() {
   console.log("Syncing Tokens....",contracts["Cryptogs"].methods)

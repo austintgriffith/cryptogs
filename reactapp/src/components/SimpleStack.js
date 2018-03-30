@@ -35,10 +35,12 @@ export default createClass({
     let transform = ""
     let scale = 1
 
+    //console.log("window.innerWidth",window.innerWidth,"width",width,"loaderPad",loaderPad)
     if(window.innerWidth < width+loaderPad){
       scale = (window.innerWidth/(width+loaderPad))
       transform =  "scale("+scale+")"
     }
+    //console.log("SO SCALE:",scale)
 
     //console.log("count",count,"scale",scale,"transform",transform)
 
@@ -111,10 +113,13 @@ export default createClass({
       }
 
     }
-
+    let simplestackwidth = this.props.spacing*count + 100
+    //console.log(simplestackwidth,this.props.spacing,count)
+    let scaledPackHeight = this.props.height*Math.min(scale,this.props.scale)
+    //console.log("SCALED PACK HEIGHT",scaledPackHeight)
     return (
-      <div style={{transform:transform,width:"100%",height:this.props.height*scale}}>
-          <div style={{position:"relative",display:"table",margin:"0 auto",left:-(this.props.spacing*(count/2))-30}}>
+      <div style={{transform:transform,width:"100%",height:scaledPackHeight}}>
+          <div style={{position:"relative",display:"table",margin:"0 auto",left:-(simplestackwidth/2)}}>
             {blockie}
             {cryptogs}
           </div>

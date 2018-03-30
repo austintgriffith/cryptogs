@@ -11,6 +11,7 @@ import ShallowEqualsById from './modules/shallowEqualsById.js';
 import IndexPage from './pages/index.js'
 import AddressPage from './pages/address.js'
 import StacksPage from './pages/stacks.js'
+import Web3Page from './pages/web3.js'
 import CreatePage from './pages/create.js'
 import ContractsPage from './pages/contracts.js'
 import PlayPage from './pages/play.js'
@@ -28,7 +29,7 @@ import axios from 'axios'
 import PogAnimation from './components/PogAnimation'
 import {Motion, spring, presets} from 'react-motion';
 
-let OPTIONALBACKENDPORT = "8001"
+let OPTIONALBACKENDPORT = "8002"
 
 const DEBUG = false
 const MAINNETGWEI = 5
@@ -105,34 +106,17 @@ export default createClass({
 			api:{},
 			apiHint:-100,
 			reloadRouter:false,
+			account:"",
 		};
 	},
 	componentDidMount(){
 		cookie.save('apiinfo', 1, { path: '/', maxAge:1800 })
-		try{
-			web3 = new Web3(window.web3.currentProvider)
-			web3.eth.net.getId().then((network)=>{
-				if(network>9999) network=9999;
-				let contracts = ContractLoader(["Cryptogs","SlammerTime","PizzaParlor"],web3,network);
-				let update = {web3:web3,contracts:contracts,contractsLoaded:true,network:network}
-				if(!this.state || !this.state.GWEI || this.state.GWEI == STARTINGGWEI){
-					if(network>1){
-						this.setGWEI(STARTINGGWEI)
-					}else{
-						this.setGWEI(MAINNETGWEI)
-					}
-				}
-				this.setState(update)
-			})
-		} catch(e) {
-			console.log(e)
-		}
+		//web3 will com back from the metamask component so wait for that
 		this.waitForContracts()
 		//check to see if we can talk to the api
 		setTimeout(()=>{
 			this.setupApi()
 		},500)
-
 	},
 	setupApi(){
 		let currentLocation = window.location
@@ -181,9 +165,18 @@ export default createClass({
 	setEtherscan(url){
     this.setState({etherscan:url})
   },
-	init(account) {
-		if(DEBUG) console.log("INIT")
-		this.setState({account:account})
+	init(account,network,web3js) {
+		console.log("INIT",account,network,web3js.currentProvider)
+		let contracts = ContractLoader(["Cryptogs","SlammerTime","PizzaParlor"],web3js,network);
+		let update = {account:account,network:network,web3:web3js,contracts:contracts,contractsLoaded:true}
+		if(!this.state || !this.state.GWEI || this.state.GWEI == STARTINGGWEI){
+			if(network>1){
+				this.setGWEI(STARTINGGWEI)
+			}else{
+				this.setGWEI(MAINNETGWEI)
+			}
+		}
+		this.setState(update)
 	},
 	waitForContracts(){
 		if(this.state && this.state.contractsLoaded){
@@ -280,6 +273,7 @@ export default createClass({
 	 			<Router>
 	 				<Switch>
 	 						 <Route exact path="/" component={IndexPage} />
+							 <Route path={`/web3`} component={Web3Page} />
 	 						 <Route path={`/stacks`} component={StacksPage} />
 	 						 <Route path={`/create`} component={CreatePage} />
 	 						 <Route path={`/buy`} component={BuyPage} />

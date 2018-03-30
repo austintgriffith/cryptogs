@@ -10,6 +10,7 @@ import StackSelect from '../components/StackSelect.js'
 import {Motion, spring, presets} from 'react-motion';
 import MMButton from '../components/MMButton.js'
 import PogAnimation from '../components/PogAnimation'
+import LoaderAnimation from '../components/LoaderAnimation.js'
 import Blockies from 'react-blockies'
 import cookie from 'react-cookies'
 import axios from 'axios'
@@ -22,6 +23,8 @@ const DEBUG = false
 const SHOWDEMOSCREEN=false
 const BLOCKTIMEOUT = 40
 let txhash
+
+const THROWROUNDTIME = 4000
 
 let timeoutArray = []
 let timeoutArrayTwo = []
@@ -265,7 +268,7 @@ class PlayStack extends Component {
       let possibleFlightPaths = [-150,-200,-250,-300,-350,350,300,250,200,150];
       axios.get(this.props.api.host+"/commit/"+this.state.stack)
       .then((response)=>{
-        console.log("APIPOLL...",response)
+        //console.log("APIPOLL...",response)
         if(!this.state.stackData){
           this.doUpdate(response.data)
         }
@@ -337,7 +340,7 @@ class PlayStack extends Component {
                     }
                     this.state.throwSlammerEvents[id].whoDoneIt = this.state.flips[t]._flipper
                     this.state.throwSlammerEvents[id].blockNumber = i
-                    update.currentlyThrowing = this.state.flips[t]._flipper.toLowerCase()
+                    update.rowing = this.state.flips[t]._flipper.toLowerCase()
                     //console.log("SETFLIPPER",id,this.state.flips[t]._flipper)
                   }else  if(parseInt(this.state.flips[t]._round)>round){
                       anyLeft=true
@@ -352,7 +355,7 @@ class PlayStack extends Component {
                 update.round = round
                 update.throwSlammerEvents = this.state.throwSlammerEvents;
 
-                console.log("updateFlip","update.flippedThisRound",update.flippedThisRound,this.state)
+                //console.log("updateFlip","update.flippedThisRound",update.flippedThisRound,this.state)
                 this.doUpdate(update)
 
                 if(!anyLeft){
@@ -366,12 +369,12 @@ class PlayStack extends Component {
                   },3000)
                 }
 
-              },4000*round)
+              },THROWROUNDTIME*round)
               timeoutArrayTwo[round] = setTimeout(()=>{
                 let update = {}
                 update.stackMode = 4;
                 this.doUpdate(update)
-              },(4000*round)+2000)
+              },(THROWROUNDTIME*round)+THROWROUNDTIME/2)
             }
 
           }
@@ -390,7 +393,7 @@ class PlayStack extends Component {
 
     if(this.state&&this.state.stack&&this.state.stackData&&this.state.stackData.owner&&this.state._counterStack){
 
-      if(!this.state.transfer1){
+      if(this.state.stackMode<=1){
         let owner1 = this.state.stackData.owner
         console.log("Check on transfer 1 ",this.state.stack,owner1)
         try{
@@ -407,7 +410,7 @@ class PlayStack extends Component {
       }
 
 
-      if(!this.state.transfer2){
+      if(this.state.stackMode<=1){
         let owner2
         for(let c in this.state.counterStacks){
           if(this.state.counterStacks[c]._counterStack==this.state._counterStack){
@@ -430,7 +433,7 @@ class PlayStack extends Component {
         }
       }
 
-      if(!this.state.generate){
+      if(this.state.stackMode<=1){
         console.log("Check on generate ",this.state.stack)
         try{
           axios.get(this.props.api.host+"/generate/"+this.state.stack)
@@ -888,65 +891,79 @@ class PlayStack extends Component {
       })
   }
   raiseSlammer(){
-    console.log("raiseSlammer",this.state.stack,this.state.counterStack)
-    let {contracts,account,web3,showLoadingScreen} = this.props.context
+    if(this.props&&this.props.api&&this.props.api.host){
 
-    let commit = web3.utils.sha3(Math.random()+this.state.account+"SLAMMERTIMEJABRONIES!")
-    console.log("commit:",commit)
-    let commitHash = web3.utils.sha3(commit)
-    console.log("commitHash:",commitHash)
-    cookie.save('commit', commit, { path: '/', maxAge:600 })
-    this.setState({commit:commit})
+      //raise slammer centralized ?
 
-    //raiseSlammer(bytes32 _stack, bytes32 _counterStack, bytes32 _commit)
-    contracts["Cryptogs"].methods.raiseSlammer(this.state.stack,this.state.counterStack,commitHash).send({
-        from: account,
-        gas:150000,
-        gasPrice:this.props.GWEI * 1000000000
-      },(error,hash)=>{
-        console.log("CALLBACK!",error,hash)
-        showLoadingScreen(hash)
-        txhash=hash
-      }).on('error',(a,b)=>{
-        console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-      }).then((receipt)=>{
-        console.log("RESULT:",receipt)
-        showLoadingScreen(false)
-      }).catch(e=> {
-          console.error('caught error', e);
-      })
+    }else{
+      console.log("raiseSlammer",this.state.stack,this.state.counterStack)
+      let {contracts,account,web3,showLoadingScreen} = this.props.context
+
+      let commit = web3.utils.sha3(Math.random()+this.state.account+"SLAMMERTIMEJABRONIES!")
+      console.log("commit:",commit)
+      let commitHash = web3.utils.sha3(commit)
+      console.log("commitHash:",commitHash)
+      cookie.save('commit', commit, { path: '/', maxAge:600 })
+      this.setState({commit:commit})
+
+      //raiseSlammer(bytes32 _stack, bytes32 _counterStack, bytes32 _commit)
+      contracts["Cryptogs"].methods.raiseSlammer(this.state.stack,this.state.counterStack,commitHash).send({
+          from: account,
+          gas:150000,
+          gasPrice:this.props.GWEI * 1000000000
+        },(error,hash)=>{
+          console.log("CALLBACK!",error,hash)
+          showLoadingScreen(hash)
+          txhash=hash
+        }).on('error',(a,b)=>{
+          console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+        }).then((receipt)=>{
+          console.log("RESULT:",receipt)
+          showLoadingScreen(false)
+        }).catch(e=> {
+            console.error('caught error', e);
+        })
+    }
+
   }
   throwSlammer(){
-    console.log("throwSlammer",this.state.stack,this.state.counterStack,this.state.commit)
-    let {contracts,account,web3,showLoadingScreen} = this.props.context
+    if(this.props&&this.props.api&&this.props.api.host){
 
-    let reveal = this.state.commit
-    //if reveal isn't saved in the state, send 0's to start over with the coin flip
-    if(!reveal) reveal = cookie.load('commit')
-    if(!reveal) reveal = "0x0000000000000000000000000000000000000000000000000000000000000000"
-    contracts["Cryptogs"].methods.throwSlammer(this.state.stack,this.state.counterStack,reveal).send({
-        from: account,
-        gas:500000,
-        gasPrice:this.props.GWEI * 1000000000
-      },(error,hash)=>{
-        console.log("CALLBACK!",error,hash)
-        showLoadingScreen(hash)
-        txhash=hash
-      }).on('error',(a,b)=>{
-        console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-      }).on('transactionHash', function(transactionHash){
-         console.log("XEVENT transactionHash",transactionHash)
-      })
-      .on('receipt', function(receipt){
-         console.log("TXEVENT receipt",receipt) // contains the new contract address
-      }).on('confirmation', function(confirmationNumber, receipt){
-        console.log("TXEVENT confirmation",confirmationNumber)
-      }).then((receipt)=>{
-        console.log("RESULT:",receipt)
-        showLoadingScreen(false)
-      }).catch(e=> {
-          console.error('caught error', e);
-      })
+      //throw slammer centralized ?
+
+    }else{
+      console.log("throwSlammer",this.state.stack,this.state.counterStack,this.state.commit)
+      let {contracts,account,web3,showLoadingScreen} = this.props.context
+
+      let reveal = this.state.commit
+      //if reveal isn't saved in the state, send 0's to start over with the coin flip
+      if(!reveal) reveal = cookie.load('commit')
+      if(!reveal) reveal = "0x0000000000000000000000000000000000000000000000000000000000000000"
+      contracts["Cryptogs"].methods.throwSlammer(this.state.stack,this.state.counterStack,reveal).send({
+          from: account,
+          gas:500000,
+          gasPrice:this.props.GWEI * 1000000000
+        },(error,hash)=>{
+          console.log("CALLBACK!",error,hash)
+          showLoadingScreen(hash)
+          txhash=hash
+        }).on('error',(a,b)=>{
+          console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+        }).on('transactionHash', function(transactionHash){
+           console.log("XEVENT transactionHash",transactionHash)
+        })
+        .on('receipt', function(receipt){
+           console.log("TXEVENT receipt",receipt) // contains the new contract address
+        }).on('confirmation', function(confirmationNumber, receipt){
+          console.log("TXEVENT confirmation",confirmationNumber)
+        }).then((receipt)=>{
+          console.log("RESULT:",receipt)
+          showLoadingScreen(false)
+        }).catch(e=> {
+            console.error('caught error', e);
+        })
+    }
+
   }
   drainStack(){
     let {contracts,account,showLoadingScreen} = this.props.context
@@ -1008,6 +1025,21 @@ class PlayStack extends Component {
       console.log("CALLBACK!",error,hash)
       showLoadingScreen(hash)
       txhash=hash
+      try{
+        axios.post(this.props.api.host+'/revoke', {
+          account: account,
+          stack: this.state.stackData,
+          txhash: hash
+        })
+        .then(function (response) {
+          console.log(response)
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      } catch(e) {
+        console.log(e)
+      }
     }).on('error',(a,b)=>{
       if(txhash){
         //howLoadingScreen(false)
@@ -1224,21 +1256,21 @@ class PlayStack extends Component {
   render(){
     let qrcode
     let width = 700
-    let mainStyle = {backgroundColor:"#FFFFFF",width:width,height:800}
-    let scale = ((window.innerWidth-100)/(width))
+    let mainStyle = {backgroundColor:"#FFFFFF",width:width,height:800,marginLeft:20}
+    let scale = ((document.documentElement.clientWidth-100)/(width))
     let leftOffset = 0
     let topOffset = 0
     let left=0
     let top=0
-    if(this.state.stackMode>0 && window.innerWidth < width){
+    if(this.state.stackMode>0 && document.documentElement.clientWidth < width){
       mainStyle.transform =  "scale("+scale+")"
-      mainStyle.marginLeft=-240*(1-(scale-.39))+100
+      mainStyle.marginLeft=-240*(1-(scale-.39))+120
       mainStyle.marginTop=-270*(1-(scale-.39))+30
       left = 0
       top = 350
     }else{
-      mainStyle.width = window.innerWidth-40
-      left=(window.innerWidth/4)
+      mainStyle.width = document.documentElement.clientWidth-40
+      left=(document.documentElement.clientWidth/4)
       top=550
     }
 
@@ -1355,7 +1387,9 @@ class PlayStack extends Component {
 
     }
 
+    console.log("checking for round...",this.state.coinFlipResult,this.state.round)
     if(this.state&&this.state.coinFlipResult&&this.state.coinFlipResult.winner&&this.state.round&&this.state.round>=1){
+      console.log("Double checking who is throwing based on round ",this.state.round)
       if(this.state.round%2==0){
         if(this.state.coinFlipResult.winner.toLowerCase()==player1.toLowerCase()){
           currentlyThrowing=player2
@@ -1613,6 +1647,23 @@ class PlayStack extends Component {
             playerWords = "You have the lower receipt hash, please press the 'Generate Game' button below:"
           }
 
+          let generateTx = ""
+          if(this.state.generate){
+            generateTx = (
+              <div className={"messageGray"} style={{margin:'0 auto',position:"relative",backgroundColor:"#eeeeee",width:260,height:40,border:"20px solid #dddddd"}}>
+                <div style={{position:'absolute',left:0,bottom:20,opacity:0.3}}>
+                  <LoaderAnimation/>
+                </div>
+                <div style={{position:'absolute',left:42,bottom:40,fontSize:24}}>
+                  <a target="_blank" href={etherscan+"tx/"+this.state.generate}>{this.state.generate.substr(0,10)}</a>
+                </div>
+                <div style={{position:'absolute',right:0,bottom:20,opacity:0.3}}>
+                  <LoaderAnimation/>
+                </div>
+              </div>
+            )
+          }
+
           display = (
             <div>
               <div className="row align-items-center">
@@ -1624,7 +1675,7 @@ class PlayStack extends Component {
                     <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
                       <MMButton color={buttonColor} onClick={clickFunction.bind(this,playerToGenerate,playerStack,otherStack)}>Generate Game</MMButton>
                     </div>
-                    {this.state.generate}
+                    {generateTx}
                     {drain}
                 </div>
 
@@ -1687,6 +1738,22 @@ class PlayStack extends Component {
           console.log("activeReceipts",activeReceipts)
 
           let messagePadding = 20*scale
+          let transfer1 = ""
+          if(this.state.transfer1){
+            transfer1 = (
+              <div className={"messageGray"} style={{margin:'0 auto',position:"relative",backgroundColor:"#eeeeee",width:260,height:40,border:"20px solid #dddddd"}}>
+                <div style={{position:'absolute',left:0,bottom:20,opacity:0.3}}>
+                  <LoaderAnimation/>
+                </div>
+                <div style={{position:'absolute',left:42,bottom:40,fontSize:24}}>
+                  <a target="_blank" href={etherscan+"tx/"+this.state.transfer1}>{this.state.transfer1.substr(0,10)}</a>
+                </div>
+                <div style={{position:'absolute',right:0,bottom:20,opacity:0.3}}>
+                  <LoaderAnimation/>
+                </div>
+              </div>
+            )
+          }
 
           let firstCol = ""
           if(activeReceipts && activeReceipts[stackData.owner.toLowerCase()]){
@@ -1710,13 +1777,31 @@ class PlayStack extends Component {
                       <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
                         <MMButton color={firstStackColor} onClick={firstClickFunction}>Transfer to Contract</MMButton>
                       </div>
-                      {this.state.transfer1}
+                      {transfer1}
       						</div>
               </div>
             )
           }
 
           let secondCol = ""
+
+          let transfer2 = ""
+          if(this.state.transfer2){
+            transfer2 = (
+              <div className={"messageGray"} style={{margin:'0 auto',position:"relative",backgroundColor:"#eeeeee",width:260,height:40,border:"20px solid #dddddd"}}>
+                <div style={{position:'absolute',left:0,bottom:20,opacity:0.3}}>
+                  <LoaderAnimation/>
+                </div>
+                <div style={{position:'absolute',left:42,bottom:40,fontSize:24}}>
+                  <a target="_blank" href={etherscan+"tx/"+this.state.transfer2}>{this.state.transfer2.substr(0,10)}</a>
+                </div>
+                <div style={{position:'absolute',right:0,bottom:20,opacity:0.3}}>
+                  <LoaderAnimation/>
+                </div>
+              </div>
+            )
+          }
+
           if(activeReceipts && activeReceipts[counterStackData.owner.toLowerCase()]){
             secondCol = (
               <div className="col-md-6" style={transferStackBoxStyle}>
@@ -1738,7 +1823,7 @@ class PlayStack extends Component {
                     <div key={"transferStackButton"+this.state._counterStack} style={{marginTop:16,marginLeft:16}}>
                       <MMButton color={secondStackColor} onClick={secondClickFunction}>Transfer to Contract</MMButton>
                     </div>
-                    {this.state.transfer3}
+                    {transfer2}
                   </div>
               </div>
             )
@@ -1891,6 +1976,8 @@ class PlayStack extends Component {
 
         }
 
+        console.log("PLAYSTACK SCALE",scale)
+
         let messageScale = 1
         let heightScale = 1
         if(scale<1){
@@ -1903,7 +1990,6 @@ class PlayStack extends Component {
           qrcodedisplay = (
             <div className={"centercontainer"} style={{marginTop:150}}>
               <QRCode value={qrcode} size={320}/>
-              <div style={{opacity:0.2,fontSize:10}}>{qrcode}</div>
             </div>
           )
         }
@@ -2007,16 +2093,19 @@ class PlayStack extends Component {
           //if(player1.toLowerCase()==){
           //  currentPlayer = player2.toLowerCase()
           //}
-          display = (
-            <div style={{position:'absolute',left:10,top:"20%"}}>
-              <a target="_blank" href={"/address/"+currentPlayer.toLowerCase()}>
-               <Blockies
-                 seed={currentPlayer.toLowerCase()}
-                 scale={10}
-               />
-              </a>
-            </div>
-          )
+          if(currentPlayer){
+            display = (
+              <div style={{position:'absolute',left:10,top:"20%"}}>
+                <a target="_blank" href={"/address/"+currentPlayer.toLowerCase()}>
+                 <Blockies
+                   seed={currentPlayer.toLowerCase()}
+                   scale={10}
+                 />
+                </a>
+              </div>
+            )
+          }
+
       }
 
     }else if(stackMode==9){

@@ -11,7 +11,7 @@ import PogAnimation from '../components/PogAnimation'
 import axios from 'axios'
 
 const DEBUG = false;
-const BLOCKLOOKBACK = 240*8; //show the last 8 hours
+const BLOCKLOOKBACK = 240*24*3; //show the last 3 days
 
 let mountTime = Date.now()
 
@@ -22,6 +22,7 @@ export default createClass({
 		web3: PropTypes.object,
 		contracts: PropTypes.array,
 		account: PropTypes.string,
+		network: PropTypes.number,
 		blockNumber: PropTypes.number,
 		metaMaskHintFn: PropTypes.func,
 		api: PropTypes.object,
@@ -37,8 +38,9 @@ export default createClass({
 		clearInterval(loadInterval)
 	},
 	async loadStackData(){
-		let {contracts,web3,blockNumber} = this.context
-		if(!contracts || !contracts["Cryptogs"] || !blockNumber){
+		let {contracts,web3,blockNumber,account,network} = this.context
+		if(!account || !network || !contracts || !contracts["Cryptogs"] || !blockNumber){
+			console.log("WAITING",account,network,blockNumber)
 			return (
 				<div style={{opacity:0.3}}><PogAnimation loader={true} image={'unicorn.png'} /></div>
 			)
@@ -410,7 +412,7 @@ export default createClass({
 		if(window.web3 && window.web3.currentProvider && window.web3.currentProvider.scanQRCode){
 			qrdisplay = (
 				<img src="/qr.png" style={{width:40,height:40}} onClick={()=>{
-					window.web3.currentProvider.scanQRCode()
+					window.web3.currentProvider.scanQRCode((/^http:.+$/))
 				  .then(data => {
 				    console.log('QR Scanned:', data)
 						window.location = data

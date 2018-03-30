@@ -3,6 +3,11 @@ import Blockies from 'react-blockies'
 var Web3 = require('web3')
 var web3
 
+const DEBUG = false
+
+// const mmLink = "https://metamask.io/"
+const mmLink = "/web3"
+
 class MetaMask extends Component {
   constructor(props) {
     super(props);
@@ -16,63 +21,64 @@ class MetaMask extends Component {
     }
   }
   componentDidMount(){
-    this.forceUpdate()
-    setInterval(()=>{ this.forceUpdate() },647)
-    setInterval( this.checkMetamask.bind(this) ,1001)
-    this.checkMetamask()
+    window.addEventListener('load',this.checkMetamask.bind(this))
+    setInterval(this.checkMetamask.bind(this),3003)
   }
-  checkMetamask() {
-    if (typeof window.web3 == 'undefined') {
-      if(this.state.metamask!=0) this.setState({metamask:0})
+  checkMetamask(){
+    if(DEBUG) console.log("Detecting web3...")
+    let web3js
+    if (typeof web3 !== 'undefined') {
+      web3js = new Web3(web3.currentProvider);
+    } else if (typeof window.web3 !== 'undefined') {
+      web3js = new Web3(window.web3.currentProvider);
     } else {
-      web3 = new Web3(window.web3.currentProvider)
-      web3.eth.net.getId().then((network)=>{
-        network = translateNetwork(network);
-        if( network=="Morden" || network=="Rinkeby" || network=="Kovan"){
-          if(this.state.metamask!=2) this.setState({metamask:2,network:network})
-        }else{
-          let accounts
-          try{
-            window.web3.eth.getAccounts((err,_accounts)=>{
-              if(err){
-                console.log("metamask error",err)
-                if(this.state.metamask!=-1) this.setState({metamask:-1,network:network})
-              }else{
-                accounts = _accounts;
-                if(network){
-                  let etherscan = "https://etherscan.io/"
-                  if(network=="Unknown"||network=="private"){
-                    etherscan = "http://localhost:8000/#/"
-                  }else if(network!="Mainnet"){
-                    etherscan = "https://"+network.toLowerCase()+".etherscan.io/"
-                  }
-                  this.props.setEtherscan(etherscan)
+      if(DEBUG) console.log("no web3")
+    }
+    if(web3js){
+      if(DEBUG) console.log("Found web3...")
+      web3js.eth.net.getId().then((network)=>{
+        if(DEBUG) console.log("Network:",network)
+        let networkNumber = network
+        web3js.eth.getAccounts().then((accounts)=>{
+          if(DEBUG) console.log("Accounts:",accounts)
+          network = translateNetwork(network);
+          if( network=="Morden" || network=="Rinkeby" || network=="Kovan"){
+            if(DEBUG) console.log("Wrong network:",network)
+            if(this.state.metamask!=2) this.setState({metamask:2,network:network})
+          }else{
+            if(!accounts||accounts.length<=0){
+              if(DEBUG) console.log("metamask didn't find accounts...")
+              if(this.state.metamask!=-1) this.setState({metamask:-1,network:network})
+            }else{
+              if(DEBUG) console.log("web3!")
+              if(network){
+                let etherscan = "https://etherscan.io/"
+                if(network=="Unknown"||network=="private"){
+                  etherscan = "http://localhost:8000/#/"
+                }else if(network!="Mainnet"){
+                  etherscan = "https://"+network.toLowerCase()+".etherscan.io/"
                 }
-
-                if(!accounts){
-                  if(this.state.metamask!=-1) this.setState({metamask:-1,network:network})
-                } else if(accounts.length<=0){
-                  if(this.state.metamask!=2) this.setState({metamask:2,network:network})
-                } else{
-
-                  if(this.props.account&&this.props.account!=accounts[0]){
-                    window.location.reload(true);
-                  }else{
-                    if(this.state.metamask!=3) {
-                      this.setState({metamask:3,accounts:accounts,network:network},()=>{
-                        this.props.init(accounts[0])
-                      })
-                    }
+                this.props.setEtherscan(etherscan)
+              }
+              if(!accounts){
+                if(this.state.metamask!=-1) this.setState({metamask:-1,network:network})
+              } else if(accounts.length<=0){
+                if(this.state.metamask!=2) this.setState({metamask:2,network:network})
+              } else{
+                if(this.props.account&&this.props.account!=accounts[0]){
+                  //force a reload on account change
+                  window.location.reload(true);
+                }else{
+                  if(this.state.metamask!=3) {
+                    this.setState({metamask:3,accounts:accounts,network:network},()=>{
+                      this.props.init(accounts[0],networkNumber,web3js)
+                    })
                   }
                 }
               }
-            })
-          }catch(e){
-            console.log(e)
-            if(this.state.metamask!=-1) this.setState({metamask:-1,network:network})
+            }
           }
-        }
-
+        })
       })
     }
   }
@@ -102,21 +108,21 @@ class MetaMask extends Component {
     if(-1==this.state.metamask){
       //not installed
       metamask = (
-        <a target="_blank"  href="https://metamask.io/">
-        {metamaskImage}
-        <span style={this.state.textStyle}>
-          Unable to connect to network
-        </span>
-        </a>
+        <div>
+          {metamaskImage}
+          <span style={this.state.textStyle}>
+            Unlock metamask to play
+          </span>
+        </div>
       )
     }else if(!this.state.metamask){
       //not installed
       let mmClick = ()=>{
-        window.open('https://metamask.io', '_blank');
+        window.open(mmLink, '_blank');
       }
       metamask = (
         <div style={{zIndex:999999}} onClick={mmClick}>
-          <a target="_blank" href="https://metamask.io/">
+          <a target="_blank" href={mmLink}>
           {metamaskImage}
           <span style={this.state.textStyle}>
             Install MetaMask to play
@@ -213,7 +219,7 @@ class MetaMask extends Component {
             <div style={{position:"absolute",left:10,top:10}}>
               <a target="_Blank" href="https://wallet.ethereum.org/">
               <Blockies
-                seed={this.state.accounts[0]}
+                seed={this.state.accounts[0].toLowerCase()}
                 scale={6}
               />
               </a>
