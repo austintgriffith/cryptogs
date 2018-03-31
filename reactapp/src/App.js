@@ -148,13 +148,6 @@ export default createClass({
 						},4500)
 						cookie.save('apiinfo', 1, { path: '/', maxAge:1800 })
 					}
-
-					/*
-					console.log("Asking for sig")
-					web3.eth.sign("https://cryptogs.io",this.state.account, function (err, result) {
-				    if (err) return console.error(err)
-				    console.log('SIGNED:' + result)
-				  })*/
 				})
 			} catch(e) {
 				console.log(e)
@@ -169,10 +162,10 @@ export default createClass({
 	setEtherscan(url){
     this.setState({etherscan:url})
   },
-	init(account,network,web3js) {
-		console.log("INIT",account,network,web3js.currentProvider)
+	networkReady(network,web3js) {
+		console.log("NETWORK READY",network,web3js.currentProvider)
 		let contracts = ContractLoader(["Cryptogs","SlammerTime","PizzaParlor"],web3js,network);
-		let update = {account:account,network:network,web3:web3js,contracts:contracts,contractsLoaded:true}
+		let update = {network:network,web3:web3js,contracts:contracts,contractsLoaded:true}
 		if(!this.state || !this.state.GWEI || this.state.GWEI == STARTINGGWEI){
 			if(network>1){
 				this.setGWEI(STARTINGGWEI)
@@ -185,6 +178,11 @@ export default createClass({
 		setTimeout(()=>{
 			this.setupApi()
 		},250)
+	},
+	init(account,network,web3js) {
+		console.log("INIT",account,network,web3js.currentProvider)
+		let update = {account:account}
+		this.setState(update)
 	},
 	waitForContracts(){
 		if(this.state && this.state.contractsLoaded){
@@ -305,6 +303,7 @@ export default createClass({
 					syncBlockNumber={this.syncBlockNumber}
 					account={this.state.account}
 					init={this.init}
+					networkReady={this.networkReady}
 					blockNumber={this.state.blockNumber}
 					etherscan={this.state.etherscan}
 					setEtherscan={this.setEtherscan}
