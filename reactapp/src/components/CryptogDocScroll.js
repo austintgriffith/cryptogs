@@ -16,8 +16,14 @@ export default createClass({
   render(){
     if(!this.state) return (<div></div>)
     if(this.state.scroll>1200) return  (<div></div>)
+    let image = "awyinandyang.jpg"
+    if(this.props.image){
+      image=this.props.image
+    }
+
+
     return (
-      <Cryptog key={"cryptogdocscroll"} id={0} scale={1} angle={(this.state.scroll*2)%360}image={"awyinandyang.jpg"}/>
+      <Cryptog key={"cryptogdocscroll"} id={0} scale={1} angle={(this.state.scroll*2)%360}image={image}/>
     )
   }
 })

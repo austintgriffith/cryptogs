@@ -102,12 +102,6 @@ class MetaMask extends Component {
       />
     )
 
-    let cipherImage = (
-      <img style={{maxHeight:40,marginTop:10,paddingRight:5,verticalAlign:"middle"}}
-      src="/cipher.jpg"
-      />
-    )
-
     if(this.props.blockNumber&&this.props.blockNumber>0){
       blockDisplay = (
         <a style={{marginLeft:10}} target="_blank" href={this.props.etherscan+"block/"+this.props.blockNumber}>
@@ -134,12 +128,12 @@ class MetaMask extends Component {
       if(window.mobileAndTabletcheck()){
         metamask = (
           <div style={{zIndex:999999}} onClick={()=>{
-            window.open("https://itunes.apple.com/us/app/cipher-browser-ethereum/id1294572970?mt=8", '_blank');
+            window.open("/web3", '_blank');
           }}>
-            <a target="_blank" href={"https://itunes.apple.com/us/app/cipher-browser-ethereum/id1294572970?mt=8"}>
-            {cipherImage}
+            <a target="_blank" href={"/web3"}>
+            {metamaskImage}
             <span style={this.state.textStyle}>
-              Install & Unlock Cipher
+              Install & Unlock Web3
             </span>
             </a>
           </div>
