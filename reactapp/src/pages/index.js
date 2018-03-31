@@ -88,7 +88,7 @@ export default createClass({
 									</div>
 									<div className="col-md-7">
 										<h2 className="h4 mb-3">Slammer Flip</h2>
-										<p>{"To determine who goes first, the slammer is flipped by the game creator. It takes two transaction, one for the commit, and another for the reveal."}</p>
+										<p>{"To determine who goes first, the slammer is flipped by the game creator using a commit/reveal."}</p>
 									</div>
 								</div>
 
