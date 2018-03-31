@@ -384,15 +384,15 @@ try{
   }
 
   https.createServer(sslOptions, app).listen(8001)
-  console.log(`Cryptogs api https webserver listening on 443`);
+  console.log(`Cryptogs api https webserver listening on 8001`);
 }catch(e){
   console.log(e)
 
-  app.listen(8001);
-  console.log(`Cryptogs backend listening on 8001`);
 
 }
 
+  app.listen(8002);
+  console.log(`Cryptogs backend listening on 8002`);
 
 async function syncTokens() {
   console.log("Syncing Tokens....",contracts["Cryptogs"].methods)
