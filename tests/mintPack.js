@@ -73,6 +73,46 @@ let adgeo = [
   "adorangegeo.png",
 ]
 
+let cryptoLogos = [
+  "metamask.png",
+  "darkclogo.png",
+  "lightclogo.png",
+  "darkclogo.png",
+  "lightclogo.png",
+  "cipher.jpg",
+  "trust.png",
+  "toshi.jpg",
+  "opensea.jpg",
+  "darkclogo.png",
+  "metamask.png",
+  "darkclogo.png",
+  "lightclogo.png",
+  "darkclogo.png",
+  "lightclogo.png",
+  "cipher.jpg",
+  "trust.png",
+  "toshi.jpg",
+  "opensea.jpg",
+  "darkclogo.png",
+]
+
+let ethDen = [
+  "ethdenver.png",
+  "ethden.png",
+  "bufficorn.jpg",
+  "ethden.png",
+  "ethdenver.png",
+  "ethdenver.png",
+  "ethden.png",
+  "bufficorn.jpg",
+  "ethden.png",
+  "ethdenver.png",
+  "ethdenver.png",
+  "ethden.png",
+  "bufficorn.jpg",
+  "ethden.png",
+  "ethdenver.png",
+]
 
 function grabRandomTen(arr){
   let newArr = []
@@ -98,16 +138,21 @@ function grabRandomTen(arr){
 //
  // cryptogs.mintPack(0,grabRandomTen(animals),0.025)
  //cryptogs.mintPack(0,grabRandomTen(animals),0.1)
-//
-cryptogs.mintPack(0,[
-  "metamask.png",
-  "darkclogo.png",
-  "lightclogo.png",
-  "darkclogo.png",
-  "lightclogo.png",
-  "cipher.jpg",
-  "trust.png",
-  "toshi.jpg",
-  "opensea.jpg",
-  "darkclogo.png",
-],0.001)
+
+cryptogs.mintPack(0,grabRandomTen(cryptoLogos),0.025)
+
+
+cryptogs.mintPack(0,grabRandomTen(ethDen),0.010)
+
+// cryptogs.mintPack(0,[
+//   "metamask.png",
+//   "darkclogo.png",
+//   "lightclogo.png",
+//   "darkclogo.png",
+//   "lightclogo.png",
+//   "cipher.jpg",
+//   "trust.png",
+//   "toshi.jpg",
+//   "opensea.jpg",
+//   "darkclogo.png",
+// ],0.001)

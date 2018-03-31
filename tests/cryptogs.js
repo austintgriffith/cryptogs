@@ -196,7 +196,7 @@ module.exports = {
   },
   mintPack:(accountindex,images,price)=>{
     describe('#testMint() ', function() {
-      it('should mint a cryptog', async function() {
+      it('should mint cryptog pack', async function() {
         this.timeout(120000)
         const accounts = await clevis("accounts")
         let imageBytes = []
