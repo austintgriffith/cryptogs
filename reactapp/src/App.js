@@ -123,7 +123,7 @@ export default createClass({
 		if(this.state.network=="1"){
 			backend = "https://api.cryptogs.io"
 		}else if(this.state.network=="3"){
-			backend = "https://stage.cryptogs.io:8002"
+			backend = "https://stage.cryptogs.io:8001"
 		}
 		console.log("backend",backend)
 		let apiCookie = parseInt(cookie.load('api'))
