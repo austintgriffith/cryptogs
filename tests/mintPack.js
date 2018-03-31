@@ -139,7 +139,7 @@ function grabRandomTen(arr){
  // cryptogs.mintPack(0,grabRandomTen(animals),0.025)
  //cryptogs.mintPack(0,grabRandomTen(animals),0.1)
 
-cryptogs.mintPack(0,grabRandomTen(cryptoLogos),0.025)
+// cryptogs.mintPack(0,grabRandomTen(cryptoLogos),0.025)
 
 
 cryptogs.mintPack(0,grabRandomTen(ethDen),0.010)
