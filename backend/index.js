@@ -11,6 +11,8 @@ app.use(bodyParser());
 var cors = require('cors')
 app.use(cors())
 var SHA3 = require('sha3');
+var twilio = require('twilio');
+var twilioClient = new twilio(fs.readFileSync("twilio.sid").toString().trim(), fs.readFileSync("twilio.token").toString().trim());
 
 const COMMIT_EXPIRE = 86400*3 // commit expires in an a few days?
 
@@ -95,7 +97,6 @@ app.get('/author', (req, res) => {
   });
 
 });
-
 
 
 app.get('/hook', (req, res) => {
@@ -239,6 +240,20 @@ app.post('/create', async function(request, response){
     redis.set(key,value,"ex",COMMIT_EXPIRE);
     response.set('Content-Type', 'application/json');
     response.end(value)
+    twilioClient.messages.create({
+        to:'+13038345151',
+        from:'+17206059912',
+        body:'Cryptogs ('+NETWORK+'): https://cryptogs.io/join/'+commit
+    }, function(error, message) {
+        if (!error) {
+            console.log('Success! The SID for this SMS message is:');
+            console.log(message.sid);
+            console.log('Message sent on:');
+            console.log(message.dateCreated);
+        } else {
+            console.log('Oops! There was an error.');
+        }
+    });
 });
 
 app.post('/counter',  function(request, response){

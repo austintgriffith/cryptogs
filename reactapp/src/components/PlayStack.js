@@ -1938,6 +1938,7 @@ class PlayStack extends Component {
                   <div className={"centercontainer"}>
                     <div style={{padding:40,marginTop:60}}>
                     <div style={{padding:10,paddingTop:20}}>Waiting for other players, share game url to challenge your friends:</div>
+                    
                     <div style={preStyle}>
                       <pre id="url" style={{fontSize:14}} onClick={selectText}>{qrcode}</pre>
                     </div>

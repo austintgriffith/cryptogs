@@ -1,11 +1,35 @@
-import React from 'react'
 
-const MMButton = (props) => {
+import React, { Component } from 'react';
+
+
+class MMButton extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      clicked:false
+    }
+  }
+  click(){
+    if(!this.state.clicked){
+      this.setState({clicked:true})
+      setTimeout(()=>{
+        this.setState({clicked:false})
+      },5000)
+      this.props.onClick.apply( this, arguments );
+    }
+
+
+  }
+  render(){
+    let color = this.props.color
+    if(this.state&&this.state.clicked){
+      color = "#999999"
+    }
 
     const buttonStyles = {
         display: 'inline-block',
         padding: '5px 17px',
-        backgroundColor: props.color,
+        backgroundColor: color,
         border: 'none',
         color: '#ffffff',
         cursor: 'pointer',
@@ -18,10 +42,13 @@ const MMButton = (props) => {
     }
 
     return (
-        <button className="grow" style={buttonStyles} onClick={props.onClick}>
-                {props.children}
+        <button className="grow" style={buttonStyles} onClick={this.click.bind(this)}>
+                {this.props.children}
         </button>
     )
+  }
+
+
 }
 
 export default MMButton
