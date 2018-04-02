@@ -1,4 +1,5 @@
 "use strict";
+const axios = require('axios');
 const express = require('express');
 const https = require('https');
 const helmet = require('helmet');
@@ -197,7 +198,11 @@ app.get('/commit/:commit', (req, res) => {
   });
 });
 
-
+app.get('/test', (req, res) => {
+  console.log("--TEST",req.params)
+  res.set('Content-Type', 'application/json');
+  res.end(JSON.stringify({test:true}))
+});
 
 app.post('/create', async function(request, response){
     console.log("CREATE",request.body);      // your JSON
@@ -240,6 +245,7 @@ app.post('/create', async function(request, response){
     redis.set(key,value,"ex",COMMIT_EXPIRE);
     response.set('Content-Type', 'application/json');
     response.end(value)
+
     twilioClient.messages.create({
         to:'+13038345151',
         from:'+17206059912',
@@ -254,6 +260,39 @@ app.post('/create', async function(request, response){
             console.log('Oops! There was an error.');
         }
     });
+
+    if(NETWORK==1){
+      var postData = {
+        "content": 'A new game is looking for challengers: https://cryptogs.io/join/'+commit,
+        "username": "Cryptog"
+      };
+      let axiosConfig = {
+        headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+            "Access-Control-Allow-Origin": "*",
+        }
+      };
+      axios.post(fs.readFileSync("discord.webhook"), postData, axiosConfig)
+      .then((res) => {
+        console.log("RESPONSE RECEIVED: ", res);
+      })
+      .catch((err) => {
+        console.log("AXIOS ERROR: ", err);
+      })
+
+      postData = {
+        "text": 'A new game is looking for challengers: https://cryptogs.io/join/'+commit,
+      };
+      axios.post(fs.readFileSync("slack.webhook").toString().trim(), postData, axiosConfig)
+      .then((res) => {
+        console.log("RESPONSE RECEIVED: ", res);
+      })
+      .catch((err) => {
+        console.log("AXIOS ERROR: ", err);
+      })
+    }
+
+
 });
 
 app.post('/counter',  function(request, response){

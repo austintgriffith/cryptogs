@@ -29,7 +29,7 @@ export default createClass({
     this.loader()
   },
   toggle(){
-      this.setState({isMinimized:!(this.state.isMinimized)})
+      //this.setState({isMinimized:!(this.state.isMinimized)})
   },
   async loader(){
     let {web3,blockNumber,showLoadingScreen} = this.props

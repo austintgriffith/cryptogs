@@ -14,6 +14,9 @@ import LoaderAnimation from '../components/LoaderAnimation.js'
 import Blockies from 'react-blockies'
 import cookie from 'react-cookies'
 import axios from 'axios'
+import Phone from 'react-phone-number-input'
+import 'react-phone-number-input/rrui.css'
+import 'react-phone-number-input/style.css'
 var QRCode = require('qrcode-react');
 
 let loadInterval
@@ -1255,6 +1258,14 @@ class PlayStack extends Component {
 
 
   }
+  smsChange(value){
+    this.setState({sms:value},()=>{
+      var phoneNumberPattern = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
+      if(phoneNumberPattern.test(this.state.sms)){
+        console.log("this.state.sms",this.state.sms,"VALID")
+      }else{console.log("this.state.sms",this.state.sms,"INVALID")}
+    })
+  }
   render(){
     let qrcode
     let width = 700
@@ -1389,9 +1400,9 @@ class PlayStack extends Component {
 
     }
 
-    console.log("checking for round...",this.state.coinFlipResult,this.state.round)
+    //console.log("checking for round...",this.state.coinFlipResult,this.state.round)
     if(this.state&&this.state.coinFlipResult&&this.state.coinFlipResult.winner&&this.state.round&&this.state.round>=1){
-      console.log("Double checking who is throwing based on round ",this.state.round)
+      //console.log("Double checking who is throwing based on round ",this.state.round)
       if(this.state.round%2==0){
         if(this.state.coinFlipResult.winner.toLowerCase()==player1.toLowerCase()){
           currentlyThrowing=player2
@@ -1541,9 +1552,9 @@ class PlayStack extends Component {
     let display = ""
     if(stackMode==0){
 
-      console.log("checking DISPLAY")
+      //console.log("checking DISPLAY")
       if(this.props&&this.props.api&&this.props.api.version&&this.state._counterStack){
-        console.log("shouldn't DISPLAY")
+        //console.log("shouldn't DISPLAY")
 
 
 
@@ -1938,9 +1949,18 @@ class PlayStack extends Component {
                   <div className={"centercontainer"}>
                     <div style={{padding:40,marginTop:60}}>
                     <div style={{padding:10,paddingTop:20}}>Waiting for other players, share game url to challenge your friends:</div>
-                    
                     <div style={preStyle}>
                       <pre id="url" style={{fontSize:14}} onClick={selectText}>{qrcode}</pre>
+                    </div>
+                    <div style={{padding:10,paddingTop:20}}>
+                      <form>
+                        Receive a text when challenger arrives:
+                        <div style={{position:"relative"}}>
+                          <div style={{margin:"auto",width:180,padding:10}}>
+                            <Phone country="US" style={{width:160}}  placeholder="555-555-5555" value={ this.state.sms } onChange={ this.smsChange.bind(this) } />
+                          </div>
+                        </div>
+                      </form>
                     </div>
                     </div>
 
@@ -1979,7 +1999,7 @@ class PlayStack extends Component {
 
         }
 
-        console.log("PLAYSTACK SCALE",scale)
+        //console.log("PLAYSTACK SCALE",scale)
 
         let messageScale = 1
         let heightScale = 1
@@ -1997,7 +2017,7 @@ class PlayStack extends Component {
           )
         }
 
-        console.log("shrkinkgngk",scale)
+        //console.log("shrkinkgngk",scale)
         display = (
           <div>
             {stackDisplay}

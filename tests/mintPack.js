@@ -114,6 +114,62 @@ let ethDen = [
   "ethdenver.png",
 ]
 
+
+let awTwo = [
+  "awtog.jpg",
+  "awweb.jpg",
+  "awbwskull.jpg",
+  "awredblackskull.jpg",
+  "awcryptogs.jpg",
+  "awtog.jpg",
+  "awweb.jpg",
+  "awbwskull.jpg",
+  "awredblackskull.jpg",
+  "awcryptogs.jpg",
+  "awtog.jpg",
+  "awweb.jpg",
+  "awbwskull.jpg",
+  "awredblackskull.jpg",
+  "awcryptogs.jpg",
+]
+
+let awCrypto = [
+  "awcrypto1.jpg",
+  "awcrypto6.jpg",
+  "awcrypto2.jpg",
+  "awcrypto3.jpg",
+  "awcrypto4.jpg",
+  "awcrypto5.jpg",
+  "awcrypto1.jpg",
+  "awcrypto6.jpg",
+  "awcrypto2.jpg",
+  "awcrypto3.jpg",
+  "awcrypto4.jpg",
+  "awcrypto5.jpg",
+  "awcrypto1.jpg",
+  "awcrypto6.jpg",
+  "awcrypto2.jpg",
+  "awcrypto3.jpg",
+  "awcrypto4.jpg",
+  "awcrypto5.jpg",
+]
+
+let awAnimals = [
+  "awrhino.jpg",
+  "awgiraffe.jpg",
+  "awelephant.jpg",
+  "awrhino.jpg",
+  "awgiraffe.jpg",
+  "awelephant.jpg",
+  "awrhino.jpg",
+  "awgiraffe.jpg",
+  "awelephant.jpg",
+  "awrhino.jpg",
+  "awgiraffe.jpg",
+  "awelephant.jpg",
+]
+
+
 function grabRandomTen(arr){
   let newArr = []
   var tempArray = arr.slice();
