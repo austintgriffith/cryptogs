@@ -1926,6 +1926,19 @@ class PlayStack extends Component {
           if(drawCounterStacks[c]) counterStackCount++
         }
 
+        let phoneInput = ""
+        if(false){
+          phoneInput=(
+
+            <div style={{position:"relative"}}>
+            Receive a text when challenger arrives:
+            <div style={{margin:"auto",width:180,padding:10}}>
+              <Phone country="US" style={{width:160}}  placeholder="555-555-5555" value={ this.state.sms } onChange={ this.smsChange.bind(this) } />
+            </div>
+            </div>
+            
+          )
+        }
 
         if(account.toLowerCase()==stackData.owner.toLowerCase()){
           if(counterStackCount>0){
@@ -1954,12 +1967,7 @@ class PlayStack extends Component {
                     </div>
                     <div style={{padding:10,paddingTop:20}}>
                       <form>
-                        Receive a text when challenger arrives:
-                        <div style={{position:"relative"}}>
-                          <div style={{margin:"auto",width:180,padding:10}}>
-                            <Phone country="US" style={{width:160}}  placeholder="555-555-5555" value={ this.state.sms } onChange={ this.smsChange.bind(this) } />
-                          </div>
-                        </div>
+
                       </form>
                     </div>
                     </div>
