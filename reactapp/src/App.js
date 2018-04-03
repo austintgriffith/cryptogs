@@ -272,7 +272,7 @@ export default createClass({
 
 		if(this.state.reloadRouter){
 				router = (
-						<div style={{opacity:0.3}}><PogAnimation loader={true} image={'unicorn.png'} /></div>
+						<div style={{opacity:0.3}}><PogAnimation loader={true} image={'unicorn.png'} />here?</div>
 				)
 		}else{
 			router = (

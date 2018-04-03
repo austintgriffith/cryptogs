@@ -20,11 +20,28 @@ export default createClass({
 		throwAlert: PropTypes.func,
 		api: PropTypes.object,
 	},
+	getInitialState(){
+		return {
+			extraMessage:""
+		}
+	},
+	componentDidMount(){
+		setTimeout(()=>{
+			this.setState({extraMessage:(
+					<div style={{width:"100%",textAlign:"center",padding:50}}>
+						Unlock <a target="_blank" href='https://metamask.io'>MetaMask</a> to Play.
+					</div>
+			)})
+		},4000)
+	},
 	render(){
 		const { account,contracts } = this.context
 		if(!account || !contracts.Cryptogs){
 			return (
-				<div style={{opacity:0.3}}><PogAnimation loader={true} image={'unicorn.png'} /></div>
+				<div>
+					<div style={{opacity:0.3}}><PogAnimation loader={true} image={'unicorn.png'} /></div>
+					{this.state.extraMessage}
+				</div>
 			)
 		}
 		return (

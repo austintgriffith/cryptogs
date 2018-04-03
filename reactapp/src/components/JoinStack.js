@@ -19,7 +19,6 @@ class JoinStack extends Component {
     setTimeout(()=>{
       this.loadStackData()
     },1000)
-
   }
   async loadStackData(){
     let stack
