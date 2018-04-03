@@ -38,7 +38,6 @@ const MAINNETGWEI = 5
 const STARTINGGWEI = 21
 
 var Web3 = require('web3')
-var web3
 let contractLoadingInterval
 let webWaitInterval
 let waitForWeb3Interval
