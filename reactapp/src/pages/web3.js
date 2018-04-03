@@ -70,7 +70,10 @@ export default createClass({
 			</div>
 			{accoutView}
 
-			
+			<div style={{cursor:"pointer",width:"100%",textAlign:"center"}} onClick={()=>{
+				window.reload(true);
+			}}>Reload</div>
+
 
 			<section className="section pt-6 pb-6">
 				<div className="container">
