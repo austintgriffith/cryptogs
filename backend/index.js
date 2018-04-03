@@ -272,7 +272,7 @@ app.post('/create', async function(request, response){
             "Access-Control-Allow-Origin": "*",
         }
       };
-      axios.post(fs.readFileSync("discord.webhook"), postData, axiosConfig)
+      axios.post(fs.readFileSync("discord.webhook").toString().trim(), postData, axiosConfig)
       .then((res) => {
         console.log("RESPONSE RECEIVED: ", res);
       })
