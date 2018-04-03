@@ -70,9 +70,13 @@ export default createClass({
 			</div>
 			{accoutView}
 
-			<div style={{cursor:"pointer",width:"100%",textAlign:"center"}} onClick={()=>{
-				window.reload(true);
+			<div style={{cursor:"pointer",width:"100%",textAlign:"center",padding:10}} onClick={()=>{
+				window.location.reload(true);
 			}}>Reload</div>
+
+			<div style={{cursor:"pointer",width:"100%",textAlign:"center",padding:10}} onClick={()=>{
+				window.location = "/web3?nocache="+Date.now()
+			}}>No Cache</div>
 
 
 			<section className="section pt-6 pb-6">
