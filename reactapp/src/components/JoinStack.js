@@ -29,6 +29,11 @@ class JoinStack extends Component {
         .then((response)=>{
           console.log("COMMIT BACK FROM API",response);
 
+          console.log("Checking for counter stack:",response.data._counterStack)
+          if(response.data._counterStack){
+            window.location = "/play/"+this.state.stack
+          }
+
           console.log("SETSTATE",response.data)
           this.setState(response.data)
         })

@@ -11,7 +11,7 @@ import PogAnimation from '../components/PogAnimation'
 import axios from 'axios'
 
 const DEBUG = false;
-const BLOCKLOOKBACK = 240*24*3; //show the last 3 days
+const BLOCKLOOKBACK = 240*24*4; //show the last 4 days
 
 let mountTime = Date.now()
 
