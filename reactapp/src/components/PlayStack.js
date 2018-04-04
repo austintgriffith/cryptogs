@@ -19,6 +19,8 @@ import 'react-phone-number-input/rrui.css'
 import 'react-phone-number-input/style.css'
 var QRCode = require('qrcode-react');
 
+const USEPHONE = true;
+
 let loadInterval
 let waitInterval
 let slammerTimeout
@@ -1259,10 +1261,28 @@ class PlayStack extends Component {
 
   }
   smsChange(value){
+    let {account,blockNumber,contracts,etherscan,showLoadingScreen} = this.props.context
     this.setState({sms:value},()=>{
-      var phoneNumberPattern = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
-      if(phoneNumberPattern.test(this.state.sms)){
+      //var phoneNumberPattern = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/;
+      //if(phoneNumberPattern.test(this.state.sms)){
+      if(value.length>=12){
         console.log("this.state.sms",this.state.sms,"VALID")
+        try{
+          axios.post(this.props.api.host+'/phone', {
+    				account: account,
+            phone: value
+    		  })
+    		  .then(function (response) {
+    				console.log(response)
+    		    console.log("PHONESAVED",response.data);
+
+    		  })
+    		  .catch(function (error) {
+    		    console.log(error);
+    		  });
+        } catch(e) {
+          console.log(e)
+        }
       }else{console.log("this.state.sms",this.state.sms,"INVALID")}
     })
   }
@@ -1927,7 +1947,7 @@ class PlayStack extends Component {
         }
 
         let phoneInput = ""
-        if(false){
+        if(USEPHONE){
           phoneInput=(
 
             <div style={{position:"relative"}}>
@@ -1936,7 +1956,7 @@ class PlayStack extends Component {
               <Phone country="US" style={{width:160}}  placeholder="555-555-5555" value={ this.state.sms } onChange={ this.smsChange.bind(this) } />
             </div>
             </div>
-            
+
           )
         }
 
@@ -1966,9 +1986,7 @@ class PlayStack extends Component {
                       <pre id="url" style={{fontSize:14}} onClick={selectText}>{qrcode}</pre>
                     </div>
                     <div style={{padding:10,paddingTop:20}}>
-                      <form>
-
-                      </form>
+                        {phoneInput}
                     </div>
                     </div>
 

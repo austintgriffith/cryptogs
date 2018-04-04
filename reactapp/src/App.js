@@ -29,8 +29,6 @@ import axios from 'axios'
 import PogAnimation from './components/PogAnimation'
 import {Motion, spring, presets} from 'react-motion';
 
-
-
 let OPTIONALBACKENDPORT = "8001"
 
 const DEBUG = false

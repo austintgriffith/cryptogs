@@ -9,7 +9,6 @@ import Spinner from '../components/Spinner.js'
 import CryptogDocScroll from '../components/CryptogDocScroll.js'
 var Web3 = require('web3')
 var web3
-
 let loadInterval
 let initialIntervalLoaded
 
@@ -20,34 +19,50 @@ export default createClass({
 	contextTypes: {
 		web3: PropTypes.object,
 		network: PropTypes.number,
+
 	},
 	getInitialState(){
-		return {status:"init...",accounts:[]}
+		return {status:"init...",accounts:[],checks:0}
 	},
 	componentDidMount(){
 		window.addEventListener('load', () => {
-			this.setState({status:"Load..."})
-			let web3js
-			if (typeof web3 !== 'undefined') {
-				web3js = new Web3(web3.currentProvider);
-			} else if (typeof window.web3 !== 'undefined') {
-				web3js = new Web3(window.web3.currentProvider);
-			} else {
-				this.setState({status:"no web3"})
-			}
-			if(web3js){
-				this.setState({status:"web3..."})
-				web3js.eth.net.getId().then((network)=>{
-					this.setState({status:"network:"+network})
-					console.log("Getting accounts...")
-					web3js.eth.getAccounts().then((accounts)=>{
-						this.setState({accounts:accounts})
-					})
-				})
-			}
+			this.waitForWeb3()
 		})
 	},
+	waitForWeb3(){
+		console.log("=== DETECTING WEB3 ===")
+		this.setState({checks:this.state.checks+1,status:"Load..."})
+		let web3js
+		if (typeof web3 !== 'undefined' && typeof web3.currentProvider !== 'undefined') {
+			web3js = new Web3(web3.currentProvider);
+		} else if (typeof window.web3 !== 'undefined' && typeof window.web3.currentProvider !== 'undefined') {
+			web3js = new Web3(window.web3.currentProvider);
+		} else {
+			if(this.state.checks>10){
 
+				web3js=web3
+				web3js.eth.getAccounts(accounts => {
+					this.setState({status:"forceweb3mightwork"+accounts[0]})
+				})
+				this.setState({status:"forceweb3"})
+
+			}else{
+				this.setState({status:"no web3"})
+				setTimeout(this.waitForWeb3,500)
+			}
+		}
+
+		if(typeof web3js !== 'undefined'){
+			this.setState({status:"web3..."})
+			web3js.eth.net.getId().then((network)=>{
+				this.setState({status:"network:"+network})
+				console.log("Getting accounts...")
+				web3js.eth.getAccounts().then((accounts)=>{
+					this.setState({accounts:accounts})
+				})
+			})
+		}
+	},
 	render(){
 		let {web3,network} = this.context
 
@@ -66,7 +81,7 @@ export default createClass({
 
 
 			<div>
-				{this.state.status}
+				{this.state.status} {this.state.checks}
 			</div>
 			{accoutView}
 
@@ -78,6 +93,16 @@ export default createClass({
 				window.location = "/web3?nocache="+Date.now()
 			}}>No Cache</div>
 
+			<pre>
+			window.web3:{typeof window.web3}
+
+			</pre>
+			<pre>
+			web3:{typeof web3}
+
+			</pre>
+			<div>web3.currentProvider:{typeof web3.currentProvider}</div>
+			<div>window.web3.currentProvider:{typeof window.web3.currentProvider}</div>
 
 			<section className="section pt-6 pb-6">
 				<div className="container">

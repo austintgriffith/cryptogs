@@ -16,6 +16,7 @@ var twilio = require('twilio');
 var twilioClient = new twilio(fs.readFileSync("twilio.sid").toString().trim(), fs.readFileSync("twilio.token").toString().trim());
 
 const COMMIT_EXPIRE = 86400*3 // commit expires in an a few days?
+const PHONE_EXPIRE = 86400*7
 
 let contracts;
 let tokens = [];
@@ -204,6 +205,11 @@ app.get('/test', (req, res) => {
   res.end(JSON.stringify({test:true}))
 });
 
+app.post('/phone', async function(request, response){
+    console.log("PHONE",request.body);
+    redis.set("phone_"+request.body.account,request.body.phone,"ex",PHONE_EXPIRE);
+})
+
 app.post('/create', async function(request, response){
     console.log("CREATE",request.body);      // your JSON
     let secret = web3.utils.keccak256(Math.random()+Date.now()+""+JSON.stringify(request.body));
@@ -333,6 +339,23 @@ app.post('/counter',  function(request, response){
     redis.set(key,value,"ex",COMMIT_EXPIRE);
     response.set('Content-Type', 'application/json');
     response.end(value)
+    redis.get("phone_"+commitData.stackData.owner, function (err, phone) {
+      console.log("SEND A TEXT TO "+phone)
+      twilioClient.messages.create({
+          to:phone,
+          from:'+17206059912',
+          body:'A challenger has arrived: https://cryptogs.io/play/'+commit
+      }, function(error, message) {
+          if (!error) {
+              console.log('Success! The SID for this SMS message is:');
+              console.log(message.sid);
+              console.log('Message sent on:');
+              console.log(message.dateCreated);
+          } else {
+              console.log('Oops! There was an error.');
+          }
+      });
+    })
   });
 });
 
