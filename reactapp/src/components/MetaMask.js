@@ -100,6 +100,13 @@ class MetaMask extends Component {
       src="/metamask.png"
       />
     )
+    let mobileImage = (
+      <img style={{maxHeight:40,marginTop:10,paddingRight:5,verticalAlign:"middle"}}
+      src="/cryptogs/toshi.jpg"
+      />
+    )
+
+
 
     if(this.props.blockNumber&&this.props.blockNumber>0){
       blockDisplay = (
@@ -130,7 +137,7 @@ class MetaMask extends Component {
             window.open("/web3", '_blank');
           }}>
             <a target="_blank" href={"/web3"}>
-            {metamaskImage}
+            {mobileImage}
             <span style={this.state.textStyle}>
               Install & Unlock Web3
             </span>

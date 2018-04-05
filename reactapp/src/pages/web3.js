@@ -83,22 +83,6 @@ export default createClass({
 				<div className="container">
 					<div className="jumbotron p-5">
 						<div className="row align-items-center" onClick={()=>{
-							window.location = "https://www.cipherbrowser.com/"
-						}}>
-							<div className="col-md-3">
-								<CryptogDocScroll image="cipher.jpg" />
-							</div>
-							<div className="col-md-9">
-								<div className="pt-2 pb-2">
-								  <p className="lead-2 mb-0" style={{fontSize:30}}><a href="https://www.cipherbrowser.com/">Cipher Browser</a></p>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div className="container">
-					<div className="jumbotron p-5">
-						<div className="row align-items-center" onClick={()=>{
 							window.location = "https://www.toshi.org/"
 						}}>
 							<div className="col-md-3">
@@ -107,6 +91,22 @@ export default createClass({
 							<div className="col-md-9">
 								<div className="pt-2 pb-2">
 									<p className="lead-2 mb-0" style={{fontSize:30}}><a href="https://www.toshi.org/">Toshi</a></p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="container">
+					<div className="jumbotron p-5">
+						<div className="row align-items-center" onClick={()=>{
+							window.location = "https://www.cipherbrowser.com/"
+						}}>
+							<div className="col-md-3">
+								<CryptogDocScroll image="cipher.jpg" />
+							</div>
+							<div className="col-md-9">
+								<div className="pt-2 pb-2">
+								  <p className="lead-2 mb-0" style={{fontSize:30}}><a href="https://www.cipherbrowser.com/">Cipher Browser</a></p>
 								</div>
 							</div>
 						</div>
