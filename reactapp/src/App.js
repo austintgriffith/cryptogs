@@ -12,6 +12,7 @@ import IndexPage from './pages/index.js'
 import AddressPage from './pages/address.js'
 import StacksPage from './pages/stacks.js'
 import Web3Page from './pages/web3.js'
+import TestPage from './pages/test.js'
 import CreatePage from './pages/create.js'
 import ContractsPage from './pages/contracts.js'
 import PlayPage from './pages/play.js'
@@ -277,6 +278,7 @@ export default createClass({
 	 				<Switch>
 	 						 <Route exact path="/" component={IndexPage} />
 							 <Route path={`/web3`} component={Web3Page} />
+							 <Route path={`/test`} component={TestPage} />
 	 						 <Route path={`/stacks`} component={StacksPage} />
 	 						 <Route path={`/create`} component={CreatePage} />
 	 						 <Route path={`/buy`} component={BuyPage} />

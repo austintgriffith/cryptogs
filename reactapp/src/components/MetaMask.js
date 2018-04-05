@@ -27,24 +27,23 @@ class MetaMask extends Component {
   }
   checkMetamask(){
     if(DEBUG) console.log("Detecting web3...")
-    let web3js
-    if (typeof web3 !== 'undefined') {
-      web3js = new Web3(web3.currentProvider);
-    } else if (typeof window.web3 !== 'undefined') {
-      web3js = new Web3(window.web3.currentProvider);
+    if (typeof web3 !== 'undefined' && typeof web3.currentProvider !== 'undefined') {
+      web3 = new Web3(web3.currentProvider);
+    } else if (typeof window.web3 !== 'undefined' && typeof window.web3.currentProvider !== 'undefined') {
+      web3 = new Web3(window.web3.currentProvider);
     } else {
       if(DEBUG) console.log("no web3")
     }
-    if(web3js){
+    if(web3){
       if(DEBUG) console.log("Found web3...")
-      web3js.eth.net.getId().then((network)=>{
+      web3.eth.net.getId().then((network)=>{
         if(DEBUG) console.log("Network:",network)
         if(network>9999) network=9999
         let networkNumber = network
 
-        this.props.networkReady(networkNumber,web3js)
+        this.props.networkReady(networkNumber,web3)
 
-        web3js.eth.getAccounts().then((accounts)=>{
+        web3.eth.getAccounts().then((accounts)=>{
           if(DEBUG) console.log("Accounts:",accounts)
           network = translateNetwork(network);
           if( network=="Morden" || network=="Rinkeby" || network=="Kovan"){
@@ -76,7 +75,7 @@ class MetaMask extends Component {
                 }else{
                   if(this.state.metamask!=3) {
                     this.setState({metamask:3,accounts:accounts,network:network},()=>{
-                      this.props.init(accounts[0],networkNumber,web3js)
+                      this.props.init(accounts[0],networkNumber,web3)
                     })
                   }
                 }

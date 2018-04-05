@@ -48,7 +48,7 @@ export default createClass({
 
 			}else{
 				this.setState({status:"no web3"})
-				setTimeout(this.waitForWeb3,500)
+				setTimeout(this.waitForWeb3,1500)
 			}
 		}
 
@@ -78,31 +78,6 @@ export default createClass({
 		return (
 			<div>
 
-
-
-			<div>
-				{this.state.status} {this.state.checks}
-			</div>
-			{accoutView}
-
-			<div style={{cursor:"pointer",width:"100%",textAlign:"center",padding:10}} onClick={()=>{
-				window.location.reload(true);
-			}}>Reload</div>
-
-			<div style={{cursor:"pointer",width:"100%",textAlign:"center",padding:10}} onClick={()=>{
-				window.location = "/web3?nocache="+Date.now()
-			}}>No Cache</div>
-
-			<pre>
-			window.web3:{typeof window.web3}
-
-			</pre>
-			<pre>
-			web3:{typeof web3}
-
-			</pre>
-			<div>web3.currentProvider:{typeof web3.currentProvider}</div>
-			<div>window.web3.currentProvider:{typeof window.web3.currentProvider}</div>
 
 			<section className="section pt-6 pb-6">
 				<div className="container">
@@ -170,6 +145,28 @@ export default createClass({
 					</div>
 				</div>
 			</section>
+
+
+						<div>
+							{this.state.status} {this.state.checks}
+						</div>
+						{accoutView}
+
+						<div style={{cursor:"pointer",width:"100%",textAlign:"center",padding:10}} onClick={()=>{
+							window.location.reload(true);
+						}}>Reload</div>
+
+						<div style={{cursor:"pointer",width:"100%",textAlign:"center",padding:10}} onClick={()=>{
+							window.location = "/web3?nocache="+Date.now()
+						}}>No Cache</div>
+
+						<pre>
+						window.web3:{typeof window.web3}
+
+						</pre>
+						<pre>
+							web3:{typeof web3}
+						</pre>
 
 
 			</div>

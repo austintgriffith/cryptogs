@@ -41,7 +41,7 @@ export default createClass({
 
 							</div>
 							<div className="col-md-4 text-center">
-								<a href="/"><img style={{maxHeight:60}}src="/logo.png"/></a>
+								<a href="/"><img style={{maxHeight:60,opacity:1}}src="/logo.png"/></a>
 							</div>
 							<div className="col-md-3">
 									<nav className="site-nav">
