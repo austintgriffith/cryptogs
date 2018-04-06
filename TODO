@@ -1,6 +1,9 @@
+stage dev script
+fix empty join stack bug
+
 [x] SEO and unfurl image
 [ ] contract links should open a new window
-[ ] pog references in code changed to cryptog 
+[ ] pog references in code changed to cryptog
 [ ] new contact info on front page with email and twitter
 [ ] warning for 50 tx problem has a crappy link in it
 [ ] I think I'd like a pull up that brings up the block Loader thing any time and have a link there that takes you to the "pending transactions" on the main contract

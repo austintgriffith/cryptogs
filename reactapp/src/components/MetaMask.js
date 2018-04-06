@@ -41,7 +41,7 @@ class MetaMask extends Component {
         if(network>9999) network=9999
         let networkNumber = network
 
-        this.props.networkReady(networkNumber,web3)
+        if(!this.props.network || this.props.network!=network) this.props.networkReady(networkNumber,web3)
 
         web3.eth.getAccounts().then((accounts)=>{
           if(DEBUG) console.log("Accounts:",accounts)
@@ -72,6 +72,9 @@ class MetaMask extends Component {
                 if(this.props.account&&this.props.account!=accounts[0]){
                   //force a reload on account change
                   window.location.reload(true);
+                //}else if(this.props.network&&this.props.network!=network){
+                    //force a reload on account change
+                //    window.location.reload(true);
                 }else{
                   if(this.state.metamask!=3) {
                     this.setState({metamask:3,accounts:accounts,network:network},()=>{

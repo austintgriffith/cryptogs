@@ -54,7 +54,7 @@ class AddressStack extends Component {
         <Spinner key={"cryptog"+token.id} guts={
           (spinning)=>{
             return (
-              <Cryptog  id={token.id} scale={0.6} slowrolling={spinning} image={token.image} zIndex={1}/>
+              <Cryptog  id={token.id} scale={0.8} slowrolling={spinning} image={token.image} zIndex={1}/>
             )
           }
         } click={()=>{

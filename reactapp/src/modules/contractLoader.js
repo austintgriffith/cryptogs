@@ -1,5 +1,3 @@
-
-
 export default function(contractList,web3,network){
   let contracts = []
   console.log("Network:",network)

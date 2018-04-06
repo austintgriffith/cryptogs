@@ -18,7 +18,7 @@ class JoinStack extends Component {
   componentDidMount(){
     setTimeout(()=>{
       this.loadStackData()
-    },1000)
+    },1500)
   }
   async loadStackData(){
     let stack
@@ -31,11 +31,21 @@ class JoinStack extends Component {
 
           console.log("Checking for counter stack:",response.data._counterStack)
           if(response.data._counterStack){
-            window.location = "/play/"+this.state.stack
+            setTimeout(()=>{
+              window.location = "/play/"+this.state.stack
+            },5000)
           }
 
-          console.log("SETSTATE",response.data)
-          this.setState(response.data)
+          if(!response.data){
+            setTimeout(()=>{
+              window.location = "/stacks"
+            },1000)
+          }else{
+            console.log("SETSTATE",response.data)
+            this.setState(response.data)
+          }
+
+
         })
       } catch(e) {
         console.log(e)
@@ -108,6 +118,7 @@ class JoinStack extends Component {
       })
     }
 	}
+
   render(){
     if(!this.state.stackData){
       return (

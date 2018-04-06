@@ -8,5 +8,5 @@ export default function(image){
   }else if(chars=="ag"){
     return "Austin Griffith"
   }
-  return "Anonymous"
+  return "Unknown"
 }

@@ -2,15 +2,13 @@ import React, { Component } from 'react';
 import createClass from 'create-react-class';
 import Draggable from 'react-draggable';
 
-const MAXGWEI = 25
-const MINGWEI = 0.1
 
 let gasOffset = 120;
 
 
 export default createClass({
   getInitialState(){
-    let startingPercent = this.props.GWEI / (MAXGWEI)
+    let startingPercent = this.props.GWEI / (this.props.MAXGWEI)
     let startingPixels = 100-(startingPercent*100)
     let topSideRoom = 100-startingPixels
     let bottomSideRoom = startingPixels-100
@@ -30,9 +28,11 @@ export default createClass({
   },
   handleGasDrag(mouse,obj){
     let currentPercent = 100-(obj.y+this.state.startingPixels);
-    let actualGWEI = Math.round(currentPercent/100 * MAXGWEI *100,1)/100;
-    if(actualGWEI<MINGWEI) actualGWEI=MINGWEI;
-    if(actualGWEI>MAXGWEI) actualGWEI=MAXGWEI;
+    //console.log("currentPercent",currentPercent)
+    let actualGWEI = Math.round(currentPercent/100 * this.props.MAXGWEI *100,1)/100;
+    //console.log("MAXGWEI",this.props.MAXGWEI)
+    if(actualGWEI<this.props.MINGWEI) actualGWEI=this.props.MINGWEI;
+    if(actualGWEI>this.props.MAXGWEI) actualGWEI=this.props.MAXGWEI;
     this.props.setGWEI(actualGWEI)
   },
   render(){

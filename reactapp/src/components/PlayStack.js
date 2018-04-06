@@ -274,7 +274,9 @@ class PlayStack extends Component {
       let possibleFlightPaths = [-150,-200,-250,-300,-350,350,300,250,200,150];
       axios.get(this.props.api.host+"/commit/"+this.state.stack)
       .then((response)=>{
-        //console.log("APIPOLL...",response)
+        if(response.data==""){
+          window.location = "/stacks"
+        }
         if(!this.state.stackData){
           this.doUpdate(response.data)
         }
@@ -401,11 +403,11 @@ class PlayStack extends Component {
 
       if(this.state.stackMode<=1){
         let owner1 = this.state.stackData.owner
-        console.log("Check on transfer 1 ",this.state.stack,owner1)
+        //console.log("Check on transfer 1 ",this.state.stack,owner1)
         try{
           axios.get(this.props.api.host+"/transfer/"+this.state.stack+"/"+owner1)
           .then((response)=>{
-            console.log("XFER1--- ",response.data.txhash)
+            //console.log("XFER1--- ",response.data.txhash)
             if(response.data.txhash){
               this.setState({transfer1:response.data.txhash})
             }
@@ -424,11 +426,11 @@ class PlayStack extends Component {
           }
         }
         if(owner2){
-          console.log("Check on transfer 2 ",this.state.stack,owner2)
+          //console.log("Check on transfer 2 ",this.state.stack,owner2)
           try{
             axios.get(this.props.api.host+"/transfer/"+this.state.stack+"/"+owner2)
             .then((response)=>{
-              console.log("XFER2--- ",response.data.txhash)
+              //console.log("XFER2--- ",response.data.txhash)
               if(response.data.txhash){
                 this.setState({transfer2:response.data.txhash})
               }
@@ -440,11 +442,11 @@ class PlayStack extends Component {
       }
 
       if(this.state.stackMode<=1){
-        console.log("Check on generate ",this.state.stack)
+        //console.log("Check on generate ",this.state.stack)
         try{
           axios.get(this.props.api.host+"/generate/"+this.state.stack)
           .then((response)=>{
-            console.log("GENERATE--- ",response.data.txhash)
+            //console.log("GENERATE--- ",response.data.txhash)
             if(response.data.txhash){
               this.setState({generate:response.data.txhash})
             }
@@ -1325,7 +1327,7 @@ class PlayStack extends Component {
         <div style={{position:'relative',width:1000,height:900,background:'url("/static/media/halftone.d3864fe4.png")'}}>
           <div style={{position:'absolute',left:400,top:250}}>
           <div style={{position:'absolute',left:-300,top:-200,zIndex:1}}>
-           <Cryptog angle={-45} scale={0.9} id={1} image={"awpurepoison.jpg"}/>
+           <Cryptog angle={-45} scale={0.9} id={1} image={"awsmile1.jpg"}/>
           </div>
           <div style={{position:'absolute',left:320,top:-120,zIndex:1}}>
            <Cryptog angle={-65} scale={0.9} id={1} image={"awrainbowyinyang.jpg"}/>
@@ -1334,7 +1336,7 @@ class PlayStack extends Component {
            <Cryptog angle={65} scale={0.9} id={1} image={"elephant.png"}/>
           </div>
             <div style={{position:'absolute',left:0,top:stackx+stackspread*2,zIndex:1}}>
-             <Cryptog angle={65} scale={0.9} id={1} image={"hippo.png"}/>
+             <Cryptog angle={65} scale={0.9} id={1} image={"awstussy.jpg"}/>
             </div>
             <div style={{position:'absolute',left:0,top:stackx+stackspread*1,zIndex:1}}>
              <Cryptog angle={65} scale={0.9} id={1} image={"awrainbowyinyang.jpg"}/>
@@ -1343,19 +1345,19 @@ class PlayStack extends Component {
              <Cryptog angle={65} scale={0.9} id={1} image={"awripsaw.jpg"}/>
             </div>
             <div style={{position:'absolute',left:189,top:130,zIndex:1}}>
-             <Cryptog angle={65} scale={0.9} id={1} image={"ethdenver.png"}/>
+             <Cryptog angle={65} scale={0.9} id={1} image={"bufficorn.jpg"}/>
             </div>
             <div style={{position:'absolute',left:129,top:-250,zIndex:1}}>
-             <Cryptog angle={120} scale={0.9} id={1} image={"ethdenver.png"}/>
+             <Cryptog angle={120} scale={0.9} id={1} image={"bufficorn.jpg"}/>
             </div>
             <div style={{position:'absolute',left:-180,top:110,zIndex:1}}>
-             <Cryptog angle={-119} scale={0.9} id={1} image={"ethdenver.png"}/>
+             <Cryptog angle={-119} scale={0.9} id={1} image={"bufficorn.jpg"}/>
             </div>
             <div style={{position:'absolute',left:-240,top:-20,zIndex:1}}>
              <Cryptog angle={95} scale={0.9} id={1} image={"awstussy.jpg"}/>
             </div>
             <div style={{position:'absolute',left:-340,top:20,zIndex:1}}>
-             <Cryptog angle={80} scale={0.9} id={1} image={"hippo.png"}/>
+             <Cryptog angle={80} scale={0.9} id={1} image={"awstussy.jpg"}/>
             </div>
             <div style={{position:'absolute',left:-320,top:-90,zIndex:1,
                         fontWeight:'bold',fontSize:140,letterSpacing:-2}}>
@@ -1768,7 +1770,7 @@ class PlayStack extends Component {
             secondRevokeColor = "#f7861c"
           }
 
-          console.log("activeReceipts",activeReceipts)
+        //  console.log("activeReceipts",activeReceipts)
 
           let messagePadding = 20*scale
           let transfer1 = ""

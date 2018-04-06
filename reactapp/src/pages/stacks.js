@@ -47,8 +47,8 @@ export default createClass({
 	},
 	async loadStackData(){
 		let {contracts,web3,blockNumber,account,network} = this.context
-		if(!account || !network || !contracts || !contracts["Cryptogs"] || !blockNumber){
-			console.log("WAITING",account,network,blockNumber)
+		if(!network || !contracts || !contracts["Cryptogs"] || !blockNumber){
+			console.log("WAITING",network,blockNumber)
 			return (
 				<div>
 					<div style={{opacity:0.3}}><PogAnimation loader={true} image={'dragon.png'} /></div>
@@ -282,6 +282,7 @@ export default createClass({
         return a.timestamp<b.timestamp
     });
 		for(let s in allStacksFlipped){
+			console.log("STACK:",allStacksFlipped[s])
 			if(allStacksFlipped[s].finished){
 				if(allStacksFlipped[s]._sender && finishedStacks.length<5){
 					count++
@@ -338,7 +339,7 @@ export default createClass({
 					)
 				}
 
-			}else if(account && allStacksFlipped[s].otherPlayer && !allStacksFlipped[s].canceled&& !allStacksFlipped[s].canceled &&
+			}else if(account && (allStacksFlipped[s].otherPlayer || allStacksFlipped[s]._counterStack) && !allStacksFlipped[s].canceled&& !allStacksFlipped[s].canceled &&
 					(
 						!allStacksFlipped[s].canceledSenders ||
 						allStacksFlipped[s].canceledSenders.indexOf(account.toLowerCase()) < 0

@@ -33,7 +33,11 @@ let OPTIONALBACKENDPORT = "8001"
 
 const DEBUG = false
 const MAINNETGWEI = 5
+const MAINNETMAXGWEI = 8
+const MAINNETMINGWEI = 0.1
 const STARTINGGWEI = 21
+const STARTINGMAXGWEI = 51
+const STARTINGMINGWEI = 5
 
 var Web3 = require('web3')
 let contractLoadingInterval
@@ -80,8 +84,15 @@ export default createClass({
 		this.setState({loadingTx:tx,loadingDest:dest})
 	},
 	setGWEI(GWEI){
-		this.setState({GWEI:parseInt(GWEI)})
+		//console.log("setGWEI",GWEI)
+		let update = {GWEI:parseInt(GWEI*10)/10}
+		this.setState(update)
 		cookie.save('GWEI', GWEI, { path: '/', maxAge:1800 })
+	},
+	setGWEIScale(MINGWEI,MAXGWEI){
+		//console.log("setGWEIScale",MINGWEI,MAXGWEI)
+		let update = {MINGWEI:parseInt(MINGWEI*10)/10,MAXGWEI:parseInt(MAXGWEI*10)/10}
+		this.setState(update)
 	},
 	metaMaskHintFn(){
 		window.scrollTo(0,0);
@@ -92,7 +103,8 @@ export default createClass({
 	},
 	getInitialState(){
 		let GWEI =  parseInt(cookie.load('GWEI'))
-		if(!GWEI) GWEI=STARTINGGWEI;
+		if(!GWEI) GWEI=MAINNETGWEI;
+		//console.log("STARTING MAINNETMAXGWEI",MAINNETMAXGWEI)
 		return {
 			web3: {},
 			contracts: [],
@@ -106,6 +118,8 @@ export default createClass({
 			apiHint:-100,
 			reloadRouter:false,
 			account:"",
+			MINGWEI:MAINNETMINGWEI,
+			MAXGWEI:STARTINGMAXGWEI,
 		};
 	},
 	componentDidMount(){
@@ -115,14 +129,14 @@ export default createClass({
 	},
 	setupApi(){
 		let currentLocation = window.location
-		console.log("currentLocation",currentLocation)
+		//console.log("currentLocation",currentLocation)
 		let backend = currentLocation.protocol+"//"+currentLocation.hostname+":"+OPTIONALBACKENDPORT
 		if(this.state.network=="1"){
 			backend = "https://api.cryptogs.io"
 		}else if(this.state.network=="3"){
 			backend = "https://stage.cryptogs.io:8001"
 		}
-		console.log("backend",backend)
+		//console.log("backend",backend)
 		let apiCookie = parseInt(cookie.load('api'))
 		if(apiCookie==-1){
 			console.log("don't even try centralized, they have turned it off")
@@ -169,6 +183,11 @@ export default createClass({
 			}else{
 				this.setGWEI(MAINNETGWEI)
 			}
+		}
+		if(network>1){
+			this.setGWEIScale(STARTINGMINGWEI,STARTINGMAXGWEI)
+		}else{
+			this.setGWEIScale(MAINNETMINGWEI,MAINNETMAXGWEI)
 		}
 		this.setState(update)
 		//check to see if we can talk to the api
@@ -291,8 +310,6 @@ export default createClass({
 	 		)
 		}
 
-
-
 		return (
 			<div style={{backgroundColor:"#FFFFFF"}}>
 
@@ -334,7 +351,7 @@ export default createClass({
 				</div>
 				{loader}
 				<Slack />
-				<GasSlider setGWEI={this.setGWEI} GWEI={this.state.GWEI} network={this.state.network}/>
+				<GasSlider setGWEI={this.setGWEI} MINGWEI={this.state.MINGWEI} MAXGWEI={this.state.MAXGWEI} GWEI={this.state.GWEI} network={this.state.network}/>
 			</div>
     )
 
