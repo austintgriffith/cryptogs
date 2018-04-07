@@ -70,6 +70,7 @@ class PlayStack extends Component {
         this.setState({debugString:"api"})
         this.loadAPIStackData()
         loadInterval = setInterval(this.loadAPIStackData.bind(this),1507)
+        loadInterval = setInterval(this.touchStack.bind(this),15000)
       }else{
         this.setState({debugString:"decent"})
         this.loadStackData()
@@ -266,6 +267,25 @@ class PlayStack extends Component {
          return counterstack["token"+i+"Image"]
        }
       }
+    }
+  }
+  async touchStack(){
+    try{
+      if(this.state.stack&&!this.state._counterStack){
+        axios.post(this.props.api.host+"/touch", {
+          commit: this.state.stack,
+        })
+        .then(function (response) {
+          console.log(response)
+          console.log("TOUCHED",response.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      }
+
+    } catch(e) {
+      console.log(e)
     }
   }
   async loadAPIStackData(){
