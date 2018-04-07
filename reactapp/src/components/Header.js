@@ -54,17 +54,17 @@ export default createClass({
 															metaMaskHintFn()
 														}
 													}} style={{padding:10, cursor:"pointer"}}>
-														{"My 'Togs"}
+														{"My Togs"}
 													</a>
 													</li>
 													<li>
 													<a href="/stacks" style={{padding:10}}>
-														{"Play 'Togs"}
+														{"Play Togs"}
 													</a>
 													</li>
 													<li>
 													<a href="/buy" style={{padding:10}}>
-														{"Buy 'Togs"}
+														{"Buy Togs"}
 													</a>
 													</li>
 											</ul>
