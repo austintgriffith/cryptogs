@@ -1962,6 +1962,10 @@ class PlayStack extends Component {
           )
         }
 
+        if(stackData.owner=="0x0000000000000000000000000000000000000000"){
+          window.location.reload(true);
+        }
+
         if(account.toLowerCase()==stackData.owner.toLowerCase()){
           if(counterStackCount>0){
             qrcode = window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack
