@@ -7,6 +7,7 @@ import Banner from '../components/Banner'
 import Cryptog from '../components/Cryptog.js'
 import Spinner from '../components/Spinner.js'
 import CryptogDocScroll from '../components/CryptogDocScroll.js'
+var QRCode = require('qrcode-react');
 
 let loadInterval
 let initialIntervalLoaded
@@ -304,6 +305,27 @@ export default createClass({
 											{"All of our work is 100% open-source and free for anyone to take and extend! Check out our github repo "}
 											<a href="https://github.com/austintgriffith/cryptogs">here</a>.
 										</p>
+									</div>
+								</div>
+
+								<hr className="my-5" />
+
+								<div className="row align-items-center">
+									<div className="col-md-12">
+
+										<div className={"centercontainer"} style={{marginTop:10}}>
+											<QRCode value={"https://cryptogs.io"} size={320}/>
+										</div>
+
+
+										<div style={{marginTop:30}} className="container text-center">
+											<p>
+												<a className="btn btn-primary btn-lg btn--alt" href="/stacks">
+													Play Now
+												</a>
+											</p>
+										</div>
+
 									</div>
 								</div>
 

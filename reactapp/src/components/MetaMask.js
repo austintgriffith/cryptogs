@@ -99,12 +99,12 @@ class MetaMask extends Component {
     )
 
     let metamaskImage = (
-      <img style={{maxHeight:40,marginTop:10,paddingRight:5,verticalAlign:"middle"}}
+      <img style={{maxHeight:40,marginTop:0,paddingRight:5,verticalAlign:"middle"}}
       src="/metamask.png"
       />
     )
     let mobileImage = (
-      <img style={{maxHeight:40,marginTop:10,paddingRight:5,verticalAlign:"middle"}}
+      <img style={{filter:'blur(10px)',filter:"grayscale(70%)",borderRadius:"45%",opacity:0.3,maxHeight:40,marginTop:10,paddingRight:5,verticalAlign:"middle"}}
       src="/cryptogs/toshi.jpg"
       />
     )

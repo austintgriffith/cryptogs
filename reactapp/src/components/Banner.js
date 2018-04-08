@@ -3,11 +3,11 @@ import React from 'react'
 const Banner = (props) => (
     <section className="banner background-primary">
         <div className="container text-center">
-            <p className="lead mb-1">Born at ETHDenver, Cryptogs is the game of pogs on Ethereum.</p>
-            <p className="lead mb-5">{"Play 'Togs live with your friends on-chain!"}</p>
-            <p><a className="btn btn-primary btn-lg btn--alt" href="/stacks">Play Now</a></p>
-            <p><a className="btn btn-primary btn-lg btn--alt" href="/buy">{"Buy Togs"}</a></p>
-            <p><a className="btn btn-blue btn-lg btn--alt" href="/contracts" style={{marginTop:40}}>Smart Contracts</a></p>
+            <p className="lead mb-1">Born at ETHDenver, <b>Cryptogs</b> is the game of pogs on Ethereum.</p>
+
+            <p><a className="btn btn-primary btn-lg btn--alt" style={{marginTop:20}} href="/stacks">Play Now</a></p>
+            <p><a className="btn btn-primary btn-lg btn--alt" style={{marginTop:20}} href="/buy">{"Buy Togs"}</a></p>
+            <p><a className="btn btn-blue btn-lg btn--alt" href="/contracts" style={{marginTop:30}}>Smart Contracts</a></p>
         </div>
         <img
             className="pog pog--large"
