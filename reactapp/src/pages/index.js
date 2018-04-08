@@ -7,6 +7,7 @@ import Banner from '../components/Banner'
 import Cryptog from '../components/Cryptog.js'
 import Spinner from '../components/Spinner.js'
 import CryptogDocScroll from '../components/CryptogDocScroll.js'
+import Online from '../components/Online'
 var QRCode = require('qrcode-react');
 
 let loadInterval
@@ -19,6 +20,8 @@ export default createClass({
 	contextTypes: {
 		web3: PropTypes.object,
 		network: PropTypes.number,
+		account: PropTypes.string,
+		api: PropTypes.object,
 	},
 
 	render(){
@@ -325,6 +328,8 @@ export default createClass({
 												</a>
 											</p>
 										</div>
+
+										<Online {...this.context}/>
 
 									</div>
 								</div>

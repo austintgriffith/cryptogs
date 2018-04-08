@@ -71,14 +71,14 @@ class AddressStack extends Component {
       callToAction= (
         <div className={"centercontainer"}>
           <div style={{padding:40,marginBottom:60,opacity:0.3}}>
-            <MMButton color={"#6081c3"} onClick={()=>{window.location="/stacks"}}>{"Play 'Togs!"}</MMButton>
+            <MMButton color={"#6081c3"} onClick={()=>{window.location="/stacks"}}>{"Play"}</MMButton>
           </div>
         </div>
       )
       callToBuy = (
         <div className={"centercontainer"}>
           <div style={{padding:40,marginBottom:60}}>
-            <MMButton color={"#6ac360"} onClick={()=>{window.location="/buy"}}>{"Buy 'Togs!"}</MMButton>
+            <MMButton color={"#6ac360"} onClick={()=>{window.location="/buy"}}>{"Buy Togs"}</MMButton>
           </div>
         </div>
       )
@@ -86,7 +86,7 @@ class AddressStack extends Component {
       callToAction = (
         <div className={"centercontainer"}>
           <div style={{padding:40,marginBottom:60}}>
-            <MMButton color={"#6ac360"} onClick={()=>{window.location="/stacks"}}>{"Play 'Togs!"}</MMButton>
+            <MMButton color={"#6ac360"} onClick={()=>{window.location="/stacks"}}>{"Play"}</MMButton>
           </div>
         </div>
       )

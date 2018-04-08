@@ -17,6 +17,7 @@ import axios from 'axios'
 import Phone from 'react-phone-number-input'
 import 'react-phone-number-input/rrui.css'
 import 'react-phone-number-input/style.css'
+import Online from '../components/Online'
 var QRCode = require('qrcode-react');
 
 const USEPHONE = true;
@@ -2277,7 +2278,6 @@ class PlayStack extends Component {
     }
 
 
-    //console.log(mainStyle)
 
     return (
       <div style={mainStyle}>
@@ -2305,6 +2305,10 @@ class PlayStack extends Component {
           }}
         </Motion>
       </div>
+        <div style={{marginTop:150,zIndex:-1,opacity:0}}>
+          <Online {...this.props.context}/>
+        </div>
+
       </div>
     )
 

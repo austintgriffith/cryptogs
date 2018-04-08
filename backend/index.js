@@ -19,6 +19,7 @@ const COMMIT_EXPIRE = 300 // commit expires quick if game isn't picked up
 const TRANSFER_EXPIRE = 3000 // commit expires quick if game isn't picked up
 const GENERATE_EXPIRE = 86400 // once a game is solid, let's cache it for longer
 const PHONE_EXPIRE = 86400*7
+const CHECKIN_EXPIRE = 30
 
 let contracts;
 let tokens = [];
@@ -218,6 +219,30 @@ app.post('/touch', async function(request, response){
     updateTTL(commit,COMMIT_EXPIRE)
     response.set('Content-Type', 'application/json');
     response.end(JSON.stringify({touched:true}))
+})
+
+app.post('/checkin', async function(request, response){
+  let time = Date.now()
+    console.log("checkin",time,request.body);
+    let account = request.body.account
+    redis.set("activeUser_"+account,time,"ex",CHECKIN_EXPIRE);
+
+
+    var stream = redis.scanStream({
+      match: 'activeUser_*'
+    });
+    var activeUsers = [];
+    stream.on('data', function (result) {
+      for (var i = 0; i < result.length; i++) {
+        activeUsers.push(result[i].replace("activeUser_",""));
+      }
+    });
+    stream.on('end', function () {
+      console.log('sending active users: ', activeUsers);
+      response.set('Content-Type', 'application/json');
+      response.end(JSON.stringify(activeUsers))
+    });
+
 })
 
 function updateTTL(commit,ttl){
