@@ -339,7 +339,7 @@ export default createClass({
 				>
 					{currentStyles => {
 						return (
-							<div style={{width:450,padding:20,fontSize:11,backgroundColor:"#FFFFFF",cursor:"pointer",position:"absolute",top:currentStyles.top,right:-100,zIndex:1000}}>
+							<div style={{width:380,padding:20,fontSize:11,backgroundColor:"#FFFFFF",cursor:"pointer",position:"absolute",top:currentStyles.top,right:0,zIndex:1000}}>
 								{apiHintContent}
 							</div>
 						)
