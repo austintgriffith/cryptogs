@@ -2278,6 +2278,14 @@ class PlayStack extends Component {
     }
 
 
+    let online = ""
+    if(gameMode<=1){
+      online = (
+        <div style={{marginTop:150,zIndex:-1,opacity:0}}>
+         <Online {...this.props.context}/>
+       </div>
+      )
+    }
 
     return (
       <div style={mainStyle}>
@@ -2305,10 +2313,8 @@ class PlayStack extends Component {
           }}
         </Motion>
       </div>
-        <div style={{marginTop:150,zIndex:-1,opacity:0}}>
-          <Online {...this.props.context}/>
-        </div>
 
+        {online}
       </div>
     )
 
