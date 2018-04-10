@@ -11,7 +11,7 @@ import PogAnimation from '../components/PogAnimation.js'
 let loadInterval
 let initialIntervalLoaded
 
-const MINTEDPACKDISPLAYLIMIT = 10
+const MINTEDPACKDISPLAYLIMIT = 5
 const DEBUG = false
 
 const GASTOBUYPACKS = 550000

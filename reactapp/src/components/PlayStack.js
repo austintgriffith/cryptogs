@@ -20,7 +20,7 @@ import 'react-phone-number-input/style.css'
 import Online from '../components/Online'
 var QRCode = require('qrcode-react');
 
-const USEPHONE = true;
+const USEPHONE = false;
 
 let loadInterval
 let waitInterval
@@ -72,6 +72,16 @@ class PlayStack extends Component {
         this.loadAPIStackData()
         loadInterval = setInterval(this.loadAPIStackData.bind(this),1507)
         loadInterval = setInterval(this.touchStack.bind(this),15000)
+
+
+        setInterval(()=>{
+          axios.get(this.props.api.host+"/joining/"+this.state.stack)
+          .then((response)=>{
+            console.log("JOINING",response)
+            if(response.data) this.setState(response.data)
+         })
+        },2000)
+
       }else{
         this.setState({debugString:"decent"})
         this.loadStackData()
@@ -290,7 +300,7 @@ class PlayStack extends Component {
     }
   }
   async loadAPIStackData(){
-    let {web3} = this.props.context
+    let {web3,account} = this.props.context
     try{
       let possibleFlightPaths = [-150,-200,-250,-300,-350,350,300,250,200,150];
       axios.get(this.props.api.host+"/commit/"+this.state.stack)
@@ -395,7 +405,13 @@ class PlayStack extends Component {
                       round++
                     }
                     this.doUpdate({stackMode:9})
+
+
                   },3000)
+
+                  setTimeout(()=>{
+                    window.location = "/address/"+account
+                  },9000)
                 }
 
               },THROWROUNDTIME*round)
@@ -1993,7 +2009,7 @@ class PlayStack extends Component {
             message = ""
             message = (
               <div>
-                <div style={{padding:10,paddingTop:20}}>Share game url:</div>
+                <div style={{padding:10,paddingTop:20,marginTop:200}}>Share game url:</div>
                 <div style={preStyle}>
                   <pre id="url" style={{fontSize:14}} onClick={selectText}>{qrcode}</pre>
                 </div>
@@ -2008,7 +2024,8 @@ class PlayStack extends Component {
 
                   <div className={"centercontainer"}>
                     <div style={{padding:40,marginTop:60}}>
-                    <div style={{padding:10,paddingTop:20}}>Waiting for other players, share game url to challenge your friends:</div>
+                    <div style={{padding:10,paddingTop:20}}>Waiting for other players</div>
+                    <div style={{padding:10,marginTop:200}}>Share game url:</div>
                     <div style={preStyle}>
                       <pre id="url" style={{fontSize:14}} onClick={selectText}>{qrcode}</pre>
                     </div>
@@ -2064,8 +2081,24 @@ class PlayStack extends Component {
         let qrcodedisplay = ""
         if(qrcode){
           qrcodedisplay = (
-            <div className={"centercontainer"} style={{marginTop:150}}>
+            <div className={"centercontainer"} style={{marginTop:300}}>
               <QRCode value={qrcode} size={320}/>
+            </div>
+          )
+        }
+        let dub = 170
+
+        let joining = ""
+        if(this.state.joining){
+          joining = (
+            <div style={{transform:"scale("+scale*1.4+")",height:dub,marginLeft:document.documentElement.clientWidth/2-dub/2,width:dub}} className={"messageGray"} >
+              <a target="_blank" href={"/address/"+this.state.joining.toLowerCase()}>
+               <Blockies
+                 seed={this.state.joining.toLowerCase()}
+                 scale={8}
+               />
+              </a>
+               joining...
             </div>
           )
         }
@@ -2080,7 +2113,11 @@ class PlayStack extends Component {
               </p>
             </div>
             {drawCounterStacks}
+
+
+
             <div>
+              {joining}
               {qrcodedisplay}
             </div>
           </div>
@@ -2278,6 +2315,14 @@ class PlayStack extends Component {
     }
 
 
+    let online = ""
+    if(this.state.stackMode<=1){
+      online = (
+        <div style={{marginTop:150,zIndex:-1,opacity:0}}>
+         <Online {...this.props.context}/>
+       </div>
+      )
+    }
 
     return (
       <div style={mainStyle}>
@@ -2305,10 +2350,8 @@ class PlayStack extends Component {
           }}
         </Motion>
       </div>
-        <div style={{marginTop:150,zIndex:-1,opacity:0}}>
-          <Online {...this.props.context}/>
-        </div>
 
+        {online}
       </div>
     )
 

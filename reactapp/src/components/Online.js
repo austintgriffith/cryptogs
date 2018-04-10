@@ -12,28 +12,31 @@ export default createClass({
   },
   componentDidMount(){
     if(this.props.api){
-      setInterval(this.checkin.bind(this),15000);
-      setTimeout(this.checkin.bind(this),5000);
-      setTimeout(this.checkin.bind(this),1000);
+      setInterval(this.checkin,15000);
+      setTimeout(this.checkin,5000);
+      setTimeout(this.checkin,1000);
     }
   },
   async checkin(){
-    console.log("Checking in...",this.props.api.host)
-		try{
-				axios.post(this.props.api.host+"/checkin", {
-					account: this.props.account,
-				})
-				.then((response)=>{
-          console.log("online:",response.data)
-          this.setState({online:response.data})
-				})
-				.catch(function (error) {
-					console.log(error);
-				});
+    if(this.props.api && this.props.api.host && this.props.api.host!="undefined"){
+      console.log("Checking in...",this.props.api.host)
+  		try{
+  				axios.post(this.props.api.host+"/checkin", {
+  					account: this.props.account,
+  				})
+  				.then((response)=>{
+            console.log("online:",response.data)
+            this.setState({online:response.data})
+  				})
+  				.catch(function (error) {
+  					console.log(error);
+  				});
 
-		} catch(e) {
-			console.log(e)
-		}
+  		} catch(e) {
+  			console.log(e)
+  		}
+    }
+
 	},
   render(){
     let online = this.state.online.map((address)=>{

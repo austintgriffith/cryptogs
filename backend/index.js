@@ -20,6 +20,7 @@ const TRANSFER_EXPIRE = 3000 // commit expires quick if game isn't picked up
 const GENERATE_EXPIRE = 86400 // once a game is solid, let's cache it for longer
 const PHONE_EXPIRE = 86400*7
 const CHECKIN_EXPIRE = 30
+const JOINING_EXPIRE = 15
 
 let contracts;
 let tokens = [];
@@ -220,6 +221,27 @@ app.post('/touch', async function(request, response){
     response.set('Content-Type', 'application/json');
     response.end(JSON.stringify({touched:true}))
 })
+
+app.post('/joining', async function(request, response){
+  let time = Date.now()
+  let commit = request.body.commit
+  let account = request.body.account
+  console.log("JOINING POST",time,request.body);
+  redis.set("joining_"+commit,account,"ex",JOINING_EXPIRE);
+  response.set('Content-Type', 'application/json');
+  response.end(JSON.stringify({joining:true}))
+})
+
+app.get('/joining/:commit', (req, res) => {
+  console.log("--Getting Joining ",req.params.commit)
+  let commit = req.params.commit
+  redis.get("joining_"+commit, function (err, result) {
+    console.log(result);
+    res.set('Content-Type', 'application/json');
+    res.end(JSON.stringify({joining:result}))
+  });
+});
+
 
 app.post('/checkin', async function(request, response){
   let time = Date.now()
