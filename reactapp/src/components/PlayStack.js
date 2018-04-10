@@ -2003,13 +2003,40 @@ class PlayStack extends Component {
           window.location.reload(true);
         }
 
+        let dub = 170
+
+        let topPadderJoiner = 0
+
+
+        let joining = ""
+
+        if(counterStackCount>0){
+          topPadderJoiner = 0
+        }else{
+          if(this.state.joining){
+            topPadderJoiner=160
+            joining = (
+              <div style={{transform:"scale("+0.8+")",height:dub,marginLeft:document.documentElement.clientWidth/2-dub/2,width:dub}} className={"messageGray"} >
+                <a target="_blank" href={"/address/"+this.state.joining.toLowerCase()}>
+                 <Blockies
+                   seed={this.state.joining.toLowerCase()}
+                   scale={8}
+                 />
+                </a>
+                 joining...
+              </div>
+            )
+          }
+        }
+
+
         if(account.toLowerCase()==stackData.owner.toLowerCase()){
           if(counterStackCount>0){
             qrcode = window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack
             message = ""
             message = (
               <div>
-                <div style={{padding:10,paddingTop:20,marginTop:200}}>Share game url:</div>
+                <div style={{padding:10,paddingTop:20,marginTop:topPadderJoiner}}>Share game url:</div>
                 <div style={preStyle}>
                   <pre id="url" style={{fontSize:14}} onClick={selectText}>{qrcode}</pre>
                 </div>
@@ -2025,7 +2052,7 @@ class PlayStack extends Component {
                   <div className={"centercontainer"}>
                     <div style={{padding:40,marginTop:60}}>
                     <div style={{padding:10,paddingTop:20}}>Waiting for other players</div>
-                    <div style={{padding:10,marginTop:200}}>Share game url:</div>
+                    <div style={{padding:10,marginTop:topPadderJoiner}}>Share game url:</div>
                     <div style={preStyle}>
                       <pre id="url" style={{fontSize:14}} onClick={selectText}>{qrcode}</pre>
                     </div>
@@ -2086,22 +2113,8 @@ class PlayStack extends Component {
             </div>
           )
         }
-        let dub = 170
 
-        let joining = ""
-        if(this.state.joining){
-          joining = (
-            <div style={{transform:"scale("+scale*0.7+")",height:dub,marginLeft:document.documentElement.clientWidth/2-dub/2,width:dub}} className={"messageGray"} >
-              <a target="_blank" href={"/address/"+this.state.joining.toLowerCase()}>
-               <Blockies
-                 seed={this.state.joining.toLowerCase()}
-                 scale={8}
-               />
-              </a>
-               joining...
-            </div>
-          )
-        }
+
 
         //console.log("shrkinkgngk",scale)
         display = (
@@ -2113,9 +2126,6 @@ class PlayStack extends Component {
               </p>
             </div>
             {drawCounterStacks}
-
-
-
             <div>
               {joining}
               {qrcodedisplay}
