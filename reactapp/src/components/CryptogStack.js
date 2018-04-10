@@ -101,6 +101,17 @@ class CryptogStack extends Component {
       )
     }
 
+    let opensea = ""
+    if(account && account.toLowerCase()==this.state.tokenData.owner.toLowerCase()){
+      opensea = (
+
+                  <div style={{paddingTop:10}}>
+                    <MMButton color={"#41d9d7"} onClick={()=>{window.location="https://opensea.io/assets/"+contracts['Cryptogs']._address+"/"+this.state.tokenData.id}}>{"Sell on OpenSea"}</MMButton>
+                  </div>
+
+      )
+    }
+
     return (
       <div>
 
@@ -117,10 +128,7 @@ class CryptogStack extends Component {
         <div style={{padding:leftPad}}>
           <Cryptog scale={1} image={this.state.tokenData.imageAscii}/>
 
-          <div style={{paddingTop:10}}>
-            <MMButton color={"#41d9d7"} onClick={()=>{window.location="https://opensea.io/assets/"+contracts['Cryptogs']._address+"/"+this.state.tokenData.id}}>{"Sell on OpenSea"}</MMButton>
-          </div>
-
+          {opensea}
 
           <div style={{marginTop:50}}>
             Artist: {Artist(this.state.tokenData.imageAscii)}

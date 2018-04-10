@@ -2091,7 +2091,7 @@ class PlayStack extends Component {
         let joining = ""
         if(this.state.joining){
           joining = (
-            <div style={{transform:"scale("+scale*1.4+")",height:dub,marginLeft:document.documentElement.clientWidth/2-dub/2,width:dub}} className={"messageGray"} >
+            <div style={{transform:"scale("+scale*0.7+")",height:dub,marginLeft:document.documentElement.clientWidth/2-dub/2,width:dub}} className={"messageGray"} >
               <a target="_blank" href={"/address/"+this.state.joining.toLowerCase()}>
                <Blockies
                  seed={this.state.joining.toLowerCase()}
