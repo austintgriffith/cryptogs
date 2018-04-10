@@ -21,6 +21,191 @@ function bigHeader(str){
 function rand(min, max) {
   return Math.floor( Math.random() * (max - min) + min );
 }
+function grabRandom(amount,arr){
+  let newArr = []
+  var tempArray = arr.slice();
+  while(newArr.length<amount){
+    let piece = tempArray.splice(Math.floor(Math.random()*tempArray.length), 1)
+    newArr.push(piece[0]);
+  }
+  return newArr;
+}
+function getBatch(count,type){
+  if(!type){
+    type="default"
+  }
+  let batches = {}
+  batches.animals = [
+    "agantelope.jpg",
+    "agbuffalo.jpg",
+    "agbull.jpg",
+    "agelephant.jpg",
+    "agfish.jpg",
+    "aghippo.jpg",
+    "agkillerwhale.jpg",
+    "aglobster.jpg",
+    "agmountaingoat.jpg",
+    "agoctopus.jpg",
+    "agpenguin.jpg",
+    "agrhino.jpg",
+    "agwalrus.jpg",
+    "agzebra.jpg"
+  ]
+  batches.aw90s = [
+    "awripsaw.jpg",
+    "awrainbowyinyang.jpg",
+    "awpoison.jpg",
+    "awpurepoison.jpg",
+    "awyinandyang.jpg",
+    "awskullsstars.jpg",
+    "awstussy.jpg",
+    "awblackwidow.jpg",
+    "awsmile1.jpg",
+    "awripsaw.jpg",
+    "awrainbowyinyang.jpg",
+    "awpoison.jpg",
+    "awpurepoison.jpg",
+    "awyinandyang.jpg",
+    "awskullsstars.jpg",
+    "awstussy.jpg",
+    "awblackwidow.jpg",
+    "awsmile1.jpg",
+  ]
+  batches.ad90s = [
+    "ad8ball.png",
+    "adbiohaz.png",
+    "adsmile.png",
+    "adyinyang.png",
+    "adyinyanggroovy.png",
+    "ad8ball.png",
+    "adbiohaz.png",
+    "adsmile.png",
+    "adyinyang.png",
+    "adyinyanggroovy.png",
+    "ad8ball.png",
+    "adbiohaz.png",
+    "adsmile.png",
+    "adyinyang.png",
+    "adyinyanggroovy.png",
+  ]
+  batches.adgeo = [
+    "adbluegeo.png",
+    "adbluetree.png",
+    "addarkmountain.png",
+    "adgreengeo.png",
+    "adgreentree.png",
+    "adlightmountain.png",
+    "adorangegeo.png",
+    "adbluegeo.png",
+    "adbluetree.png",
+    "addarkmountain.png",
+    "adgreengeo.png",
+    "adgreentree.png",
+    "adlightmountain.png",
+    "adorangegeo.png",
+  ]
+  batches.cryptoLogos = [
+    "metamask.png",
+    "darkclogo.png",
+    "lightclogo.png",
+    "darkclogo.png",
+    "lightclogo.png",
+    "cipher.jpg",
+    "trust.png",
+    "toshi.jpg",
+    "opensea.jpg",
+    "darkclogo.png",
+    "metamask.png",
+    "darkclogo.png",
+    "lightclogo.png",
+    "darkclogo.png",
+    "lightclogo.png",
+    "cipher.jpg",
+    "trust.png",
+    "toshi.jpg",
+    "opensea.jpg",
+    "darkclogo.png",
+  ]
+  batches.ethDen = [
+    "ethdenver.png",
+    "ethden.png",
+    "bufficorn.jpg",
+    "ethden.png",
+    "ethdenver.png",
+    "ethdenver.png",
+    "ethden.png",
+    "bufficorn.jpg",
+    "ethden.png",
+    "ethdenver.png",
+    "ethdenver.png",
+    "ethden.png",
+    "bufficorn.jpg",
+    "ethden.png",
+    "ethdenver.png",
+  ]
+  batches.awTwo = [
+    "awtog.jpg",
+    "awweb.jpg",
+    "awbwskull.jpg",
+    "awredblackskull.jpg",
+    "awcryptogs.jpg",
+    "awtog.jpg",
+    "awweb.jpg",
+    "awbwskull.jpg",
+    "awredblackskull.jpg",
+    "awcryptogs.jpg",
+    "awtog.jpg",
+    "awweb.jpg",
+    "awbwskull.jpg",
+    "awredblackskull.jpg",
+    "awcryptogs.jpg",
+  ]
+  batches.awCrypto = [
+    "awcrypto1.jpg",
+    "awcrypto6.jpg",
+    "awcrypto2.jpg",
+    "awcrypto3.jpg",
+    "awcrypto4.jpg",
+    "awcrypto5.jpg",
+    "awcrypto1.jpg",
+    "awcrypto6.jpg",
+    "awcrypto2.jpg",
+    "awcrypto3.jpg",
+    "awcrypto4.jpg",
+    "awcrypto5.jpg",
+    "awcrypto1.jpg",
+    "awcrypto6.jpg",
+    "awcrypto2.jpg",
+    "awcrypto3.jpg",
+    "awcrypto4.jpg",
+    "awcrypto5.jpg",
+  ]
+  batches.awAnimals = [
+    "awrhino.jpg",
+    "awgiraffe.jpg",
+    "awelephant.jpg",
+    "awrhino.jpg",
+    "awgiraffe.jpg",
+    "awelephant.jpg",
+    "awrhino.jpg",
+    "awgiraffe.jpg",
+    "awelephant.jpg",
+    "awrhino.jpg",
+    "awgiraffe.jpg",
+    "awelephant.jpg",
+  ]
+  batches.default = [
+    "ad8ball.png",
+    "awsmile1.jpg",
+    "adyinyang.png",
+    "darkclogo.png",
+    "lightclogo.png"
+  ]
+
+  let batch = grabRandom(count,batches[type]);
+  if(!batch) batch=batches.default;
+  return batch;
+}
 const contractsDir = "reactapp/src/contracts/"
 const contractsDirBackend = "backend/contracts/"
 function loadAbi(contract,deployNetwork){
@@ -183,7 +368,40 @@ module.exports = {
       });
     });
   },
+  dropBatch:(accountindex,type,toAddress)=>{
+    describe('#dropBatch() ', function() {
+      it('should drop a batch of cryptogs', async function() {
+        this.timeout(120000)
+        const accounts = await clevis("accounts")
+        let imageArray
 
+        if(typeof type != "string" ){
+          imageArray = type
+        }else{
+          imageArray = getBatch(5,type)
+        }
+
+        console.log(tab,"Dropping Batch".green,imageArray[0].blue,imageArray[1].blue,imageArray[2].blue,imageArray[3].blue,imageArray[4].blue,"on".green,toAddress.cyan)
+
+        let bytes32Image1 = web3.utils.fromAscii(imageArray[0]);
+        let bytes32Image2 = web3.utils.fromAscii(imageArray[1]);
+        let bytes32Image3 = web3.utils.fromAscii(imageArray[2]);
+        let bytes32Image4 = web3.utils.fromAscii(imageArray[3]);
+        let bytes32Image5 = web3.utils.fromAscii(imageArray[4]);
+
+        assert(bytes32Image1)
+        assert(bytes32Image2)
+        assert(bytes32Image3)
+        assert(bytes32Image4)
+        assert(bytes32Image5)
+
+        const result = await clevis("contract","mintBatch","Cryptogs",accountindex,bytes32Image1,bytes32Image2,bytes32Image3,bytes32Image4,bytes32Image5,toAddress)
+        printTxResult(result)
+
+
+      });
+    });
+  },
   airdrop:(accountindex,image,toAddress)=>{
     describe('#testMint() ', function() {
       it('should mint a cryptog', async function() {
@@ -194,13 +412,14 @@ module.exports = {
       });
     });
   },
-  mintPack:(accountindex,images,price)=>{
+  mintPack:(accountindex,type,price)=>{
     describe('#testMint() ', function() {
-      it('should mint cryptog pack', async function() {
+      it('should mint cryptog pack of type '+type, async function() {
         this.timeout(120000)
         const accounts = await clevis("accounts")
         let imageBytes = []
 
+        images = getBatch(10,type)
         console.log(images)
 
         for(let i in images){
