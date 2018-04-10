@@ -63,7 +63,7 @@ class CryptogStack extends Component {
     this.setState({address:e.target.value})
   }
   render(){
-    let {account} = this.props
+    let {account,contracts} = this.props
     let {hasLoadedFirst,tokenData,hovers} = this.state
     if(!tokenData){
       return (
@@ -116,6 +116,12 @@ class CryptogStack extends Component {
         </div>
         <div style={{padding:leftPad}}>
           <Cryptog scale={1} image={this.state.tokenData.imageAscii}/>
+
+          <div style={{paddingTop:10}}>
+            <MMButton color={"#41d9d7"} onClick={()=>{window.location="https://opensea.io/assets/"+contracts['Cryptogs']._address+"/"+this.state.tokenData.id}}>{"Sell on OpenSea"}</MMButton>
+          </div>
+
+
           <div style={{marginTop:50}}>
             Artist: {Artist(this.state.tokenData.imageAscii)}
           </div>

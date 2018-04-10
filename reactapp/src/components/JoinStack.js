@@ -21,8 +21,29 @@ class JoinStack extends Component {
     },1500)
   }
   async loadStackData(){
+    const { account } = this.props.context
     let stack
     if(this.props.api&&this.props.api.host){
+
+      setInterval(()=>{
+        try{
+          axios.post(this.props.api.host+'/joining', {
+            account: account,
+            commit: this.state.stack,
+          })
+          .then(function (response) {
+            console.log(response)
+            console.log("JOINING",response.data);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+        } catch(e) {
+          console.log(e)
+        }
+      },3000)
+
+
       try{
         console.log("Loading commit data from api...")
         axios.get(this.props.api.host+"/commit/"+this.state.stack)
@@ -128,7 +149,7 @@ class JoinStack extends Component {
     return (
       <div>
         <SimpleStack showBlockie={true} count={5} scale={0.8} padding={200} spacing={70} height={180} {...this.state.stackData}/>
-        <StackSelect message={"Select five of your pogs to join existing game:"} myTokens={this.props.context.myTokens} goFn={this.joinStack.bind(this)} />
+        <StackSelect message={"Select five of your pogs to risk:"} myTokens={this.props.context.myTokens} goFn={this.joinStack.bind(this)} />
       </div>
     )
   }
