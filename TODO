@@ -1,5 +1,8 @@
 stage dev script
 fix empty join stack bug
+message when you are entering a game so the stack creator knows you are on your way
+message everywhere you come in from an external link and nothing displays that you need to unlock metamask
+
 
 [x] SEO and unfurl image
 [ ] contract links should open a new window

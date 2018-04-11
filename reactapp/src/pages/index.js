@@ -7,6 +7,8 @@ import Banner from '../components/Banner'
 import Cryptog from '../components/Cryptog.js'
 import Spinner from '../components/Spinner.js'
 import CryptogDocScroll from '../components/CryptogDocScroll.js'
+import Online from '../components/Online'
+var QRCode = require('qrcode-react');
 
 let loadInterval
 let initialIntervalLoaded
@@ -18,6 +20,8 @@ export default createClass({
 	contextTypes: {
 		web3: PropTypes.object,
 		network: PropTypes.number,
+		account: PropTypes.string,
+		api: PropTypes.object,
 	},
 
 	render(){
@@ -36,7 +40,7 @@ export default createClass({
 									</div>
 									<div className="col-md-9">
 										<div className="pt-2 pb-2">
-											<p className="lead-2 mb-0">{"Cryptogs is a cryptographically backed version of the game of pogs (milk caps). It extends the ERC-721 token standard from just collecting and trading to risking tokens using on-chain random game mechanics. Play pogs against people from around the decentralized world."}</p>
+											<p className="lead-2 mb-0">{"Cryptogs is a cryptographically backed version of the game of pogs (milk caps). It extends the ERC-721 token standard from just collecting and trading to risking tokens using on-chain random game mechanics. Play togs against people from around the decentralized world."}</p>
 											<p className="lead-2 mb-0" style={{ marginTop: 20 }}>
 												{"TL;DR: You can win or lose tokens depending on your luck and it's all on the blockchain!"}
 											</p>
@@ -74,7 +78,7 @@ export default createClass({
 									</div>
 									<div className="col-md-7">
 										<h2 className="h4 mb-3">Create A Game</h2>
-										<p>{"After you purchase some pogs, you can start playing by creating a new game or joining an existing game. You'll select 5 pogs you are willing to risk against your opponent's 5 pogs."}</p>
+										<p>{"After you purchase some togs, you can start playing by creating a new game or joining an existing game. You'll select 5 togs you are willing to risk against your opponent's 5 togs."}</p>
 									</div>
 								</div>
 
@@ -102,7 +106,7 @@ export default createClass({
 									</div>
 									<div className="col-md-7">
 										<h2 className="h4 mb-3">Game Play</h2>
-										<p>{"Players take turns raising and throwing their slammer. Any Cryptogs the player flips over on their turn are transferred automatically to them. Play continues until all pogs are flipped."}</p>
+										<p>{"Players take turns raising and throwing their slammer. Any Cryptogs the player flips over on their turn are transferred automatically to them. Play continues until all togs are flipped."}</p>
 									</div>
 								</div>
 							</div>
@@ -304,6 +308,29 @@ export default createClass({
 											{"All of our work is 100% open-source and free for anyone to take and extend! Check out our github repo "}
 											<a href="https://github.com/austintgriffith/cryptogs">here</a>.
 										</p>
+									</div>
+								</div>
+
+								<hr className="my-5" />
+
+								<div className="row align-items-center">
+									<div className="col-md-12">
+
+										<div className={"centercontainer"} style={{marginTop:10}}>
+											<QRCode value={"https://cryptogs.io"} size={320}/>
+										</div>
+
+
+										<div style={{marginTop:30}} className="container text-center">
+											<p>
+												<a className="btn btn-primary btn-lg btn--alt" href="/stacks">
+													Play Now
+												</a>
+											</p>
+										</div>
+
+										<Online {...this.context}/>
+
 									</div>
 								</div>
 

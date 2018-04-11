@@ -7,6 +7,8 @@ import Blockies from 'react-blockies'
 import MMButton from '../components/MMButton.js'
 import PogAnimation from '../components/PogAnimation.js'
 import Artist from '../modules/artist.js';
+var QRCode = require('qrcode-react');
+
 
 let loadInterval
 let txhash
@@ -61,7 +63,7 @@ class CryptogStack extends Component {
     this.setState({address:e.target.value})
   }
   render(){
-    let {account} = this.props
+    let {account,contracts} = this.props
     let {hasLoadedFirst,tokenData,hovers} = this.state
     if(!tokenData){
       return (
@@ -74,11 +76,24 @@ class CryptogStack extends Component {
       )
     }
 
+
+
+    let leftPad = 50
+    let inputWidth = 400
+    let inputMargin = 5
+    let inputPadding = 3
+    if(document.documentElement.clientWidth<400){
+      leftPad = 5
+      inputWidth=320
+      inputMargin=1
+      inputPadding=1
+    }
+
     let transferDisplay = ""
     if(account && account.toLowerCase()==this.state.tokenData.owner.toLowerCase()){
       transferDisplay = (
-        <div style={{backgroundColor:"#efefef",border:"1px solid #dfdfdf",padding:50}}>
-          Transfer Cryptog #{this.state.tokenData.id} to address: <input onChange={this.change.bind(this)} value={this.state.address} type="text" style={{padding:3,width:400,margin:5}}/>
+        <div style={{backgroundColor:"#efefef",border:"1px solid #dfdfdf",padding:leftPad}}>
+          Transfer Cryptog #{this.state.tokenData.id} to address: <input onChange={this.change.bind(this)} value={this.state.address} type="text" style={{padding:inputPadding,width:inputWidth,margin:inputMargin}}/>
           <span style={{padding:20}}>
           <MMButton color={"#6081c3"} onClick={this.sendCryptog.bind(this)}>Send</MMButton>
           </span>
@@ -86,13 +101,22 @@ class CryptogStack extends Component {
       )
     }
 
+    let opensea = ""
+    if(account && account.toLowerCase()==this.state.tokenData.owner.toLowerCase()){
+      opensea = (
 
+                  <div style={{paddingTop:10}}>
+                    <MMButton color={"#41d9d7"} onClick={()=>{window.location="https://opensea.io/assets/"+contracts['Cryptogs']._address+"/"+this.state.tokenData.id}}>{"Sell on OpenSea"}</MMButton>
+                  </div>
+
+      )
+    }
 
     return (
       <div>
 
-      <div style={{paddingLeft:50,paddingTop:10}}>
-        <MMButton color={"#6ac360"} onClick={()=>{window.location="/stacks"}}>{"Play 'Togs!"}</MMButton>
+      <div style={{paddingLeft:leftPad,paddingTop:10}}>
+        <MMButton color={"#6ac360"} onClick={()=>{window.location="/stacks"}}>{"Play"}</MMButton>
       </div>
 
         <div style={{float:'right',marginTop:30}}><
@@ -101,8 +125,11 @@ class CryptogStack extends Component {
             scale={8}
           />
         </div>
-        <div style={{padding:50}}>
-          <Cryptog scale={1.2} image={this.state.tokenData.imageAscii}/>
+        <div style={{padding:leftPad}}>
+          <Cryptog scale={1} image={this.state.tokenData.imageAscii}/>
+
+          {opensea}
+
           <div style={{marginTop:50}}>
             Artist: {Artist(this.state.tokenData.imageAscii)}
           </div>
@@ -112,6 +139,10 @@ class CryptogStack extends Component {
         </div>
 
         {transferDisplay}
+
+        <div className={"centercontainer"} style={{marginTop:50,marginBottom:120}}>
+          <QRCode value={window.location.href} size={320}/>
+        </div>
 
       </div>
     )

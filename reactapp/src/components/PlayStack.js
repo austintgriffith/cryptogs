@@ -17,9 +17,10 @@ import axios from 'axios'
 import Phone from 'react-phone-number-input'
 import 'react-phone-number-input/rrui.css'
 import 'react-phone-number-input/style.css'
+import Online from '../components/Online'
 var QRCode = require('qrcode-react');
 
-const USEPHONE = true;
+const USEPHONE = false;
 
 let loadInterval
 let waitInterval
@@ -70,6 +71,17 @@ class PlayStack extends Component {
         this.setState({debugString:"api"})
         this.loadAPIStackData()
         loadInterval = setInterval(this.loadAPIStackData.bind(this),1507)
+        loadInterval = setInterval(this.touchStack.bind(this),15000)
+
+
+        setInterval(()=>{
+          axios.get(this.props.api.host+"/joining/"+this.state.stack)
+          .then((response)=>{
+            console.log("JOINING",response)
+            if(response.data) this.setState(response.data)
+         })
+        },2000)
+
       }else{
         this.setState({debugString:"decent"})
         this.loadStackData()
@@ -268,8 +280,27 @@ class PlayStack extends Component {
       }
     }
   }
+  async touchStack(){
+    try{
+      if(this.state.stack&&!this.state._counterStack){
+        axios.post(this.props.api.host+"/touch", {
+          commit: this.state.stack,
+        })
+        .then(function (response) {
+          console.log(response)
+          console.log("TOUCHED",response.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      }
+
+    } catch(e) {
+      console.log(e)
+    }
+  }
   async loadAPIStackData(){
-    let {web3} = this.props.context
+    let {web3,account} = this.props.context
     try{
       let possibleFlightPaths = [-150,-200,-250,-300,-350,350,300,250,200,150];
       axios.get(this.props.api.host+"/commit/"+this.state.stack)
@@ -374,7 +405,13 @@ class PlayStack extends Component {
                       round++
                     }
                     this.doUpdate({stackMode:9})
+
+
                   },3000)
+
+                  setTimeout(()=>{
+                    window.location = "/address/"+account
+                  },9000)
                 }
 
               },THROWROUNDTIME*round)
@@ -1962,13 +1999,44 @@ class PlayStack extends Component {
           )
         }
 
+        if(stackData.owner=="0x0000000000000000000000000000000000000000"){
+          window.location.reload(true);
+        }
+
+        let dub = 170
+
+        let topPadderJoiner = 0
+
+
+        let joining = ""
+
+        if(counterStackCount>0){
+          topPadderJoiner = 0
+        }else{
+          if(this.state.joining){
+            topPadderJoiner=160
+            joining = (
+              <div style={{transform:"scale("+0.8+")",height:dub,marginLeft:document.documentElement.clientWidth/2-dub/2,width:dub}} className={"messageGray"} >
+                <a target="_blank" href={"/address/"+this.state.joining.toLowerCase()}>
+                 <Blockies
+                   seed={this.state.joining.toLowerCase()}
+                   scale={8}
+                 />
+                </a>
+                 joining...
+              </div>
+            )
+          }
+        }
+
+
         if(account.toLowerCase()==stackData.owner.toLowerCase()){
           if(counterStackCount>0){
             qrcode = window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack
             message = ""
             message = (
               <div>
-                <div style={{padding:10,paddingTop:20}}>Share game url:</div>
+                <div style={{padding:10,paddingTop:20,marginTop:topPadderJoiner}}>Share game url:</div>
                 <div style={preStyle}>
                   <pre id="url" style={{fontSize:14}} onClick={selectText}>{qrcode}</pre>
                 </div>
@@ -1983,7 +2051,8 @@ class PlayStack extends Component {
 
                   <div className={"centercontainer"}>
                     <div style={{padding:40,marginTop:60}}>
-                    <div style={{padding:10,paddingTop:20}}>Waiting for other players, share game url to challenge your friends:</div>
+                    <div style={{padding:10,paddingTop:20}}>Waiting for other players</div>
+                    <div style={{padding:10,marginTop:topPadderJoiner}}>Share game url:</div>
                     <div style={preStyle}>
                       <pre id="url" style={{fontSize:14}} onClick={selectText}>{qrcode}</pre>
                     </div>
@@ -2039,11 +2108,13 @@ class PlayStack extends Component {
         let qrcodedisplay = ""
         if(qrcode){
           qrcodedisplay = (
-            <div className={"centercontainer"} style={{marginTop:150}}>
+            <div className={"centercontainer"} style={{marginTop:300}}>
               <QRCode value={qrcode} size={320}/>
             </div>
           )
         }
+
+
 
         //console.log("shrkinkgngk",scale)
         display = (
@@ -2056,6 +2127,7 @@ class PlayStack extends Component {
             </div>
             {drawCounterStacks}
             <div>
+              {joining}
               {qrcodedisplay}
             </div>
           </div>
@@ -2253,7 +2325,14 @@ class PlayStack extends Component {
     }
 
 
-    //console.log(mainStyle)
+    let online = ""
+    if(this.state.stackMode<=1){
+      online = (
+        <div style={{marginTop:150,zIndex:-1,opacity:0}}>
+         <Online {...this.props.context}/>
+       </div>
+      )
+    }
 
     return (
       <div style={mainStyle}>
@@ -2281,6 +2360,8 @@ class PlayStack extends Component {
           }}
         </Motion>
       </div>
+
+        {online}
       </div>
     )
 

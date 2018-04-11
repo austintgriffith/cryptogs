@@ -3,6 +3,7 @@ import createClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import Metamask from '../components/MetaMask.js'
 import {Motion, spring, presets} from 'react-motion';
+import MMButton from '../components/MMButton.js'
 
 export default createClass({
 	render(){
@@ -54,17 +55,17 @@ export default createClass({
 															metaMaskHintFn()
 														}
 													}} style={{padding:10, cursor:"pointer"}}>
-														{"My 'Togs"}
+														{"My Togs"}
 													</a>
 													</li>
 													<li>
-													<a href="/stacks" style={{padding:10}}>
-														{"Play 'Togs"}
-													</a>
+
+													<MMButton color={"#6081c3"} onClick={()=>{window.location="/stacks"}}>{"Play Togs"}</MMButton>
+
 													</li>
 													<li>
 													<a href="/buy" style={{padding:10}}>
-														{"Buy 'Togs"}
+														{"Buy Togs"}
 													</a>
 													</li>
 											</ul>

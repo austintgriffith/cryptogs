@@ -7,6 +7,7 @@ import LiveParser from '../modules/liveParser.js';
 import MMButton from '../components/MMButton.js'
 import SimpleStack from '../components/SimpleStack.js'
 import PogAnimation from '../components/PogAnimation'
+import Online from '../components/Online'
 
 import axios from 'axios'
 
@@ -60,6 +61,8 @@ export default createClass({
 			if(this.context.api&&this.context.api.version){
 
 
+
+
 				let updateGenerateGame= async (update)=>{
 					//console.log("updateGenerateGame",update)
 					let id = update._commit
@@ -77,9 +80,6 @@ export default createClass({
 				setInterval(()=>{
 					LiveParser(contracts["PizzaParlor"],"DrainGame",blockNumber,updateGenerateGame)
 				},997)
-
-
-
 
 				setInterval(()=>{
 						//console.log("Connecting to API...")
@@ -255,7 +255,7 @@ export default createClass({
 		}
 	},
 	render(){
-		const { contracts,account,metaMaskHintFn } = this.context
+		const { contracts,account,metaMaskHintFn,api } = this.context
 		if(!contracts.Cryptogs){
 			return (
 				<div>
@@ -282,7 +282,7 @@ export default createClass({
         return a.timestamp<b.timestamp
     });
 		for(let s in allStacksFlipped){
-			console.log("STACK:",allStacksFlipped[s])
+			//console.log("STACK:",allStacksFlipped[s])
 			if(allStacksFlipped[s].finished){
 				if(allStacksFlipped[s]._sender && finishedStacks.length<5){
 					count++
@@ -454,6 +454,7 @@ export default createClass({
 						}
 					}}>Create Game</MMButton>
 				</div>
+				<Online account={account} api={api}/>
 				<div style={{float:'left',padding:30,paddingRLeft:100}}>
 				</div>
 				<div style={{ clear:"both"}}></div>

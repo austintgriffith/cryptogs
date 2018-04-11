@@ -15,8 +15,12 @@ var SHA3 = require('sha3');
 var twilio = require('twilio');
 var twilioClient = new twilio(fs.readFileSync("twilio.sid").toString().trim(), fs.readFileSync("twilio.token").toString().trim());
 
-const COMMIT_EXPIRE = 86400*3 // commit expires in an a few days?
+const COMMIT_EXPIRE = 300 // commit expires quick if game isn't picked up
+const TRANSFER_EXPIRE = 3000 // commit expires quick if game isn't picked up
+const GENERATE_EXPIRE = 86400 // once a game is solid, let's cache it for longer
 const PHONE_EXPIRE = 86400*7
+const CHECKIN_EXPIRE = 30
+const JOINING_EXPIRE = 15
 
 let contracts;
 let tokens = [];
@@ -210,6 +214,70 @@ app.post('/phone', async function(request, response){
     redis.set("phone_"+request.body.account,request.body.phone,"ex",PHONE_EXPIRE);
 })
 
+app.post('/touch', async function(request, response){
+    console.log("TOUCH",request.body);
+    let commit = request.body.commit
+    updateTTL(commit,COMMIT_EXPIRE)
+    response.set('Content-Type', 'application/json');
+    response.end(JSON.stringify({touched:true}))
+})
+
+app.post('/joining', async function(request, response){
+  let time = Date.now()
+  let commit = request.body.commit
+  let account = request.body.account
+  console.log("JOINING POST",time,request.body);
+  redis.set("joining_"+commit,account,"ex",JOINING_EXPIRE);
+  response.set('Content-Type', 'application/json');
+  response.end(JSON.stringify({joining:true}))
+})
+
+app.get('/joining/:commit', (req, res) => {
+  console.log("--Getting Joining ",req.params.commit)
+  let commit = req.params.commit
+  redis.get("joining_"+commit, function (err, result) {
+    console.log(result);
+    res.set('Content-Type', 'application/json');
+    res.end(JSON.stringify({joining:result}))
+  });
+});
+
+
+app.post('/checkin', async function(request, response){
+  let time = Date.now()
+    console.log("checkin",time,request.body);
+    let account = request.body.account
+    redis.set("activeUser_"+account,time,"ex",CHECKIN_EXPIRE);
+
+
+    var stream = redis.scanStream({
+      match: 'activeUser_*'
+    });
+    var activeUsers = [];
+    stream.on('data', function (result) {
+      for (var i = 0; i < result.length; i++) {
+        activeUsers.push(result[i].replace("activeUser_",""));
+      }
+    });
+    stream.on('end', function () {
+      console.log('sending active users: ', activeUsers);
+      response.set('Content-Type', 'application/json');
+      response.end(JSON.stringify(activeUsers))
+    });
+
+})
+
+function updateTTL(commit,ttl){
+  let key = "commit_"+commit
+  redis.expire(key,ttl);
+  let revealKey = "getReveal"+commit
+  redis.expire(revealKey,ttl);
+  redis.get(revealKey, function (err, result) {
+    let secretKey = "getSecret"+result
+    redis.expire(secretKey,ttl);
+  });
+}
+
 app.post('/create', async function(request, response){
     console.log("CREATE",request.body);      // your JSON
     let secret = web3.utils.keccak256(Math.random()+Date.now()+""+JSON.stringify(request.body));
@@ -340,21 +408,23 @@ app.post('/counter',  function(request, response){
     response.set('Content-Type', 'application/json');
     response.end(value)
     redis.get("phone_"+commitData.stackData.owner, function (err, phone) {
-      console.log("SEND A TEXT TO "+phone)
-      twilioClient.messages.create({
-          to:phone,
-          from:'+17206059912',
-          body:'A challenger has arrived: https://cryptogs.io/play/'+commit
-      }, function(error, message) {
-          if (!error) {
-              console.log('Success! The SID for this SMS message is:');
-              console.log(message.sid);
-              console.log('Message sent on:');
-              console.log(message.dateCreated);
-          } else {
-              console.log('Oops! There was an error.');
-          }
-      });
+      if(phone&&phone!=null&&phone!="null"){
+        console.log("SEND A TEXT TO "+phone)
+        twilioClient.messages.create({
+            to:phone,
+            from:'+17206059912',
+            body:'A challenger has arrived: https://cryptogs.io/play/'+commit
+        }, function(error, message) {
+            if (!error) {
+                console.log('Success! The SID for this SMS message is:');
+                console.log(message.sid);
+                console.log('Message sent on:');
+                console.log(message.dateCreated);
+            } else {
+                console.log('Oops! There was an error.');
+            }
+        });
+      }
     })
   });
 });
@@ -369,7 +439,10 @@ app.post('/accept', function(request, response){
       let key = "commit_"+commit
       let value = JSON.stringify(commitData)
       console.log("SETTING REDIS "+key+" TO "+value)
-      redis.set(key,value,"ex",COMMIT_EXPIRE);
+      redis.set(key,value,"ex",TRANSFER_EXPIRE);
+
+      updateTTL(commit,TRANSFER_EXPIRE)
+
       response.set('Content-Type', 'application/json');
       response.end(value)
     })
@@ -415,10 +488,12 @@ app.post('/cancelcounter', function(request, response){
 
 app.post('/transfer', async function(request, response){
     console.log("TRANSFER",request.body);
-    redis.set("transfer_"+request.body.stack.commit+"_"+request.body.stack.owner,request.body.txhash,"ex",COMMIT_EXPIRE);
+    redis.set("transfer_"+request.body.stack.commit+"_"+request.body.stack.owner,request.body.txhash,"ex",TRANSFER_EXPIRE);
 
     //if you wanted to you could mark tokens as used here too
     console.log("usedtoken_"+request.body.stack.token1)
+
+    updateTTL(request.body.stack.commit,TRANSFER_EXPIRE)
 
     response.set('Content-Type', 'application/json');
     response.end(JSON.stringify({thanks:true}))
@@ -441,7 +516,10 @@ app.post('/revoke', async function(request, response){
 
 app.post('/generate', async function(request, response){
     console.log("GENERATE",request.body);
-    redis.set("generate_"+request.body.stack.commit,request.body.txhash,"ex",COMMIT_EXPIRE);
+    redis.set("generate_"+request.body.stack.commit,request.body.txhash,"ex",GENERATE_EXPIRE);
+
+    updateTTL(request.body.stack.commit,GENERATE_EXPIRE)
+
     response.set('Content-Type', 'application/json');
     response.end(JSON.stringify({thanks:true}))
 });

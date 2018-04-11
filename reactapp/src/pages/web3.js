@@ -29,6 +29,26 @@ export default createClass({
 			this.waitForWeb3()
 		})
 	},
+	walletLink(link,image,name){
+
+		return (
+
+
+						<div className="col-md-4" style={{padding:30,borderBottom:"1px solid #dddddd"}} onClick={()=>{
+							window.location = link
+						}}>
+							<CryptogDocScroll image={image} />
+
+								<div className="pt-2 pb-2" style={{textAlign:"center"}}>
+									<p className="lead-2 mb-0" style={{fontSize:30}}><a href={link}>{name}</a></p>
+								</div>
+
+						</div>
+
+
+
+		)
+	},
 	waitForWeb3(){
 		console.log("=== DETECTING WEB3 ===")
 		this.setState({checks:this.state.checks+1,status:"Load..."})
@@ -79,94 +99,45 @@ export default createClass({
 			<div>
 
 
+			<p style={{width:"100%",textAlign:"center",opacity:0.7,marginTop:20}}>
+				Mobile wallets available:
+			</p>
+
 			<section className="section pt-6 pb-6">
 				<div className="container">
 					<div className="jumbotron p-5">
-						<div className="row align-items-center" onClick={()=>{
-							window.location = "https://www.toshi.org/"
-						}}>
-							<div className="col-md-3">
-								<CryptogDocScroll image="toshi.jpg" />
-							</div>
-							<div className="col-md-9">
-								<div className="pt-2 pb-2">
-									<p className="lead-2 mb-0" style={{fontSize:30}}><a href="https://www.toshi.org/">Toshi</a></p>
-								</div>
-							</div>
+						<div className="row align-items-center">
+							{this.walletLink("https://trustwalletapp.com/","trust.png","Trust Wallet")}
+							{this.walletLink("https://www.toshi.org/","toshi.jpg","Toshi")}
+							{this.walletLink("https://www.cipherbrowser.com/","cipher.png","Cipher Browser")}
 						</div>
 					</div>
 				</div>
-				<div className="container">
-					<div className="jumbotron p-5">
-						<div className="row align-items-center" onClick={()=>{
-							window.location = "https://www.cipherbrowser.com/"
-						}}>
-							<div className="col-md-3">
-								<CryptogDocScroll image="cipher.jpg" />
-							</div>
-							<div className="col-md-9">
-								<div className="pt-2 pb-2">
-								  <p className="lead-2 mb-0" style={{fontSize:30}}><a href="https://www.cipherbrowser.com/">Cipher Browser</a></p>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div className="container">
-					<div className="jumbotron p-5">
-						<div className="row align-items-center" onClick={()=>{
-							window.location = "https://trustwalletapp.com/"
-						}}>
-							<div className="col-md-3">
-								<CryptogDocScroll image="trust.png" />
-							</div>
-							<div className="col-md-9">
-								<div className="pt-2 pb-2">
-									<p className="lead-2 mb-0" style={{fontSize:30}}><a href="https://trustwalletapp.com/">Trust Wallet</a></p>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div className="container">
-					<div className="jumbotron p-5">
-						<div className="row align-items-center" onClick={()=>{
-							window.location = "https://metamask.io/"
-						}}>
-							<div className="col-md-3">
-								<CryptogDocScroll image="metamask.png" />
-							</div>
-							<div className="col-md-9">
-								<div className="pt-2 pb-2">
-									<p className="lead-2 mb-0" style={{fontSize:30}}><a href="https://metamask.io/">MetaMask</a></p>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+
 			</section>
 
 
-						<div>
+						<div style={{textAlign:"center"}}>
 							{this.state.status} {this.state.checks}
+							{accoutView}
+
+							<div style={{cursor:"pointer",width:"100%",textAlign:"center",padding:10}} onClick={()=>{
+								window.location.reload(true);
+							}}>Reload</div>
+
+							<div style={{cursor:"pointer",width:"100%",textAlign:"center",padding:10}} onClick={()=>{
+								window.location = "/web3?nocache="+Date.now()
+							}}>No Cache</div>
+
+							<pre>
+							window.web3:{typeof window.web3}
+
+							</pre>
+							<pre>
+								web3:{typeof web3}
+							</pre>
 						</div>
-						{accoutView}
 
-						<div style={{cursor:"pointer",width:"100%",textAlign:"center",padding:10}} onClick={()=>{
-							window.location.reload(true);
-						}}>Reload</div>
-
-						<div style={{cursor:"pointer",width:"100%",textAlign:"center",padding:10}} onClick={()=>{
-							window.location = "/web3?nocache="+Date.now()
-						}}>No Cache</div>
-
-						<pre>
-						window.web3:{typeof window.web3}
-
-						</pre>
-						<pre>
-							web3:{typeof web3}
-						</pre>
 
 
 			</div>

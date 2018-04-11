@@ -11,7 +11,7 @@ import PogAnimation from '../components/PogAnimation.js'
 let loadInterval
 let initialIntervalLoaded
 
-const MINTEDPACKDISPLAYLIMIT = 10
+const MINTEDPACKDISPLAYLIMIT = 5
 const DEBUG = false
 
 const GASTOBUYPACKS = 550000
@@ -239,6 +239,9 @@ export default createClass({
 
 		return (
 			<div>
+			<div style={{padding:40}}>
+				<MMButton color={"#41d9d7"} onClick={()=>{window.location="https://opensea.io/assets/cryptogs"}}>{"Trade on OpenSea"}</MMButton>
+			</div>
 				{mintedPackRender}
 			</div>
 		)
