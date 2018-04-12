@@ -11,7 +11,7 @@ import PogAnimation from '../components/PogAnimation.js'
 let loadInterval
 let initialIntervalLoaded
 
-const MINTEDPACKDISPLAYLIMIT = 5
+const MINTEDPACKDISPLAYLIMIT = 3
 const DEBUG = false
 
 const GASTOBUYPACKS = 550000
@@ -32,7 +32,7 @@ export default createClass({
 		GWEI: PropTypes.number,
 	},
 	getInitialState(){
-		return {mintedPacks:[],shouldHaveLoaded:false,debounce:true}
+		return {mintedPacks:[],shouldHaveLoaded:false,debounce:true,showAll:false}
 	},
 	componentDidMount(){
 		this.loadPackData()
@@ -110,33 +110,47 @@ export default createClass({
 			return (
 				<div className={"centercontainer"}>
 					<div style={{padding:40}}>
-						<MMButton color={"#6ac360"} onClick={()=>{metaMaskHintFn()}}>{"Play 'Togs!"}</MMButton>
+						<MMButton color={"#6ac360"} onClick={()=>{metaMaskHintFn()}}>{"Play Togs"}</MMButton>
 					</div>
 				</div>
 			)
 
 		}
 
-    if(compact){
+		//console.log("mintedPacks",mintedPacks)
 
+		let sortedPacks = []
+		for(let p in mintedPacks){
+			if(mintedPacks[p] && !mintedPacks[p].bought && mintedPacks[p].price){
+				mintedPacks[p].id = p
+				sortedPacks.push(mintedPacks[p])
+			}
+		}
+		sortedPacks.sort(function(a, b) {
+		    return a.price - b.price;
+		});
+
+		//console.log("sortedPacks",sortedPacks)
+
+    if(compact){
 			let buypacks = []
 			let foundOfPrice = {}
 			let displycount = 0
-			for(let p in mintedPacks){
-  			if(!mintedPacks[p].bought){
-					if(!foundOfPrice[mintedPacks[p].price]){
-						foundOfPrice[mintedPacks[p].price]=true;
+			for(let p in sortedPacks){
+  			if(sortedPacks[p].price){
+					if(!foundOfPrice[sortedPacks[p].price]){
+						foundOfPrice[sortedPacks[p].price]=true;
 						if(displycount++<4){
 	  					buypacks.push(
-	  						<Pack compact={true} id={p} key={"pack"+p} {...mintedPacks[p]} PackClick={
+	  						<Pack compact={true} id={p} key={"pack"+p} {...sortedPacks[p]} PackClick={
 	  							(p)=>{
 	  								if(!account){
 	  									metaMaskHintFn()
 	  								}else{
 
-												contracts["Cryptogs"].methods.buyPack(p).send({
+												contracts["Cryptogs"].methods.buyPack(sortedPacks[p].id).send({
 													from: account,
-													value: web3.utils.toWei(mintedPacks[p].price,"ether"),
+													value: web3.utils.toWei(sortedPacks[p].price,"ether"),
 													gas:GASTOBUYPACKS,
 													gasPrice:this.context.GWEI * 1000000000
 												},(error,hash)=>{
@@ -181,19 +195,19 @@ export default createClass({
     }else{
       mintedPackRender = []
   		let displycount = 0
-  		for(let p in mintedPacks){
-  			if(!mintedPacks[p].bought){
-  				if(displycount++<MINTEDPACKDISPLAYLIMIT){
+  		for(let p in sortedPacks){
+  			if(sortedPacks[p].price){
+  				if(displycount++<MINTEDPACKDISPLAYLIMIT || this.state.showAll){
   					mintedPackRender.push(
-  						<Pack id={p} key={"pack"+p} {...mintedPacks[p]} PackClick={
-  							(p)=>{
+  						<Pack id={p} key={"pack"+p} {...sortedPacks[p]} PackClick={
+  							()=>{
   								if(!account){
   									metaMaskHintFn()
   								}else{
 
-  										contracts["Cryptogs"].methods.buyPack(p).send({
+  										contracts["Cryptogs"].methods.buyPack(sortedPacks[p].id).send({
   							        from: account,
-  											value: web3.utils.toWei(mintedPacks[p].price,"ether"),
+  											value: web3.utils.toWei(sortedPacks[p].price,"ether"),
   							        gas:GASTOBUYPACKS,
   							        gasPrice:this.context.GWEI * 1000000000
   							      },(error,hash)=>{
@@ -237,12 +251,22 @@ export default createClass({
 			}
 		}
 
+		let viewButton = ""
+		if(!this.state.showAll){
+			viewButton = (
+			 <div style={{padding:40}}>
+				 <MMButton color={"#6081c3"} onClick={()=>{this.setState({showAll:true})}}>{"View More Packs"}</MMButton>
+			 </div>
+		 )
+		}
+
 		return (
 			<div>
-			<div style={{padding:40}}>
-				<MMButton color={"#41d9d7"} onClick={()=>{window.location="https://opensea.io/assets/cryptogs"}}>{"Trade on OpenSea"}</MMButton>
-			</div>
+				<div style={{padding:40}}>
+					<MMButton color={"#41d9d7"} onClick={()=>{window.location="https://opensea.io/assets/cryptogs"}}>{"Trade on OpenSea"}</MMButton>
+				</div>
 				{mintedPackRender}
+				{viewButton}
 			</div>
 		)
 	}

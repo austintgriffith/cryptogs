@@ -59,9 +59,9 @@ export default createClass({
 													</a>
 													</li>
 													<li>
-
-													<MMButton color={"#6081c3"} onClick={()=>{window.location="/stacks"}}>{"Play Togs"}</MMButton>
-
+													<a href="/stacks" style={{padding:10}}>
+														{"Play Togs"}
+													</a>
 													</li>
 													<li>
 													<a href="/buy" style={{padding:10}}>

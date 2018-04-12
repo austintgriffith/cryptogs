@@ -2,9 +2,20 @@ const cryptogs = require("./cryptogs.js")
 
  // cryptogs.mintPack(0,grabRandomTen(ad90s),0.001)
  //cryptogs.mintPack(0,grabRandomTen(ad90s),0.001)
+ /*
+ animals
+ aw90s
+ ad90s
+ adgeo
+ cryptoLogos
+ ethDen
+ awTwo
+ awCrypto
+ awAnimals
+ default
+ */
 
-
-// cryptogs.mintPack(0,grabRandomTen(ethDen),0.010)
+cryptogs.mintPack(0,"aw90s",0.001)
 
 // cryptogs.mintPack(0,[
 //   "metamask.png",
