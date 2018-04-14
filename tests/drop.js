@@ -18,13 +18,15 @@ default
 // cryptogs.dropBatch(0,"ad90s","0x0f4bf39b99F4831Dc1ba51a3e79266e29633f054")
 // cryptogs.dropBatch(0,"aw90s","")
 
-cryptogs.dropBatch(0,[
-  "peepeth.png",
-  "peepeth.png",
-  "peepeth.png",
-  "peepeth.png",
-  "peepeth.png"
-],"0x5f19cEfc9C9D1BC63f9e4d4780493ff5577D238B")
+// cryptogs.dropBatch(0,[
+//   "peepeth.png",
+//   "peepeth.png",
+//   "peepeth.png",
+//   "peepeth.png",
+//   "peepeth.png"
+// ],"0x2aeb4bcdbd41cb64447b75a9550b9bdf9e9a824d")
+
+
 //
 // cryptogs.dropBatch(0,[
 //   "darkclogo.png",

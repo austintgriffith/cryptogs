@@ -16,6 +16,9 @@ const cryptogs = require("./cryptogs.js")
  */
 
 cryptogs.mintPack(0,"aw90s",0.001)
+cryptogs.mintPack(0,"ad90s",0.001)
+cryptogs.mintPack(0,"aw90s",0.001)
+cryptogs.mintPack(0,"ad90s",0.001)
 
 // cryptogs.mintPack(0,[
 //   "metamask.png",

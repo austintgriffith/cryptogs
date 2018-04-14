@@ -132,9 +132,11 @@ export default createClass({
 
 		//console.log("sortedPacks",sortedPacks)
 
+			let foundOfPrice = {}
+
     if(compact){
 			let buypacks = []
-			let foundOfPrice = {}
+
 			let displycount = 0
 			for(let p in sortedPacks){
   			if(sortedPacks[p].price){
@@ -197,38 +199,41 @@ export default createClass({
   		let displycount = 0
   		for(let p in sortedPacks){
   			if(sortedPacks[p].price){
-  				if(displycount++<MINTEDPACKDISPLAYLIMIT || this.state.showAll){
-  					mintedPackRender.push(
-  						<Pack id={p} key={"pack"+p} {...sortedPacks[p]} PackClick={
-  							()=>{
-  								if(!account){
-  									metaMaskHintFn()
-  								}else{
+					if(!foundOfPrice[sortedPacks[p].price]){
+						foundOfPrice[sortedPacks[p].price]=true;
+	  				if(displycount++<MINTEDPACKDISPLAYLIMIT || this.state.showAll){
+	  					mintedPackRender.push(
+	  						<Pack id={p} key={"pack"+p} {...sortedPacks[p]} PackClick={
+	  							()=>{
+	  								if(!account){
+	  									metaMaskHintFn()
+	  								}else{
 
-  										contracts["Cryptogs"].methods.buyPack(sortedPacks[p].id).send({
-  							        from: account,
-  											value: web3.utils.toWei(sortedPacks[p].price,"ether"),
-  							        gas:GASTOBUYPACKS,
-  							        gasPrice:this.context.GWEI * 1000000000
-  							      },(error,hash)=>{
-  							        console.log("CALLBACK!",error,hash)
-												showLoadingScreen(hash,"/address/"+account)
-												txhash=hash
-  							      }).on('error',(a,b)=>{
-												console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
-											}).then((receipt)=>{
-  							        console.log("RESULT:",receipt)
-  											window.location = "/address/"+account
-												showLoadingScreen(false)
-  							      }).catch(e=> {
-								          console.error('caught error', e);
-								      })
+	  										contracts["Cryptogs"].methods.buyPack(sortedPacks[p].id).send({
+	  							        from: account,
+	  											value: web3.utils.toWei(sortedPacks[p].price,"ether"),
+	  							        gas:GASTOBUYPACKS,
+	  							        gasPrice:this.context.GWEI * 1000000000
+	  							      },(error,hash)=>{
+	  							        console.log("CALLBACK!",error,hash)
+													showLoadingScreen(hash,"/address/"+account)
+													txhash=hash
+	  							      }).on('error',(a,b)=>{
+													console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
+												}).then((receipt)=>{
+	  							        console.log("RESULT:",receipt)
+	  											window.location = "/address/"+account
+													showLoadingScreen(false)
+	  							      }).catch(e=> {
+									          console.error('caught error', e);
+									      })
 
-  								}
-  							}
-  						}/>
-  					)
-  				}
+	  								}
+	  							}
+	  						}/>
+	  					)
+	  				}
+					}
   			}
   		}
     }
