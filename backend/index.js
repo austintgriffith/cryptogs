@@ -3,14 +3,18 @@ const axios = require('axios');
 const express = require('express');
 const https = require('https');
 const helmet = require('helmet');
+
 const app = express();
 const fs = require('fs');
 const Redis = require('ioredis');
 const ContractLoader = require('./modules/contractLoader.js');
 var bodyParser = require('body-parser')
-app.use(bodyParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 var cors = require('cors')
 app.use(cors())
+var multer = require('multer');
+app.use(multer({dest:'./uploads/'}).single('File'));
 var SHA3 = require('sha3');
 var twilio = require('twilio');
 var twilioClient = new twilio(fs.readFileSync("twilio.sid").toString().trim(), fs.readFileSync("twilio.token").toString().trim());
@@ -212,6 +216,45 @@ app.get('/test', (req, res) => {
 app.post('/phone', async function(request, response){
     console.log("PHONE",request.body);
     redis.set("phone_"+request.body.account,request.body.phone,"ex",PHONE_EXPIRE);
+})
+
+app.post('/upload',function (req, res, next) {
+  console.log("UPLOAD",req.body,req.file);
+
+  var dir = './artwork/';
+  if (!fs.existsSync(dir)){fs.mkdirSync(dir);}
+  dir = './artwork/'+req.body.account.replace(/[^a-zA-Z0-9]+/g,"");
+  if (!fs.existsSync(dir)){fs.mkdirSync(dir);}
+  fs.renameSync("./"+req.file.path.replace(/[^a-zA-Z0-9/]+/g,""),dir+"/"+Date.now()+req.file.filename.substring(0,8)+req.file.originalname.substring(req.file.originalname.lastIndexOf('.')));
+
+  res.end(JSON.stringify({upload:true}))
+})
+app.use(express.static('artwork'))
+app.get('/artwork/:account', (req, res) => {
+  console.log("ARTWORK",req.params)
+
+  var dir = './artwork/';
+  if (!fs.existsSync(dir)){fs.mkdirSync(dir);}
+  dir = './artwork/'+req.params.account.replace(/[^a-zA-Z0-9]+/g,"");
+  if (!fs.existsSync(dir)){fs.mkdirSync(dir);}
+
+  var files = fs.readdirSync(dir);
+  res.set('Content-Type', 'application/json');
+  res.end(JSON.stringify({files:files}))
+});
+
+app.post('/delete', function(request, response){
+    console.log("DELETE!",request.body);      // your JSON
+
+    let account = request.body.account.replace(/[^a-zA-Z0-9]+/g,"");
+    let file = request.body.file.replace(/[^a-zA-Z0-9.]+/g,"");
+    let result = false
+    try{
+      result = fs.unlinkSync("./artwork/"+account+"/"+file)
+    }catch(e){console.log(e)}
+    response.set('Content-Type', 'application/json');
+    response.end(JSON.stringify({delete:result}))
+
 })
 
 app.post('/touch', async function(request, response){

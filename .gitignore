@@ -1,3 +1,5 @@
+backend/artwork
+backend/uploads
 backend/*.webhook
 backend/twilio.*
 backend/redisdata

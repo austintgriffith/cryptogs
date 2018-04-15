@@ -871,12 +871,23 @@ module.exports = {
       });
     });
   },
-  withdraw:(accountindex,amount)=>{
+  withdraw:(accountindex,amount,contract)=>{
     describe('#withdraw() ', function() {
       it('should withdraw ether', async function() {
+        if(!contract) contract="Cryptogs"
         this.timeout(600000)
         const inWei = await clevis("wei",amount,'ether')
-        const result = await clevis("contract","withdraw","Cryptogs",accountindex,inWei)
+        const result = await clevis("contract","withdraw",contract,accountindex,inWei)
+        printTxResult(result)
+      });
+    });
+  },
+  setArtistsPrice:(accountindex,priceToMint,priceToMintStack)=>{
+    describe('#setArtistsPrice() ', function() {
+      it('should setArtistsPrice', async function() {
+        this.timeout(120000)
+        //setPrice(uint _priceToMint,uint _priceToMintStack)
+        const result = await clevis("contract","setPrice","Artists",accountindex,web3.utils.toWei(priceToMint,"ether"),web3.utils.toWei(priceToMintStack,"ether"))
         printTxResult(result)
       });
     });
@@ -897,10 +908,12 @@ module.exports = {
         loadAddress("Cryptogs",deployNetwork)
         loadAddress("SlammerTime",deployNetwork)
         loadAddress("PizzaParlor",deployNetwork)
+        loadAddress("Artists",deployNetwork)
 
         loadAbi("Cryptogs",deployNetwork)
         loadAbi("SlammerTime",deployNetwork)
         loadAbi("PizzaParlor",deployNetwork)
+        loadAbi("Artists",deployNetwork)
 
         loadBlockNumber("Cryptogs",deployNetwork)
 

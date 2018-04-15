@@ -134,6 +134,10 @@ export default createClass({
 
 			let foundOfPrice = {}
 
+			let viewButton = ""
+
+
+
     if(compact){
 			let buypacks = []
 
@@ -195,6 +199,15 @@ export default createClass({
       	)
 
     }else{
+
+			if(!this.state.showAll){
+				viewButton = (
+				 <div style={{padding:40}}>
+					 <MMButton color={"#6081c3"} onClick={()=>{this.setState({showAll:true})}}>{"View More Packs"}</MMButton>
+				 </div>
+			 )
+			}
+
       mintedPackRender = []
   		let displycount = 0
   		for(let p in sortedPacks){
@@ -256,14 +269,6 @@ export default createClass({
 			}
 		}
 
-		let viewButton = ""
-		if(!this.state.showAll){
-			viewButton = (
-			 <div style={{padding:40}}>
-				 <MMButton color={"#6081c3"} onClick={()=>{this.setState({showAll:true})}}>{"View More Packs"}</MMButton>
-			 </div>
-		 )
-		}
 
 		return (
 			<div>

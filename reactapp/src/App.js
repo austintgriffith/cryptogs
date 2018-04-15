@@ -12,6 +12,7 @@ import IndexPage from './pages/index.js'
 import AddressPage from './pages/address.js'
 import StacksPage from './pages/stacks.js'
 import Web3Page from './pages/web3.js'
+import ArtistsPage from './pages/artists.js'
 import CreatePage from './pages/create.js'
 import ContractsPage from './pages/contracts.js'
 import PlayPage from './pages/play.js'
@@ -135,6 +136,8 @@ export default createClass({
 			backend = "https://api.cryptogs.io"
 		}else if(this.state.network=="3"){
 			backend = "https://stage.cryptogs.io:8001"
+		}else{
+			backend = "http://localhost:8002"
 		}
 		//console.log("backend",backend)
 		let apiCookie = parseInt(cookie.load('api'))
@@ -175,7 +178,7 @@ export default createClass({
   },
 	networkReady(network,web3js) {
 		console.log("NETWORK READY",network,web3js.currentProvider)
-		let contracts = ContractLoader(["Cryptogs","SlammerTime","PizzaParlor"],web3js,network);
+		let contracts = ContractLoader(["Cryptogs","SlammerTime","PizzaParlor","Artists"],web3js,network);
 		let update = {network:network,web3:web3js,contracts:contracts,contractsLoaded:true}
 		if(!this.state || !this.state.GWEI || this.state.GWEI == STARTINGGWEI){
 			if(network>1){
@@ -304,6 +307,7 @@ export default createClass({
 	 						 <Route path={`/join/:stack`} component={JoinPage} />
 	 						 <Route path={`/cryptog/:cryptog`} component={CryptogPage} />
 	 						 <Route path={`/contracts`} component={ContractsPage} />
+							 <Route path={`/artists`} component={ArtistsPage} />
 	 						 <Redirect to='/' />
 	 				</Switch>
 	 			</Router>

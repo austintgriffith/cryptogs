@@ -28,6 +28,12 @@ export default createClass({
     if(this.props.creeprolling){
       className = "is-creeproll"
     }
+
+    let image = '/cryptogs/'+this.props.image
+    if(this.props.absoluteImage){
+      image=this.props.absoluteImage
+    }
+
     return (
       <div className={className} style={{transform: "scale("+scale+")"}}>
         <div className="coin__container" >
@@ -38,7 +44,7 @@ export default createClass({
             }}>
 
                 <div className="coin__front" style={{
-                    backgroundImage: 'url("/cryptogs/'+this.props.image+'")'
+                    backgroundImage: 'url("'+image+'")'
                 }}></div>
 
                 <div className="coin__back"></div>
