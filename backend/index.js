@@ -268,6 +268,36 @@ app.get('/artist/:account', (req, res) => {
   });
 });
 
+app.post('/mint', function(request, response){
+    console.log("MINT!",request.body);      // your JSON
+    let account = request.body.account.replace(/[^a-zA-Z0-9]+/g,"");
+    let file = request.body.file.replace(/[^a-zA-Z0-9.]+/g,"");
+    let stack = request.body.stack
+    let hash = request.body.hash.replace(/[^a-zA-Z0-9.]+/g,"");
+    let type = "MINT"
+    if(stack){
+      type = "MINTSTACK"
+    }
+    twilioClient.messages.create({
+        to:'+13038345151',
+        from:'+17206059912',
+        body:'Cryptogs '+type+' ('+NETWORK+'): '+account+' '+file+" "+hash
+    }, function(error, message) {
+        if (!error) {
+            console.log('Success! The SID for this SMS message is:');
+            console.log(message.sid);
+            console.log('Message sent on:');
+            console.log(message.dateCreated);
+        } else {
+            console.log('Oops! There was an error.');
+        }
+    });
+    response.set('Content-Type', 'application/json');
+    response.end(JSON.stringify({mint:true}))
+})
+
+
+
 app.post('/delete', function(request, response){
     console.log("DELETE!",request.body);      // your JSON
 
