@@ -976,7 +976,7 @@ module.exports = {
 
 
             //next we need to make the actual mint calls to get the thing created
-            const result = await clevis("contract","mint","Cryptogs",accountindex,web3.utils.fromAscii(newImageName),needToMint.address)
+            //const result = await clevis("contract","mint","Cryptogs",accountindex,web3.utils.fromAscii(newImageName),needToMint.address)
 
             /* needToMint.minted = "yes"
              minted.push(needToMint)
@@ -1005,9 +1005,9 @@ module.exports = {
 
         console.log(tab,"Deploy Network:",(""+deployNetwork).green)
 
-        loadAddress("Cryptogs",deployNetwork)
-        loadAddress("SlammerTime",deployNetwork)
-        loadAddress("PizzaParlor",deployNetwork)
+       loadAddress("Cryptogs",deployNetwork)
+       loadAddress("SlammerTime",deployNetwork)
+       loadAddress("PizzaParlor",deployNetwork)
         loadAddress("Artists",deployNetwork)
 
         loadAbi("Cryptogs",deployNetwork)
