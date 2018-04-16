@@ -17,7 +17,7 @@ export default createClass({
 		throwAlert: PropTypes.func,
 	},
 	getInitialState(){
-		let contractList = ["Cryptogs","SlammerTime","PizzaParlor"]
+		let contractList = ["Cryptogs","SlammerTime","PizzaParlor","Artists"]
 		let mainnet = {}
 		let ropsten = {}
 		for(let c in contractList){
@@ -53,6 +53,7 @@ export default createClass({
 														<div>Cryptogs.sol</div>
 														<div>SlammerTime.sol</div>
 														<div>PizzaParlor.sol</div>
+														<div>Artists.sol</div>
 												</div>
 												<div className="col-md-9">
 													<div>
@@ -64,6 +65,9 @@ export default createClass({
 													<div>
 														<a href={"https://etherscan.io/address/"+this.state.mainnet.PizzaParlor+"#code"}>{this.state.mainnet.PizzaParlor}</a>
 													</div>
+													<div>
+														<a href={"https://etherscan.io/address/"+this.state.mainnet.Artists+"#code"}>{this.state.mainnet.Artists}</a>
+													</div>
 												</div>
 										</div>
 
@@ -74,6 +78,7 @@ export default createClass({
 													<div>Cryptogs.sol</div>
 													<div>SlammerTime.sol</div>
 													<div>PizzaParlor.sol</div>
+													<div>Artists.sol</div>
 												</div>
 												<div className="col-md-9">
 													<div>
@@ -85,6 +90,9 @@ export default createClass({
 													<div>
 														<a href={"https://ropsten.etherscan.io/address/"+this.state.ropsten.PizzaParlor+"#code"}>{this.state.ropsten.PizzaParlor}</a>
 													</div>
+													<div>
+														<a href={"https://ropsten.etherscan.io/address/"+this.state.ropsten.Artists+"#code"}>{this.state.ropsten.Artists}</a>
+													</div>
 												</div>
 										</div>
 
@@ -95,6 +103,7 @@ export default createClass({
 													<div>Cryptogs.sol</div>
 													<div>SlammerTime.sol</div>
 													<div>PizzaParlor.sol</div>
+													<div>Artists.sol</div>
 												</div>
 												<div className="col-md-9">
 													<div>
@@ -105,6 +114,9 @@ export default createClass({
 													</div>
 													<div>
 														<a href="https://github.com/austintgriffith/cryptogs/blob/master/PizzaParlor/PizzaParlor.sol">Source Code</a>
+													</div>
+													<div>
+														<a href="https://github.com/austintgriffith/cryptogs/blob/master/Artists/Artists.sol">Source Code</a>
 													</div>
 												</div>
 										</div>

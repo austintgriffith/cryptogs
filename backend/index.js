@@ -19,12 +19,15 @@ var SHA3 = require('sha3');
 var twilio = require('twilio');
 var twilioClient = new twilio(fs.readFileSync("twilio.sid").toString().trim(), fs.readFileSync("twilio.token").toString().trim());
 
+
+const ARTIST_EXPIRE = 9999999999
 const COMMIT_EXPIRE = 300 // commit expires quick if game isn't picked up
 const TRANSFER_EXPIRE = 3000 // commit expires quick if game isn't picked up
 const GENERATE_EXPIRE = 86400 // once a game is solid, let's cache it for longer
 const PHONE_EXPIRE = 86400*7
 const CHECKIN_EXPIRE = 30
 const JOINING_EXPIRE = 15
+
 
 let contracts;
 let tokens = [];
@@ -209,7 +212,7 @@ app.get('/commit/:commit', (req, res) => {
 
 app.get('/test', (req, res) => {
   console.log("--TEST",req.params)
-  res.set('Content-Type', 'application/json');
+
   res.end(JSON.stringify({test:true}))
 });
 
@@ -220,14 +223,22 @@ app.post('/phone', async function(request, response){
 
 app.post('/upload',function (req, res, next) {
   console.log("UPLOAD",req.body,req.file);
+  res.set('Content-Type', 'application/json');
 
-  var dir = './artwork/';
-  if (!fs.existsSync(dir)){fs.mkdirSync(dir);}
-  dir = './artwork/'+req.body.account.replace(/[^a-zA-Z0-9]+/g,"");
-  if (!fs.existsSync(dir)){fs.mkdirSync(dir);}
-  fs.renameSync("./"+req.file.path.replace(/[^a-zA-Z0-9/]+/g,""),dir+"/"+Date.now()+req.file.filename.substring(0,8)+req.file.originalname.substring(req.file.originalname.lastIndexOf('.')));
+  if(req.file.size > 80000){
+    console.log("File was too large... returning error...")
+    res.end(JSON.stringify({upload:false,message:"Failed to upload, the image is too big."}))
+  }else{
+    var dir = './artwork/';
+    if (!fs.existsSync(dir)){fs.mkdirSync(dir);}
+    dir = './artwork/'+req.body.account.replace(/[^a-zA-Z0-9]+/g,"");
+    if (!fs.existsSync(dir)){fs.mkdirSync(dir);}
+    fs.renameSync("./"+req.file.path.replace(/[^a-zA-Z0-9/]+/g,""),dir+"/"+Date.now()+req.file.filename.substring(0,8)+req.file.originalname.substring(req.file.originalname.lastIndexOf('.')));
+    res.end(JSON.stringify({upload:true}))
+  }
 
-  res.end(JSON.stringify({upload:true}))
+
+
 })
 app.use(express.static('artwork'))
 app.get('/artwork/:account', (req, res) => {
@@ -241,6 +252,20 @@ app.get('/artwork/:account', (req, res) => {
   var files = fs.readdirSync(dir);
   res.set('Content-Type', 'application/json');
   res.end(JSON.stringify({files:files}))
+});
+
+app.post('/artist',function (req, res, next) {
+  console.log("SET ARTIST",req.body,req.file);
+  redis.set("artist_"+req.body.account,req.body.name.replace(/[^a-zA-Z ]+/g,""),"ex",ARTIST_EXPIRE);
+  res.end(JSON.stringify({artist:req.body.name}))
+})
+app.get('/artist/:account', (req, res) => {
+  console.log("GET ARTIST",req.params.account)
+  redis.get("artist_"+req.params.account, function (err, result) {
+    console.log(result);
+    res.set('Content-Type', 'application/json');
+    res.end(JSON.stringify({artist:result}))
+  });
 });
 
 app.post('/delete', function(request, response){

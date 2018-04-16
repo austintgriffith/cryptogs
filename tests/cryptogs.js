@@ -892,6 +892,106 @@ module.exports = {
       });
     });
   },
+  artistReport:()=>{
+    describe('#artistReport() ', function() {
+      it('should create artist report', async function() {
+        this.timeout(600000)
+
+        let realList = []
+        const mintEvents = await clevis("contract","eventMint","Artists")
+        for(let e in mintEvents){
+          let image = web3.utils.toAscii(mintEvents[e].returnValues.image).replace(/[^a-zA-Z\d\s.]+/g,"")
+          realList.push({
+            type:"mint",
+            time:mintEvents[e].returnValues.time,
+            image:image,
+            value:mintEvents[e].returnValues.value,
+            address:mintEvents[e].returnValues.sender
+          })
+        }
+        const mintStackEvents = await clevis("contract","eventMintStack","Artists")
+        for(let e in mintStackEvents){
+          let image = web3.utils.toAscii(mintStackEvents[e].returnValues.image).replace(/[^a-zA-Z\d\s.]+/g,"")
+          realList.push({
+            type:"mintStack",
+            time:mintStackEvents[e].returnValues.time,
+            image:image,
+            value:mintStackEvents[e].returnValues.value,
+            address:mintStackEvents[e].returnValues.sender
+          })
+        }
+
+        console.log(realList)
+        fs.writeFileSync("artist.report",JSON.stringify(realList));
+
+      });
+    });
+  },
+  artistMint:(accountindex)=>{
+    describe('#artistMint() ', function() {
+      it('should artistMint', async function() {
+        this.timeout(600000)
+
+        let report = JSON.parse(fs.readFileSync("artist.report").toString().trim())
+        let minted = []
+        try{
+          minted = JSON.parse(fs.readFileSync("artist.minted").toString().trim())
+        }catch(e){}
+
+        let needToMint = false
+        for(let r in report){
+          let found = false
+          for(let m in minted){
+            if( minted[m].time == report[r].time && minted[m].address == report[r].address && minted[m].image == report[r].image ){
+              found=true
+            }
+          }
+          if(!found){
+            needToMint = report[r]
+            break
+          }
+        }
+
+        if(needToMint){
+          console.log(tab,tab,"Approval to mint (y or n)".green,needToMint,
+            ("\nhttps://stage.cryptogs.io:8001/"+needToMint.address+"/"+needToMint.image).blue,
+            ("\nhttps://stage.cryptogs.io:8001/artist/"+needToMint.address).yellow,
+          )
+          var stdin = process.openStdin();
+          stdin.addListener("data", function(d) {
+           let answer = d.toString().trim()
+           if(answer=="n" || answer.toLowerCase()=="no"){
+             console.log("NO")
+             needToMint.minted = "no"
+             minted.push(needToMint)
+             fs.writeFileSync("artist.minted",JSON.stringify(minted))
+             process.stdin.pause()
+           }else if(answer.length==2){
+             let newImageName = answer+needToMint.image
+             console.log("MINT FOR ARTIST "+newImageName)
+
+             //DO MINT!
+             //first we need to move the image so it is ready to deploy
+             fs.createReadStream('./backend/artwork/'+needToMint.address+"/"+needToMint.image).pipe(fs.createWriteStream('./reactapp/public/cryptogs/'+newImageName));
+
+
+            //next we need to make the actual mint calls to get the thing created
+            const result = await clevis("contract","mint","Cryptogs",accountindex,web3.utils.fromAscii(newImageName),needToMint.address)
+
+            /* needToMint.minted = "yes"
+             minted.push(needToMint)
+             fs.writeFileSync("artist.minted",JSON.stringify(minted))*/
+             process.stdin.pause()
+           }else{
+             console.log("please enter artists initials or 'no'")
+           }
+          });
+        }
+
+
+      });
+    });
+  },
 
 
   publish:()=>{

@@ -24,17 +24,22 @@ export default createClass({
 		blockNumber: PropTypes.number,
 	},
 	getInitialState(){
-		return {files:[],priceToMintStack:40000000000000000,priceToMint:10000000000000000,loadedEvents:false,mints:{}}
+		return {uploadMessage:"",artistName:"",files:[],priceToMintStack:40000000000000000,priceToMint:10000000000000000,loadedEvents:false,mints:{}}
 	},
 	componentDidMount(){
 		setInterval(this.getArtwork,5000)
 		setTimeout(this.getArtwork,500)
 		setTimeout(this.getArtwork,1500)
-		setInterval(this.getPrices,15000)
+		setInterval(this.getPrices,30000)
+		setTimeout(this.getPrices,500)
 		setTimeout(this.getPrices,1500)
+		setTimeout(this.getPrices,300)
+		setTimeout(this.getPrices,6000)
+		setTimeout(this.getPrices,12000)
+		setTimeout(this.getPrices,19000)
 	},
 	async getPrices(){
-		const { web3,contracts,blockNumber,account } = this.context
+		const { web3,contracts,blockNumber,account,api } = this.context
 		console.log("GETPRICES",contracts)
 		if(contracts && contracts['Artists'] && contracts['Artists']._address && account && blockNumber && web3){
 			let priceToMint = await contracts["Artists"].methods.priceToMint().call()
@@ -44,6 +49,22 @@ export default createClass({
 			if(!this.state.loadedEvents){
 				this.setState({loadedEvents:true},()=>{
 
+					try{
+						let url = api.host+'/artist/'+account
+						console.log("Looking for artist as "+account)
+						axios.get(url)
+						.then((response)=>{
+							if(response.data && response.data.artist){
+								console.log("ARTIST:", response.data.artist)
+
+								this.setState({artistName: response.data.artist})
+							}
+
+						})
+					} catch(e) {
+						console.log(e)
+					}
+
 					let filter = {
 						sender:account
 					}
@@ -51,6 +72,7 @@ export default createClass({
 					let updateMint = async (update)=>{
 						update.image = web3.utils.toAscii(update.image).replace(/[^a-zA-Z\d\s.]+/g,"")
 						update.mint = true
+						update.mintStack = false
 						if(!this.state.mints || !this.state.mints[update.time]){
 							let updateState = this.state.mints
 							if(!updateState) updateState = {}
@@ -68,6 +90,7 @@ export default createClass({
 					let updateMintStack = async (update)=>{
 						update.image = web3.utils.toAscii(update.image).replace(/[^a-zA-Z\d\s.]+/g,"")
 						update.mintStack = true
+						update.mint = false
 						if(!this.state.mints || !this.state.mints[update.time]){
 							let updateState = this.state.mints
 							if(!updateState) updateState = {}
@@ -78,7 +101,7 @@ export default createClass({
 					}
 					EventParser(contracts["Artists"],"MintStack",contracts["Cryptogs"].blockNumber,blockNumber,updateMintStack,filter);
 					setInterval(()=>{
-						LiveParser(contracts["Artists"],"MintStack",blockNumber,updateMint,filter)
+						LiveParser(contracts["Artists"],"MintStack",blockNumber,updateMintStack,filter)
 					},739)
 
 				})
@@ -109,7 +132,16 @@ export default createClass({
 		form.append('account',account);
 		let url = api.host+'/upload'
 		console.log(url,form)
-		axios.post(url, form)
+		console.log("POSTING UPLOAD...")
+		axios.post(url, form).then((response)=>{
+			console.log("BACK FROM UPLOAD",response);
+			if(!response.data.upload){
+				this.setState({uploadMessage:response.data.message})
+				setTimeout(()=>{
+					this.setState({uploadMessage:""})
+				},5000)
+			}
+		})
 		setTimeout(this.getArtwork,1000)
 		setTimeout(this.getArtwork,2500)
 	},
@@ -172,8 +204,34 @@ export default createClass({
 				console.error('caught error', e);
 		})
 	},
+	artistNameChangeKeyPress(e){
+		if (e.key === 'Enter') {
+      console.log('do validate');
+			this.saveArtistName()
+    }
+	},
+	artistNameChange(e){
+		this.setState({artistName:e.target.value.replace(/[^a-zA-Z0-9 ]+/g,"")})
+	},
+	saveArtistName(){
+		console.log("SAVE ARTIST")
+		const { api,account } = this.context
+		let url = api.host+'/artist'
+		axios.post(url, {
+			account:account,
+			name:this.state.artistName
+		})
+		.then((response)=>{
+			console.log(response)
+			console.log("ARTIST",response.data);
+		})
+		.catch(function (error) {
+			console.log(error);
+		});
+	},
 	render(){
 		let {web3,network,account,api} = this.context
+
 
 		let files = this.state.files.map((file)=>{
 
@@ -200,10 +258,13 @@ export default createClass({
 						timeAgoText = " m"
 					}
 					timeAgo= Math.round(timeAgo*10)/10
-					let type = "minted stack";
-					if(update.mint){
+					let type = "unknown";
+					if(update.mintStack===true){
+						type = "minted stack"
+					}else if(update.mint===true){
 						type = "minted"
 					}
+
 					return (
 						<div key={"update"+update.time} style={{opacity:0.7,marginLeft:"30%"}}>
 							{type+": "+timeAgo+timeAgoText+" ago"}
@@ -223,6 +284,8 @@ export default createClass({
 					</div>
 				)
 			}
+
+
 
 			return (
 				<div key={"cryptogs"+file}>
@@ -272,6 +335,15 @@ export default createClass({
 			)
 		})
 
+		let uploadMessageBox = ""
+		if(this.state.uploadMessage){
+			uploadMessageBox = (
+				<div style={{backgroundColor:"#FFEEEE",padding:20,textAlign:"center",margin:10}}>
+					{this.state.uploadMessage}
+				</div>
+			)
+		}
+
 		return (
 			<div>
 				<section className="section background-primary pt-5 pb-5">
@@ -285,7 +357,7 @@ export default createClass({
 									<Dropzone onDrop={this.onDrop}  style={{"cursor":"pointer","width" : "100%", "height" : "120", textAlign:"center",padding:40, opacity:0.7,"border" : "3px dashed #dddddd"}}>
 										<p>Drag and Drop or Click to Select</p>
 									</Dropzone>
-
+									{uploadMessageBox}
 								</div>
 
 							</div>
@@ -296,6 +368,17 @@ export default createClass({
 						</div>
 
 						<hr className="my-5" />
+
+						<div className="row align-items-center">
+							<div className="col-md-12">
+								<div style={{marginLeft:"10%"}}>
+									Artist Name: <input style={{}} value={this.state.artistName} onChange={this.artistNameChange} onBlur={this.saveArtistName} onKeyPress={this.artistNameChangeKeyPress}/>
+								</div>
+							</div>
+						</div>
+
+						<hr className="my-5" />
+
 
 						 {files}
 						</div>

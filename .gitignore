@@ -1,3 +1,4 @@
+artist.*
 backend/artwork
 backend/uploads
 backend/*.webhook
