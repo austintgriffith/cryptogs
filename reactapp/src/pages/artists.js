@@ -165,7 +165,7 @@ export default createClass({
 		});
 	},
 	mintStack(file){
-		const { account, contracts, web3, showLoadingScreen } = this.context
+		const { api, account, contracts, web3, showLoadingScreen } = this.context
 		console.log("MINT",file,account,contracts)
 		contracts["Artists"].methods.mintStack(web3.utils.fromAscii(file)).send({
 			from: account,
@@ -175,6 +175,25 @@ export default createClass({
 		},(error,hash)=>{
 			console.log("CALLBACK!",error,hash)
 			showLoadingScreen(hash)
+			if(api&&api.host){
+				let url = api.host+'/mint'
+				console.log("MINT",file,url,account)
+				console.log(url)
+				axios.post(url, {
+					account:account,
+					file:file,
+					hash:hash,
+					stack:true
+				})
+				.then((response)=>{
+					console.log(response)
+					console.log("MINT",response.data);
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+			}
+
 		}).on('error',(a,b)=>{
 			console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
 		}).then((receipt)=>{
@@ -185,7 +204,7 @@ export default createClass({
 		})
 	},
 	mint(file){
-		const { account, contracts, web3, showLoadingScreen } = this.context
+		const { api, account, contracts, web3, showLoadingScreen } = this.context
 		console.log("MINT",file,account,contracts)
 		contracts["Artists"].methods.mint(web3.utils.fromAscii(file)).send({
 			from: account,
@@ -195,6 +214,24 @@ export default createClass({
 		},(error,hash)=>{
 			console.log("CALLBACK!",error,hash)
 			showLoadingScreen(hash)
+			if(api&&api.host){
+				let url = api.host+'/mint'
+				console.log("MINT",file,url,account)
+				console.log(url)
+				axios.post(url, {
+					account:account,
+					file:file,
+					hash:hash,
+					stack:false
+				})
+				.then((response)=>{
+					console.log(response)
+					console.log("MINT",response.data);
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+			}
 		}).on('error',(a,b)=>{
 			console.log("ERROR"," Your transation is not yet mined into the blockchain. Wait or try again with a higher gas price. It could still get mined!")
 		}).then((receipt)=>{
