@@ -234,7 +234,7 @@ class MetaMask extends Component {
                 textAlign:"left",
 
               }}>
-              <a target="_blank" href={this.props.etherscan+"address/"+this.state.accounts[0]}>
+              <a target="_blank" href={"/address/"+this.state.accounts[0]}>
                 <div>
                   {this.state.accounts.length > 0 ? this.state.accounts[0].substring(0,16) : "Loading..."}
                 </div>
@@ -247,7 +247,7 @@ class MetaMask extends Component {
             </div>
 
             <div style={{position:"absolute",left:10,top:10}}>
-              <a target="_Blank" href="https://wallet.ethereum.org/">
+              <a target="_Blank" href={"/address/"+this.state.accounts[0]}>
               <Blockies
                 seed={this.state.accounts[0].toLowerCase()}
                 scale={6}

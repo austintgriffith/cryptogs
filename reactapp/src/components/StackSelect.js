@@ -77,7 +77,7 @@ class StackSelect extends Component {
       extraTokenDisplay = (
         <div className={"centercontainer"} style={{width:"100%"}}>
           <div style={{padding:40}}>
-            <MMButton color={"#6ac360"} onClick={()=>{window.location="/buy"}}>Buy Pogs</MMButton>
+            <MMButton color={"#6ac360"} onClick={()=>{window.location="/buy"}}>Buy Togs</MMButton>
           </div>
         </div>
       )

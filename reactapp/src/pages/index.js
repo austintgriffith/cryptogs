@@ -287,7 +287,13 @@ export default createClass({
 									<div className="col-md-7">
 										<h2 className="h4 mb-3">Original Artwork</h2>
 										<p>
-											{"Calling all artists! We are looking for original artwork. Players, traders, and gamers can see the artist of each pog. Jump in the #design channel of our "}
+											{"Calling all artists! We are looking for original artwork."}
+										</p>
+										<p>
+											Artists can design and mint their own Togs <a href="/artists">here</a>!
+										</p>
+										<p>
+											{"Players, traders, and gamers can see the artist of each pog. Jump in the #design channel of our "}
 											<a target="_blank" href="https://join.slack.com/t/cryptopogs/shared_invite/enQtMzIyNTI4Njc5MDMwLTkyZTczMTgwYzU2YTZhNmFiMDg5YTFkOGQzYmNlMGZhYmRmNmQ4ZTM2MGRkMjEyYmRmYWZiNzIzMDVhNDA3NDk">Slack</a> or
 											 <a target="_blank" href="https://discord.gg/RhqxSj7">Discord</a>.
 										</p>

@@ -15,6 +15,7 @@ export default createClass({
 		account: PropTypes.string,
 		myTokens: PropTypes.array,
 		etherscan: PropTypes.string,
+		api: PropTypes.object,
 	},
 	render(){
 		const { contracts } = this.context
@@ -35,6 +36,7 @@ export default createClass({
 	              component={AddressStack}
 								context={this.context}
 								etherscan={this.context.etherscan}
+								api={this.context.api}
 	            />
 	          </div>
 	        )}

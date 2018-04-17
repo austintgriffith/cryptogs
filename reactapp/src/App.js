@@ -33,7 +33,7 @@ import {Motion, spring, presets} from 'react-motion';
 let OPTIONALBACKENDPORT = "8001"
 
 const DEBUG = false
-const MAINNETGWEI = 5
+const MAINNETGWEI = 2.1
 const MAINNETMAXGWEI = 8
 const MAINNETMINGWEI = 0.1
 const STARTINGGWEI = 21
@@ -103,7 +103,7 @@ export default createClass({
 		},1000)
 	},
 	getInitialState(){
-		let GWEI =  parseInt(cookie.load('GWEI'))
+		let GWEI =  parseInt(cookie.load('GWEI')*10)/10
 		if(!GWEI) GWEI=MAINNETGWEI;
 		//console.log("STARTING MAINNETMAXGWEI",MAINNETMAXGWEI)
 		return {
