@@ -134,7 +134,7 @@ class AddressStack extends Component {
       })
 
       history = (
-        <div style={{marginLeft:20,marginBottom:80,marginTop:40}}>
+        <div style={{marginLeft:20,marginBottom:80,marginTop:40,fontSize:12}}>
           <h3>Game History:</h3>
           {games}
         </div>
@@ -163,7 +163,7 @@ class AddressStack extends Component {
           </StackGrid>
           {history}
         {callToBuy}
-        <div className="row align-items-center" style={{marginTop:50,marginBottom:100}}>
+        <div className="row align-items-center" style={{marginTop:100,marginBottom:150}}>
           <div className="col-md-12">
             <div className={"centercontainer"} style={{marginTop:10}}>
               <QRCode value={this.props.match.params.address} size={320}/>

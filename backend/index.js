@@ -346,18 +346,32 @@ app.get('/artwork/:account', (req, res) => {
   res.set('Content-Type', 'application/json');
   res.end(JSON.stringify({files:files}))
 });
+app.get('/artwork', (req, res) => {
+  console.log("LIST ARTWORK",req.params)
+
+  var dir = './artwork/';
+  if (!fs.existsSync(dir)){fs.mkdirSync(dir);}
+  var files = fs.readdirSync(dir);
+  res.set('Content-Type', 'application/json');
+  res.end(JSON.stringify({files:files}))
+});
 
 app.post('/artist',function (req, res, next) {
   console.log("SET ARTIST",req.body,req.file);
-  redis.set("artist_"+req.body.account,req.body.name.replace(/[^a-zA-Z ]+/g,""),"ex",ARTIST_EXPIRE);
-  res.end(JSON.stringify({artist:req.body.name}))
+  if(req.body.name) redis.set("artist_"+req.body.account,req.body.name.replace(/[^a-zA-Z0-9 ]+/g,""),"ex",ARTIST_EXPIRE);
+  if(req.body.email) redis.set("artistEmail_"+req.body.account,req.body.email.replace(/[^a-zA-Z0-9@_ .-]+/g,""),"ex",ARTIST_EXPIRE);
+  res.set('Content-Type', 'application/json');
+  res.end(JSON.stringify({artist:req.body.name,email:req.body.email}))
 })
 app.get('/artist/:account', (req, res) => {
   console.log("GET ARTIST",req.params.account)
-  redis.get("artist_"+req.params.account, function (err, result) {
-    console.log(result);
-    res.set('Content-Type', 'application/json');
-    res.end(JSON.stringify({artist:result}))
+  redis.get("artist_"+req.params.account, function (err, name) {
+    console.log(name);
+    redis.get("artistEmail_"+req.params.account, function (err, email) {
+      console.log(email);
+      res.set('Content-Type', 'application/json');
+      res.end(JSON.stringify({artist:name,email:email}))
+    });
   });
 });
 

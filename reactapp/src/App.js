@@ -13,6 +13,7 @@ import AddressPage from './pages/address.js'
 import StacksPage from './pages/stacks.js'
 import Web3Page from './pages/web3.js'
 import ArtistsPage from './pages/artists.js'
+import ArtPage from './pages/art.js'
 import CreatePage from './pages/create.js'
 import ContractsPage from './pages/contracts.js'
 import PlayPage from './pages/play.js'
@@ -33,7 +34,7 @@ import {Motion, spring, presets} from 'react-motion';
 let OPTIONALBACKENDPORT = "8001"
 
 const DEBUG = false
-const MAINNETGWEI = 2.1
+const MAINNETGWEI = 5
 const MAINNETMAXGWEI = 8
 const MAINNETMINGWEI = 0.1
 const STARTINGGWEI = 21
@@ -308,6 +309,7 @@ export default createClass({
 	 						 <Route path={`/cryptog/:cryptog`} component={CryptogPage} />
 	 						 <Route path={`/contracts`} component={ContractsPage} />
 							 <Route path={`/artists`} component={ArtistsPage} />
+							 <Route path={`/art`} component={ArtPage} />
 	 						 <Redirect to='/' />
 	 				</Switch>
 	 			</Router>

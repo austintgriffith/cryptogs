@@ -24,7 +24,7 @@ export default createClass({
 		blockNumber: PropTypes.number,
 	},
 	getInitialState(){
-		return {uploadMessage:"",artistName:"",files:[],priceToMintStack:40000000000000000,priceToMint:10000000000000000,loadedEvents:false,mints:{}}
+		return {uploadMessage:"",artistName:"",artistEmail:"",files:[],priceToMintStack:40000000000000000,priceToMint:10000000000000000,loadedEvents:false,mints:{}}
 	},
 	componentDidMount(){
 		setInterval(this.getArtwork,5000)
@@ -54,10 +54,10 @@ export default createClass({
 						console.log("Looking for artist as "+account)
 						axios.get(url)
 						.then((response)=>{
-							if(response.data && response.data.artist){
-								console.log("ARTIST:", response.data.artist)
+							if(response.data){
+								console.log("ARTIST:", response.data)
 
-								this.setState({artistName: response.data.artist})
+								this.setState({artistName: response.data.artist,artistEmail: response.data.email})
 							}
 
 						})
@@ -244,18 +244,22 @@ export default createClass({
 	artistNameChangeKeyPress(e){
 		if (e.key === 'Enter') {
       console.log('do validate');
-			this.saveArtistName()
+			this.saveArtist()
     }
 	},
 	artistNameChange(e){
 		this.setState({artistName:e.target.value.replace(/[^a-zA-Z0-9 ]+/g,"")})
 	},
-	saveArtistName(){
+	artistEmailChange(e){
+		this.setState({artistEmail:e.target.value.replace(/[^a-zA-Z0-9@_ .-]+/g,"")})
+	},
+	saveArtist(){
 		console.log("SAVE ARTIST")
 		const { api,account } = this.context
 		let url = api.host+'/artist'
 		axios.post(url, {
 			account:account,
+			email:this.state.artistEmail,
 			name:this.state.artistName
 		})
 		.then((response)=>{
@@ -269,6 +273,13 @@ export default createClass({
 	render(){
 		let {web3,network,account,api} = this.context
 
+		if(!account){
+			return (
+				<div style={{padding:100,width:"100%",textAlign:"center"}}>
+					Hello, Artist, please unlock metamask. :)
+				</div>
+			)
+		}
 
 		let files = this.state.files.map((file)=>{
 
@@ -407,9 +418,14 @@ export default createClass({
 						<hr className="my-5" />
 
 						<div className="row align-items-center">
-							<div className="col-md-12">
+							<div className="col-md-6">
 								<div style={{marginLeft:"10%"}}>
-									Artist Name: <input style={{}} value={this.state.artistName} onChange={this.artistNameChange} onBlur={this.saveArtistName} onKeyPress={this.artistNameChangeKeyPress}/>
+									Artist Name: <input style={{}} value={this.state.artistName} onChange={this.artistNameChange} onBlur={this.saveArtist} onKeyPress={this.artistNameChangeKeyPress}/>
+								</div>
+							</div>
+							<div className="col-md-6">
+								<div style={{marginLeft:"10%"}}>
+									Artist Email: <input style={{width:250}} value={this.state.artistEmail} onChange={this.artistEmailChange} onBlur={this.saveArtist} onKeyPress={this.artistNameChangeKeyPress}/>
 								</div>
 							</div>
 						</div>
