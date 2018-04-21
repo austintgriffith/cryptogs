@@ -76,25 +76,37 @@ export default createClass({
 		let art = []
 		for(let a in this.state.artists) {
 			let artist = this.state.artists[a]
-				art.push(
-					<div>
+			let artwork = this.state[artist]
+			if(artwork&&artwork.length>0){
 
+				let artworkDisplay = []
+				for(let a in artwork){
+					artworkDisplay.push(
 						<div className="container">
 							<div className="row align-items-center">
-								<div className="col-md-11">
+								<div className="col-md-1">
 									<Blockies
 										seed={artist.toLowerCase()}
 										scale={6}
 									/>
 								</div>
-								<div className="col-md-1">
-									1
+								<div className="col-md-6">
+									<Cryptog key={"cryptog"+artwork[a]} scale={1} id={artwork[a]} absoluteImage={api.host+"/"+artist+"/"+artwork[a]} zIndex={1}/>
+								</div>
+								<div className="col-md-5">
+
 								</div>
 							</div>
 						</div>
+					)
+				}
+
+				art.push(
+					<div>
+						{artworkDisplay}
 					</div>
 				)
-
+			}
 		}
 
 
@@ -103,19 +115,13 @@ export default createClass({
 				<section className="section background-primary pt-5 pb-5">
 					<div className="container">
 						<div className="jumbotron jumbotron--white p-5">
-
-
 						<hr className="my-5" />
-
 						<div className="row align-items-center">
 							<div className="col-md-12">
 								Art
 							</div>
 						</div>
-
 						<hr className="my-5" />
-
-
 						 {art}
 						</div>
 					</div>
