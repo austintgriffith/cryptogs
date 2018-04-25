@@ -178,22 +178,38 @@ export default createClass({
     this.setState({etherscan:url})
   },
 	networkReady(network,web3js) {
-		console.log("NETWORK READY",network,web3js.currentProvider)
+		console.log("NETWORK READY:",network,web3js.currentProvider)
 		let contracts = ContractLoader(["Cryptogs","SlammerTime","PizzaParlor","Artists"],web3js,network);
 		let update = {network:network,web3:web3js,contracts:contracts,contractsLoaded:true}
-		if(!this.state || !this.state.GWEI || this.state.GWEI == STARTINGGWEI){
+	//	if(!this.state || !this.state.GWEI || this.state.GWEI == STARTINGGWEI MAINNETGWEI){
+			console.log("GWEI...")
 			if(network>1){
 				this.setGWEI(STARTINGGWEI)
 			}else{
+				console.log("Setting gas to default and hitting API for a better price...")
 				this.setGWEI(MAINNETGWEI)
+				axios.get("https://ethgasstation.info/json/ethgasAPI.json")
+				.then((response)=>{
+					console.log("GAS",response.data)
+					if(response.data.average>0&&response.data.average<200){
+						response.data.average=response.data.average+2
+						let setMainGasTo = response.data.average/10
+						this.setGWEI(setMainGasTo)
+					}
+				})
 			}
-		}
+	//	}else{
+	//		console.log("GWEI already",this.state.GWEI)
+		//}
 		if(network>1){
 			this.setGWEIScale(STARTINGMINGWEI,STARTINGMAXGWEI)
 		}else{
 			this.setGWEIScale(MAINNETMINGWEI,MAINNETMAXGWEI)
 		}
 		this.setState(update)
+
+
+
 		//check to see if we can talk to the api
 		setTimeout(()=>{
 			this.setupApi()
