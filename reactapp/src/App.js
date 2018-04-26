@@ -233,6 +233,8 @@ export default createClass({
 		}
 	},
 	apiClick(){
+
+		/*
 		cookie.save('apiinfo', 0, { path: '/', maxAge:1800 })
 		if(this.state.api&&this.state.api.version){
 			console.log("clear api and go dencentralized")
@@ -257,6 +259,8 @@ export default createClass({
 			},2000)
 
 		}
+		*/
+		window.location = "/"
 	},
 	whenContractsAreReady(){
 		setInterval(()=>{

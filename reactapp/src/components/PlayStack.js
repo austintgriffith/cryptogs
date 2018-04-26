@@ -18,6 +18,7 @@ import Phone from 'react-phone-number-input'
 import 'react-phone-number-input/rrui.css'
 import 'react-phone-number-input/style.css'
 import Online from '../components/Online'
+import Notification from 'react-web-notification'
 var QRCode = require('qrcode-react');
 
 const USEPHONE = false;
@@ -55,6 +56,9 @@ class PlayStack extends Component {
       slammerLeft:-200,
       blockNumber:0,
       debugString:"con",
+      notif:false,
+      notifTitle:false,
+      notifOptions:{},
     }
 
     this.waitForStuff()
@@ -77,7 +81,7 @@ class PlayStack extends Component {
         setInterval(()=>{
           axios.get(this.props.api.host+"/joining/"+this.state.stack)
           .then((response)=>{
-            console.log("JOINING",response)
+            //console.log("JOINING",response)
             if(response.data) this.setState(response.data)
          })
         },2000)
@@ -287,8 +291,8 @@ class PlayStack extends Component {
           commit: this.state.stack,
         })
         .then(function (response) {
-          console.log(response)
-          console.log("TOUCHED",response.data);
+        //  console.log(response)
+          //console.log("TOUCHED",response.data);
         })
         .catch(function (error) {
           console.log(error);
@@ -305,9 +309,17 @@ class PlayStack extends Component {
       let possibleFlightPaths = [-150,-200,-250,-300,-350,350,300,250,200,150];
       axios.get(this.props.api.host+"/commit/"+this.state.stack)
       .then((response)=>{
+
         if(response.data==""){
           window.location = "/stacks"
         }
+
+        if(response.data&&response.data.counterStacks&&response.data.counterStacks.length>0){
+          if(!this.state.sentNotif){
+            this.sendNotif()
+          }
+        }
+
         if(!this.state.stackData){
           this.doUpdate(response.data)
         }
@@ -1325,6 +1337,19 @@ class PlayStack extends Component {
       }else{console.log("this.state.sms",this.state.sms,"INVALID")}
     })
   }
+  sendNotif(){
+    const options = {
+     body: "A challenger has arrived!",
+     icon: "https://raw.githubusercontent.com/austintgriffith/cryptogs/master/reactapp/public/cryptogs/ad8ball.png",
+     lang: 'en',
+     dir: 'ltr',
+   }
+   this.setState({
+     notifTitle: "Cryptogs!",
+     notifOptions: options,
+     sentNotif: true
+   });
+  }
   render(){
     let qrcode
     let width = 700
@@ -2045,6 +2070,38 @@ class PlayStack extends Component {
             )
           }else{
             if(this.props.api&&this.props.api.version){
+
+
+
+              let notifBody = ""
+              if(this.state.notif){
+                notifBody = (
+                  <div>
+                  <Notification
+                    /*  ignore={}
+                      notSupported={this.handleNotSupported.bind(this)}
+                      onPermissionGranted={this.handlePermissionGranted.bind(this)}
+                      onPermissionDenied={this.handlePermissionDenied.bind(this)}
+                      onShow={this.handleNotificationOnShow.bind(this)}
+                      onClick={this.handleNotificationOnClick.bind(this)}
+                      onClose={this.handleNotificationOnClose.bind(this)}
+                      onError={this.handleNotificationOnError.bind(this)}*/
+                      askAgain={true}
+                      timeout={8000}
+                      title={this.state.notifTitle}
+                      options={this.state.notifOptions}
+                  />
+                  (Allow notifications and you will receive a browser notification when a challenger arrives.)
+                  </div>
+                )
+              }else{
+                notifBody = (
+                  <MMButton color={"#6081c3"} onClick={()=>{
+                    this.setState({notif:true})
+                  }}>Notify Me When Challenger Arrives</MMButton>
+                )
+              }
+
               qrcode = window.location.protocol+"//"+window.location.hostname+portInfo+"/join/"+this.state.stack
               message = (
                 <div>
@@ -2052,10 +2109,16 @@ class PlayStack extends Component {
                   <div className={"centercontainer"}>
                     <div style={{padding:40,marginTop:60}}>
                     <div style={{padding:10,paddingTop:20}}>Waiting for other players</div>
+
                     <div style={{padding:10,marginTop:topPadderJoiner}}>Share game url:</div>
                     <div style={preStyle}>
                       <pre id="url" style={{fontSize:14}} onClick={selectText}>{qrcode}</pre>
                     </div>
+
+                    <div style={{marginTop:40}}>
+                     {notifBody}
+                    </div>
+
                     <div style={{padding:10,paddingTop:20}}>
                         {phoneInput}
                     </div>

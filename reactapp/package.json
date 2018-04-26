@@ -25,6 +25,7 @@
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.1",
     "react-stack-grid": "^0.7.1",
+    "react-web-notification": "^0.3.1",
     "s3": "^4.4.0",
     "web3": "^1.0.0-beta.30"
   },
