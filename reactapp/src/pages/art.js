@@ -85,10 +85,12 @@ export default createClass({
 						<div className="container">
 							<div className="row align-items-center">
 								<div className="col-md-1">
-									<Blockies
-										seed={artist.toLowerCase()}
-										scale={6}
-									/>
+									<a target="_blank" href={"/address/"+artist.toLowerCase()}>
+										<Blockies
+											seed={artist.toLowerCase()}
+											scale={6}
+										/>
+									</a>
 								</div>
 								<div className="col-md-6">
 									<Cryptog key={"cryptog"+artwork[a]} scale={1} id={artwork[a]} absoluteImage={api.host+"/"+artist+"/"+artwork[a]} zIndex={1}/>
