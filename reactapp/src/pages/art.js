@@ -85,7 +85,7 @@ export default createClass({
 						<div className="container">
 							<div className="row align-items-center">
 								<div className="col-md-1">
-									<a target="_blank" href={"/address/"+artist.toLowerCase()}>
+									<a target="_blank" href={"https://api.cryptogs.io/artist/"+artist.toLowerCase()}>
 										<Blockies
 											seed={artist.toLowerCase()}
 											scale={6}
