@@ -8,11 +8,13 @@ export default function(image){
   }else if(chars=="ag"){
     return "Austin Griffith"
   }else if(chars=="wg"){
-    return "Randy O"
+    return "wgmeets"
   }else if(chars=="ts"){
     return "thestarflyer"
   }else if(chars=="jb"){
     return "jbdoge"
+  }else if(chars=="pz"){
+    return "PersonZ"
   }
 
 
