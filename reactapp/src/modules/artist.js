@@ -15,6 +15,8 @@ export default function(image){
     return "jbdoge"
   }else if(chars=="pz"){
     return "PersonZ"
+  }else if(chars=="ce"){
+    return "Max Brody"
   }
 
 
