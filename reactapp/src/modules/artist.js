@@ -21,6 +21,12 @@ export default function(image){
     return "Valerio Poltrini"
   }else if(chars=="al"){
     return "Arya Love"
+  }else if(chars=="mt"){
+    return "Mtimetraveller"
+  }else if(chars=="tb"){
+    return "th3build"
+  }else if(chars=="tu"){
+    return "TechUnboxin"
   }
 
 
