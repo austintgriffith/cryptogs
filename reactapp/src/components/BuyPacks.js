@@ -158,7 +158,7 @@ export default createClass({
 													from: account,
 													value: web3.utils.toWei(sortedPacks[p].price,"ether"),
 													gas:GASTOBUYPACKS,
-													gasPrice:this.context.GWEI * 1000000000
+													gasPrice:Math.round(this.context.GWEI * 1000000000)
 												},(error,hash)=>{
 													console.log("CALLBACK!",error,hash)
 													showLoadingScreen(hash,"/address/"+account)
@@ -226,7 +226,7 @@ export default createClass({
 	  							        from: account,
 	  											value: web3.utils.toWei(sortedPacks[p].price,"ether"),
 	  							        gas:GASTOBUYPACKS,
-	  							        gasPrice:this.context.GWEI * 1000000000
+	  							        gasPrice:Math.round(this.context.GWEI * 1000000000)
 	  							      },(error,hash)=>{
 	  							        console.log("CALLBACK!",error,hash)
 													showLoadingScreen(hash,"/address/"+account)

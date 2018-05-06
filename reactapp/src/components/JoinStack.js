@@ -121,7 +121,7 @@ class JoinStack extends Component {
   		contracts["Cryptogs"].methods.submitCounterStack(stack,finalArray[0],finalArray[1],finalArray[2],finalArray[3],finalArray[4]).send({
         from: account,
         gas:350000,
-        gasPrice:this.props.GWEI * 1000000000
+        gasPrice:Math.round(this.props.GWEI * 1000000000)
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
         showLoadingScreen(hash,"/play/"+stack)

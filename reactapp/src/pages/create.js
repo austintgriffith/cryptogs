@@ -68,7 +68,7 @@ export default createClass({
 			contracts["Cryptogs"].methods.submitStack(finalArray[0],finalArray[1],finalArray[2],finalArray[3],finalArray[4],true).send({
 	        from: account,
 	        gas:350000,
-	        gasPrice:this.context.GWEI * 1000000000
+	        gasPrice:Math.round(this.context.GWEI * 1000000000)
 	      },(error,hash)=>{
 	        console.log("CALLBACK!",error,hash)
 					showLoadingScreen(hash,this.findSubmitStackAndGo)

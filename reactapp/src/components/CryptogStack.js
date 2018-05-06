@@ -44,7 +44,7 @@ class CryptogStack extends Component {
 		contracts["Cryptogs"].methods.transfer(this.state.address,this.state.tokenData.id).send({
         from: account,
         gas:100000,
-        gasPrice:this.context.GWEI * 1000000000
+        gasPrice:Math.round(this.context.GWEI * 1000000000)
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
 				showLoadingScreen(hash,this.findSubmitStackAndGo)

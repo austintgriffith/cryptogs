@@ -17,6 +17,10 @@ export default function(image){
     return "PersonZ"
   }else if(chars=="ce"){
     return "Max Brody"
+  }else if(chars=="vp"){
+    return "Valerio Poltrini"
+  }else if(chars=="al"){
+    return "Arya Love"
   }
 
 
