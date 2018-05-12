@@ -171,7 +171,7 @@ export default createClass({
 			from: account,
 			value: this.state.priceToMintStack,
 			gas:30000,
-			gasPrice:this.context.GWEI * 1000000000
+			gasPrice:Math.round(this.context.GWEI * 1000000000)
 		},(error,hash)=>{
 			console.log("CALLBACK!",error,hash)
 			showLoadingScreen(hash)
@@ -210,7 +210,7 @@ export default createClass({
 			from: account,
 			value: this.state.priceToMint,
 			gas:30000,
-			gasPrice:this.context.GWEI * 1000000000
+			gasPrice:Math.round(this.context.GWEI * 1000000000)
 		},(error,hash)=>{
 			console.log("CALLBACK!",error,hash)
 			showLoadingScreen(hash)

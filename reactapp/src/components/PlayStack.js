@@ -782,7 +782,7 @@ class PlayStack extends Component {
       contracts["Cryptogs"].methods.acceptCounterStack(this.state.stack,counterStack).send({
         from: account,
         gas:1000000,
-        gasPrice:this.props.GWEI * 1000000000
+        gasPrice:Math.round(this.props.GWEI * 1000000000)
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
         showLoadingScreen(hash)
@@ -824,7 +824,7 @@ class PlayStack extends Component {
       contracts["Cryptogs"].methods.cancelStack(stack).send({
         from: account,
         gas:250000,
-        gasPrice:this.props.GWEI * 1000000000
+        gasPrice:Math.round(this.props.GWEI * 1000000000)
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
         showLoadingScreen(hash,"/stacks")
@@ -870,7 +870,7 @@ class PlayStack extends Component {
       contracts["Cryptogs"].methods.cancelCounterStack(stack,counterstack).send({
         from: account,
         gas:350000,
-        gasPrice:this.props.GWEI * 1000000000
+        gasPrice:Math.round(this.props.GWEI * 1000000000)
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
         showLoadingScreen(hash,"/stacks")
@@ -906,7 +906,7 @@ class PlayStack extends Component {
     contracts["Cryptogs"].methods.startCoinFlip(this.state.stack,this.state.counterStack,commitHash).send({
         from: account,
         gas:150000,
-        gasPrice:this.props.GWEI * 1000000000
+        gasPrice:Math.round(this.props.GWEI * 1000000000)
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
         showLoadingScreen(hash)
@@ -934,7 +934,7 @@ class PlayStack extends Component {
     contracts["Cryptogs"].methods.endCoinFlip(this.state.stack,this.state.counterStack,reveal).send({
         from: account,
         gas:150000,
-        gasPrice:this.props.GWEI * 1000000000
+        gasPrice:Math.round(this.props.GWEI * 1000000000)
       },(error,hash)=>{
         console.log("CALLBACK!",error,hash)
         showLoadingScreen(hash)
@@ -968,7 +968,7 @@ class PlayStack extends Component {
       contracts["Cryptogs"].methods.raiseSlammer(this.state.stack,this.state.counterStack,commitHash).send({
           from: account,
           gas:150000,
-          gasPrice:this.props.GWEI * 1000000000
+          gasPrice:Math.round(this.props.GWEI * 1000000000)
         },(error,hash)=>{
           console.log("CALLBACK!",error,hash)
           showLoadingScreen(hash)
@@ -1000,7 +1000,7 @@ class PlayStack extends Component {
       contracts["Cryptogs"].methods.throwSlammer(this.state.stack,this.state.counterStack,reveal).send({
           from: account,
           gas:500000,
-          gasPrice:this.props.GWEI * 1000000000
+          gasPrice:Math.round(this.props.GWEI * 1000000000)
         },(error,hash)=>{
           console.log("CALLBACK!",error,hash)
           showLoadingScreen(hash)
@@ -1029,7 +1029,7 @@ class PlayStack extends Component {
     contracts["Cryptogs"].methods.drainStack(this.state.stack,this.state.counterStack).send({
       from: account,
       gas:1000000,
-      gasPrice:this.props.GWEI * 1000000000
+      gasPrice:Math.round(this.props.GWEI * 1000000000)
     },(error,hash)=>{
       console.log("CALLBACK!",error,hash)
       showLoadingScreen(hash)
@@ -1078,7 +1078,7 @@ class PlayStack extends Component {
     contracts["PizzaParlor"].methods.revokeStack(stackData.commit,stackData.token1,stackData.token2,stackData.token3,stackData.token4,stackData.token5).send({
       from: account,
       gas:400000,
-      gasPrice:this.props.GWEI * 1000000000
+      gasPrice:Math.round(this.props.GWEI * 1000000000)
     },(error,hash)=>{
       console.log("CALLBACK!",error,hash)
       showLoadingScreen(hash)
@@ -1122,7 +1122,7 @@ class PlayStack extends Component {
     contracts["Cryptogs"].methods.transferStackAndCall(pizzaParlorAddress,stackData.token1,stackData.token2,stackData.token3,stackData.token4,stackData.token5,stackData.commit).send({
       from: account,
       gas:400000,
-      gasPrice:this.props.GWEI * 1000000000
+      gasPrice:Math.round(this.props.GWEI * 1000000000)
     },(error,hash)=>{
       console.log("CALLBACK!",error,hash)
       showLoadingScreen(hash)
@@ -1214,7 +1214,7 @@ class PlayStack extends Component {
        ).send({
          from: account,
          gas:400000,
-         gasPrice:this.props.GWEI * 1000000000
+         gasPrice:Math.round(this.props.GWEI * 1000000000)
        },(error,hash)=>{
          console.log("CALLBACK!",error,hash)
          showLoadingScreen(hash)
@@ -1274,7 +1274,7 @@ class PlayStack extends Component {
     ).send({
       from: account,
       gas:400000,
-      gasPrice:this.props.GWEI * 1000000000
+      gasPrice:Math.round(this.props.GWEI * 1000000000)
     },(error,hash)=>{
       console.log("CALLBACK!",error,hash)
       showLoadingScreen(hash)
