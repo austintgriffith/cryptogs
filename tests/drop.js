@@ -10,41 +10,70 @@ awTwo
 awCrypto
 awAnimals
 default
+
+pzPaintings
+alPaintings
+tbThebuild
 */
 
-// cryptogs.dropBatch(0,"awCrypto","0x982572547720705cA05B130D9301E4863bBf843E")
-// cryptogs.dropBatch(0,"ethDen","0xDe3b95B47f1F488E26F838E62497EFF4e3F42fD5")
+// cryptogs.dropBatch(0,"tbThebuild","")
+// cryptogs.dropBatch(0,"ethDen","")
 
-cryptogs.dropBatch(0,"aw90s","0xCc3bFCD2d2A1Ce5c30AB5dF77C0DB21c3eBa1576")
+// cryptogs.dropBatch(0,"aw90s","")
 // cryptogs.dropBatch(0,"aw90s","")
 
 // cryptogs.dropBatch(0,[
-//   "peepeth.png",
-//   "peepeth.png",
-//   "peepeth.png",
-//   "peepeth.png",
-//   "peepeth.png"
-// ],"0x2aeb4bcdbd41cb64447b75a9550b9bdf9e9a824d")
+//   "1524962442486dff37cae.jpg",
+//   "1524962442486dff37cae.jpg",
+//   "1524962442486dff37cae.jpg",
+//   "1524962442486dff37cae.jpg",
+//   "1524962442486dff37cae.jpg"
+// ],"")
 
+
+//
+cryptogs.dropBatch(0,[
+  "peepeth.png",
+  "peepeth.png",
+  "peepeth.png",
+  "peepeth.png",
+  "peepeth.png",
+],"")
+
+// cryptogs.dropBatch(0,[
+//   "jsmaga.jpg",
+//   "jsmaga.jpg",
+//   "jsmaga.jpg",
+//   "jsmaga.jpg",
+//   "jsmaga.jpg",
+// ],"")
 
 //
 // cryptogs.dropBatch(0,[
 //   "darkclogo.png",
 //   "lightclogo.png",
-//   "ethereumlogo.png",
+//   "vphammerandsickle.png",
 //   "darkclogo.png",
 //   "lightclogo.png",
-// ],"0x4E21563f675aBff094872697d3b8A7f2143C6186")
+// ],"")
 
-//
-//
+
 // cryptogs.dropBatch(0,[
-//   "trust.png",
-//   "trust.png",
-//   "trust.png",
-//   "trust.png",
-//   "trust.png",
-// ],"0xe47494379c1d48ee73454c251a6395fdd4f9eb43")
+//   "cent.jpg",
+//   "cent.jpg",
+//   "cent.jpg",
+//   "cent.jpg",
+//   "cent.jpg",
+// ],"")
+
+
+// cryptogs.dropBatch(0,[
+//   "peepeth.png",
+//   "peepeth.png",
+//   "peepeth.png",
+//   "peepeth.png",
+//   "peepeth.png",
+// ],"")
 
 /*
 
@@ -197,30 +226,14 @@ agunicorn.png
  cryptogs.mint(0,"agethereumlogo.png",2)
 */
 /*
- cryptogs.airdrop(0,"aggenesiscryptog.png","0x5f19cefc9c9d1bc63f9e4d4780493ff5577d238b")
- cryptogs.airdrop(0,"agdragon.png","0x5f19cefc9c9d1bc63f9e4d4780493ff5577d238b")
- cryptogs.airdrop(0,"agunicorn.png","0x5f19cefc9c9d1bc63f9e4d4780493ff5577d238b")
- cryptogs.airdrop(0,"agfish.png","0x5f19cefc9c9d1bc63f9e4d4780493ff5577d238b")
- cryptogs.airdrop(0,"agethereumlogo.png","0x5f19cefc9c9d1bc63f9e4d4780493ff5577d238b")
- cryptogs.airdrop(0,"aggenesiscryptog.png","0x2a906694D15Df38F59e76ED3a5735f8AAbccE9cb")
- cryptogs.airdrop(0,"agunicorn.png","0x2a906694D15Df38F59e76ED3a5735f8AAbccE9cb")
- cryptogs.airdrop(0,"agethereumlogo.png","0x2a906694D15Df38F59e76ED3a5735f8AAbccE9cb")
- cryptogs.airdrop(0,"agfish.png","0x2a906694D15Df38F59e76ED3a5735f8AAbccE9cb")
- cryptogs.airdrop(0,"agdragon.png","0x2a906694D15Df38F59e76ED3a5735f8AAbccE9cb")
+ cryptogs.airdrop(0,"aggenesiscryptog.png","")
+ cryptogs.airdrop(0,"agdragon.png","")
+ cryptogs.airdrop(0,"agunicorn.png","")
+ cryptogs.airdrop(0,"agfish.png","")
+ cryptogs.airdrop(0,"agethereumlogo.png","")
+ cryptogs.airdrop(0,"aggenesiscryptog.png","")
+ cryptogs.airdrop(0,"agunicorn.png","")
+ cryptogs.airdrop(0,"agethereumlogo.png","")
+ cryptogs.airdrop(0,"agfish.png","")
+ cryptogs.airdrop(0,"agdragon.png","")
 */
-
-//
-//me
-//cryptogs.airdrop(0,"dragon.png","0x34aA3F359A9D614239015126635CE7732c18fDF3")
-//gerk
-//cryptogs.airdrop(0,"dragon.png","0x707912a400af1cb2d00ffad766d8a675b8dce504")
-//grehg
-//cryptogs.airdrop(0,"dragon.png","0x535c1a27cc5eed222e4c8af6a911a5d181a2f44c")
-
-
-
-//Patrick
-//0x0FA23C532B040f8E93aF72D91fb03aD78Eb367eD
-//
-//Hunter
-//0x55fFbCD5F80a7e22660A3B564447a0c1D5396A5C

@@ -194,6 +194,23 @@ function getBatch(count,type){
     "awgiraffe.jpg",
     "awelephant.jpg",
   ]
+  batches.pzPaintings = [
+    "pzelephant.jpg",
+    "pzwaterfall.jpg",
+    "pzwindmill.jpg",
+    "pzelephant.jpg",
+    "pzwaterfall.jpg",
+    "pzwindmill.jpg",
+    "pzelephant.jpg",
+    "pzwaterfall.jpg",
+    "pzwindmill.jpg",
+    "pzelephant.jpg",
+    "pzwaterfall.jpg",
+    "pzwindmill.jpg",
+    "pzelephant.jpg",
+    "pzwaterfall.jpg",
+    "pzwindmill.jpg",
+  ]
   batches.default = [
     "ad8ball.png",
     "awsmile1.jpg",
@@ -201,6 +218,39 @@ function getBatch(count,type){
     "darkclogo.png",
     "lightclogo.png"
   ]
+  batches.alPaintings = [
+    "alpaintingone.jpg",
+    "alpaintingtwo.jpg",
+    "alpaintingthree.jpg",
+    "alpaintingfour.jpg",
+    "alpaintingone.jpg",
+    "alpaintingtwo.jpg",
+    "alpaintingthree.jpg",
+    "alpaintingfour.jpg",
+    "alpaintingone.jpg",
+    "alpaintingtwo.jpg",
+    "alpaintingthree.jpg",
+    "alpaintingfour.jpg",
+  ]
+  batches.tbThebuild = [
+    "tb3purple.jpg",
+    "tb3blue.jpg",
+    "tb3red.jpg",
+    "tbpurple.jpg",
+    "tbblack.png",
+    "tbanarchy.png",
+    "tbhammersickle.png",
+    "tb3purple.jpg",
+    "tb3blue.jpg",
+    "tb3red.jpg",
+    "tbpurple.jpg",
+    "tbblack.png",
+    "tbanarchy.png",
+    "tbhammersickle.png",
+  ]
+
+
+
 
   let batch = grabRandom(count,batches[type]);
   if(!batch) batch=batches.default;
