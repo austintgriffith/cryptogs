@@ -1,3 +1,6 @@
+last.balance
+cron.csv
+aws*
 artist.*
 backend/artwork
 backend/uploads
