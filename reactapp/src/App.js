@@ -34,8 +34,8 @@ import {Motion, spring, presets} from 'react-motion';
 let OPTIONALBACKENDPORT = "8001"
 
 const DEBUG = false
-const MAINNETGWEI = 5
-const MAINNETMAXGWEI = 8
+const MAINNETGWEI = 8
+const MAINNETMAXGWEI = 12
 const MAINNETMINGWEI = 0.1
 const STARTINGGWEI = 21
 const STARTINGMAXGWEI = 51
