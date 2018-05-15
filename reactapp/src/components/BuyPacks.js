@@ -39,7 +39,7 @@ export default createClass({
 		loadInterval = setInterval(this.loadPackData,107)
 		setTimeout(()=>{
 			this.setState({debounce:false})
-		},2000)
+		},5000)
 	},
 	componentWillUnmount(){
 		clearInterval(loadInterval)

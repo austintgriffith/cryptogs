@@ -202,6 +202,26 @@ function getBatch(count,type){
     "lightclogo.png"
   ]
 
+  batches.cryptoStache = [
+    "cswhale.png",
+    "csgoat.png",
+    "cswestern.png",
+    "cswhimpy.png",
+    "csringmaster.png",
+    "cslover.png",
+    "csvillain.png",
+    "cscent.png",
+    "cswhale.png",
+    "csgoat.png",
+    "cswestern.png",
+    "cswhimpy.png",
+    "csringmaster.png",
+    "cslover.png",
+    "csvillain.png",
+    "cscent.png",
+  ]
+
+
   let batch = grabRandom(count,batches[type]);
   if(!batch) batch=batches.default;
   return batch;

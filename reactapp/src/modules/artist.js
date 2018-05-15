@@ -27,6 +27,10 @@ export default function(image){
     return "th3build"
   }else if(chars=="tu"){
     return "TechUnboxin"
+  }else if(chars=="js"){
+    return "jeff"
+  }else if(chars=="cs"){
+    return "The CryptoStache"
   }
 
 

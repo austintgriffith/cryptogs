@@ -10,12 +10,13 @@ awTwo
 awCrypto
 awAnimals
 default
+cryptoStache
 */
 
 // cryptogs.dropBatch(0,"awCrypto","0x982572547720705cA05B130D9301E4863bBf843E")
 // cryptogs.dropBatch(0,"ethDen","0xDe3b95B47f1F488E26F838E62497EFF4e3F42fD5")
 
-cryptogs.dropBatch(0,"aw90s","0xCc3bFCD2d2A1Ce5c30AB5dF77C0DB21c3eBa1576")
+cryptogs.dropBatch(0,"cryptoStache","")
 // cryptogs.dropBatch(0,"aw90s","")
 
 // cryptogs.dropBatch(0,[
