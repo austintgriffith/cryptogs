@@ -19,7 +19,7 @@ const cryptogs = require("./cryptogs.js")
 
 // cryptogs.mintPack(0,"ad90s",0.004)
 
-// cryptogs.mintPack(0,"aw90s",0.008)
+cryptogs.mintPack(0,"aw90s",0.008)
 
 // cryptogs.mintPack(0,"adgeo",0.012)
 
