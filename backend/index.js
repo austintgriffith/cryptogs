@@ -59,10 +59,6 @@ web3.setProvider(new web3.providers.HttpProvider('http://0.0.0.0:8545'));
 console.log("LOADING CONTRACTS")
 contracts = ContractLoader(["Cryptogs","SlammerTime","PizzaParlor"],web3,NETWORK);
 
-contracts["Cryptogs"].methods.author().call({}, function(error, result){
-    console.log("AUTHOR",error,result)
-});
-
 var redis = new Redis({
   port: redisPort,
   host: redisHost,
@@ -70,52 +66,71 @@ var redis = new Redis({
 
 let games = {}
 
-web3.eth.getBlockNumber().then((blockNumber)=>{
-  console.log("=== STARTING EVENT PARSERS AT CURRENT BLOCKNUMBER:",blockNumber,contracts["Cryptogs"].blockNumber)
-
-  let updateGenerateGame= async (update)=>{
-    if(!games[update._commit]){
-      games[update._commit] = update
-    }else{
-      games[update._commit] = Object.assign(games[update._commit],update)
-    }
-  }
-  EventParser(contracts["PizzaParlor"],"GenerateGame",contracts["Cryptogs"].blockNumber,blockNumber,updateGenerateGame);
-  setInterval(()=>{
-    LiveParser(contracts["PizzaParlor"],"GenerateGame",blockNumber,updateGenerateGame)
-  },997)
-
-  let updateTransferStack= async (update)=>{
-    if(!games[update._commit]) games[update._commit] = {}
-    if(!games[update._commit]['player1']||games[update._commit]['player1']._sender == update._sender){
-      games[update._commit]['player1'] = update;
-    }else if(!games[update._commit]['player2']){
-      games[update._commit]['player2'] = update;
-    }
-  }
-  EventParser(contracts["PizzaParlor"],"TransferStack",contracts["Cryptogs"].blockNumber,blockNumber,updateTransferStack);
-  setInterval(()=>{
-    LiveParser(contracts["PizzaParlor"],"TransferStack",blockNumber,updateTransferStack)
-  },999)
+function checkForGeth() {
+  contracts["Cryptogs"].methods.author().call({}, function(error, result){
+      console.log("AUTHOR",error,result)
+      if(error){
+        setTimeout(checkForGeth,10000);
+      }else{
+        startParsers()
+      }
+  });
+}
+checkForGeth()
 
 
-  let updateFlip = async (update)=>{
-    if(!games[update._commit]) games[update._commit] = {}
-    if(!games[update._commit]['flips']) games[update._commit]['flips']=[]
-    let found = false
-    for(let f in games[update._commit]['flips']){
-      if(games[update._commit]['flips'][f]._token==update._token){
-        found=true;
-        break;
+function startParsers(){
+
+  web3.eth.getBlockNumber().then((blockNumber)=>{
+    console.log("=== STARTING EVENT PARSERS AT CURRENT BLOCKNUMBER:",blockNumber,contracts["Cryptogs"].blockNumber)
+
+    let updateGenerateGame= async (update)=>{
+      if(!games[update._commit]){
+        games[update._commit] = update
+      }else{
+        games[update._commit] = Object.assign(games[update._commit],update)
       }
     }
-    if(!found) games[update._commit]['flips'].push(update)
-  }
-  EventParser(contracts["PizzaParlor"],"Flip",contracts["Cryptogs"].blockNumber,blockNumber,updateFlip);
-  setInterval(()=>{
-    LiveParser(contracts["PizzaParlor"],"Flip",blockNumber,updateFlip)
-  },797)
-})
+    EventParser(contracts["PizzaParlor"],"GenerateGame",contracts["Cryptogs"].blockNumber,blockNumber,updateGenerateGame);
+    setInterval(()=>{
+      LiveParser(contracts["PizzaParlor"],"GenerateGame",blockNumber,updateGenerateGame)
+    },997)
+
+    let updateTransferStack= async (update)=>{
+      if(!games[update._commit]) games[update._commit] = {}
+      if(!games[update._commit]['player1']||games[update._commit]['player1']._sender == update._sender){
+        games[update._commit]['player1'] = update;
+      }else if(!games[update._commit]['player2']){
+        games[update._commit]['player2'] = update;
+      }
+    }
+    EventParser(contracts["PizzaParlor"],"TransferStack",contracts["Cryptogs"].blockNumber,blockNumber,updateTransferStack);
+    setInterval(()=>{
+      LiveParser(contracts["PizzaParlor"],"TransferStack",blockNumber,updateTransferStack)
+    },999)
+
+
+    let updateFlip = async (update)=>{
+      if(!games[update._commit]) games[update._commit] = {}
+      if(!games[update._commit]['flips']) games[update._commit]['flips']=[]
+      let found = false
+      for(let f in games[update._commit]['flips']){
+        if(games[update._commit]['flips'][f]._token==update._token){
+          found=true;
+          break;
+        }
+      }
+      if(!found) games[update._commit]['flips'].push(update)
+    }
+    EventParser(contracts["PizzaParlor"],"Flip",contracts["Cryptogs"].blockNumber,blockNumber,updateFlip);
+    setInterval(()=>{
+      LiveParser(contracts["PizzaParlor"],"Flip",blockNumber,updateFlip)
+    },797)
+  })
+
+}
+
+
 
 /*
 var pub = new Redis({
