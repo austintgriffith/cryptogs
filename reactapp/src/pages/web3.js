@@ -99,8 +99,8 @@ export default createClass({
 			<div>
 
 
-			<p style={{width:"100%",textAlign:"center",opacity:0.7,marginTop:20}}>
-				Mobile wallets available:
+			<p style={{width:"100%",textAlign:"center",opacity:0.7,marginTop:30,fontSize:26}}>
+				Choose a Mobile Wallet:
 			</p>
 
 			<section className="section pt-6 pb-6">
@@ -109,7 +109,7 @@ export default createClass({
 						<div className="row align-items-center">
 							{this.walletLink("https://trustwalletapp.com/","trust.png","Trust Wallet")}
 							{this.walletLink("https://www.toshi.org/","toshi.jpg","Toshi")}
-							{this.walletLink("https://www.cipherbrowser.com/","cipher.png","Cipher Browser")}
+							{this.walletLink("https://www.cipherbrowser.com/","cipher.jpg","Cipher Browser")}
 						</div>
 					</div>
 				</div>
