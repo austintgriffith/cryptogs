@@ -44,7 +44,6 @@ export default createClass({
 				}else{
 					this.setState({extraMessage:"Unlock MetaMask to play.",extraMessageLink:"https://metamask.io/"})
 				}
-
 			}
 		},5000)
 	},

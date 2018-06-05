@@ -31,7 +31,10 @@ export default function(image){
     return "jeff"
   }else if(chars=="cs"){
     return "The CryptoStache"
+  }else if(chars=="se"){
+    return "SunnyEgo"
   }
+
 
 
   return "Unknown"
