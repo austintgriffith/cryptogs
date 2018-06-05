@@ -13,13 +13,20 @@ const cryptogs = require("./cryptogs.js")
  awCrypto
  awAnimals
  default
-
+ cryptoStache
+ pzPaintings
+ alPaintings
+ tbThebuild
  pzPaintings
  */
 
 // cryptogs.mintPack(0,"ad90s",0.004)
 
-cryptogs.mintPack(0,"aw90s",0.008)
+
+// cryptogs.mintPack(0,"aw90s",0.008)
+//
+//cryptogs.mintPack(0,"cryptoStache",0.009)
+
 
 // cryptogs.mintPack(0,"adgeo",0.012)
 

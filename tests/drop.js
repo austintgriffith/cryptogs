@@ -16,29 +16,29 @@ alPaintings
 tbThebuild
 */
 
-// cryptogs.dropBatch(0,"tbThebuild","")
+// cryptogs.dropBatch(0,"tbThebuild","0xDDF4da877d64C694ac69175FEEdB19a2591F7d7F")
 // cryptogs.dropBatch(0,"ethDen","")
 
-cryptogs.dropBatch(0,"cryptoStache","")
+// cryptogs.dropBatch(0,"cryptoStache","0x4911E3049a846A2495C2474d45a4d578AbDeAEAB")
 // cryptogs.dropBatch(0,"aw90s","")
 
 // cryptogs.dropBatch(0,[
-//   "1524962442486dff37cae.jpg",
-//   "1524962442486dff37cae.jpg",
-//   "1524962442486dff37cae.jpg",
-//   "1524962442486dff37cae.jpg",
-//   "1524962442486dff37cae.jpg"
-// ],"")
+//   "gitcoindark.jpg",
+//   "gitcoinlight.jpg",
+//   "gitcoindark.jpg",
+//   "gitcoinlight.jpg",
+//   "gitcoindark.jpg",
+// ],"0xe93d33cf8aaf56c64d23b5b248919eabd8c3c41e")
 
 
-//
+// //
 cryptogs.dropBatch(0,[
   "peepeth.png",
   "peepeth.png",
   "peepeth.png",
   "peepeth.png",
   "peepeth.png",
-],"")
+],"0x4ecb2ad57322ae37160ef62cf0d57294d8437a8a")
 
 // cryptogs.dropBatch(0,[
 //   "jsmaga.jpg",
