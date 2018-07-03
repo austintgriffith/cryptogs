@@ -47,10 +47,10 @@ console.log("NETWORK:",NETWORK)
 let redisHost = 'localhost'
 let redisPort = 57290
 if(NETWORK==3){
-  redisHost = 'stagecryptogs.048tmy.0001.use2.cache.amazonaws.com'
-  redisPort = 6379
+  redisHost = '0.0.0.0'
+  redisPort = 57290
 }else if(NETWORK==1){
-  redisHost = 'cryptogs.048tmy.0001.use2.cache.amazonaws.com'
+  redisHost = 'cryptogsnew.048tmy.0001.use2.cache.amazonaws.com'
   redisPort = 6379
 }
 
